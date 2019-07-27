@@ -55,5 +55,5 @@ jbelanger _at_ rochester _dot_ rr _dot_ com).
 License
 -------
 All sources are released under the GPL 3.0 license.  See the
-[LICENSE](http://github.com/JonathanBelanger/blisscpp/LICENSE)
+[LICENSE](https://github.com/JonathanBelanger/blisscpp/blob/master/LICENSE)
 file for the license text.
