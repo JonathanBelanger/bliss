@@ -1,10 +1,10 @@
 README for the BLISS-LLVM Compiler
 ===============================
 
-This is the source package for the BLISS-LLVM compiler, a portable
+This is the source package for the BLISS compiler, a portable
 cross-compiler for the BLISS programming language.
-Visit the [project website](http://madisongh.github.io/blissc)
-for more information about BLISS-LLVM.
+Visit the [project website](http://github.com/JonathanBelanger/blisscpp)
+for more information about BLISS.
 
 Current Status
 --------------
@@ -29,16 +29,11 @@ The build system uses CMake 3.13 or later.
 Building the compiler
 ---------------------
 
-1. Clone [the repository]().
-
+1. Clone [the repository](https://github.com/JonathanBelanger/blisscpp.git).
 2. cd to the top-level source directory and create a build directory.
-
 3. cd to your build directory.
-
 4. Run `cmake ..`.
-
 5. Run `make` to build the compiler.
-
 6. Run `make check` to test the built compiler.
 
 
@@ -59,6 +54,6 @@ jbelanger _at_ rochester _dot_ rr _dot_ com).
 
 License
 -------
-All sources are released under the BSD 2-clause license.  See the
-[LICENSE.TXT]()
+All sources are released under the GPL 3.0 license.  See the
+[LICENSE](http://github.com/JonathanBelanger/blisscpp/LICENSE)
 file for the license text.
