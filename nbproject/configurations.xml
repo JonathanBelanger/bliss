@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <df root="." name="0">
-      <df name="tests">
-        <in>testharness.c</in>
+    <df root="/home/belangerj/projects/bliss/include" name="0">
+      <df name="bliss">
+        <df name="AST">
+          <in>AST.h</in>
+        </df>
+        <df name="CodeGen">
+          <in>CodeGen.h</in>
+        </df>
+        <df name="Lexer">
+          <in>Parser.h</in>
+          <in>Token.h</in>
+        </df>
       </df>
     </df>
     <logicalFolder name="ExternalFiles"
@@ -12,10 +21,12 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>nbproject/private/launcher.properties</itemPath>
     </logicalFolder>
+    <itemPath>/home/belangerj/projects/bliss/lib/AST/AST.cxx</itemPath>
+    <itemPath>/home/belangerj/projects/bliss/lib/Lexer/Parser.cxx</itemPath>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <sourceRootList>
-    <Elem>.</Elem>
+    <Elem>/home/belangerj/projects/bliss/include</Elem>
   </sourceRootList>
   <projectmakefile></projectmakefile>
   <confs>
@@ -33,13 +44,41 @@
           <buildCommand>echo build</buildCommand>
           <cleanCommand>echo clean</cleanCommand>
           <executablePath></executablePath>
+          <ccTool>
+            <incDir>
+              <pElem>../llvm-project/llvm/include</pElem>
+              <pElem>../llvm-project/build/include</pElem>
+            </incDir>
+          </ccTool>
         </makeTool>
         <preBuild>
           <preBuildCommandWorkingDir>.</preBuildCommandWorkingDir>
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
-      <item path="tests/testharness.c" ex="false" tool="0" flavor2="0">
+      <item path="/home/belangerj/projects/bliss/include/bliss/AST/AST.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/belangerj/projects/bliss/include/bliss/Lexer/Token.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/belangerj/projects/bliss/lib/AST/AST.cxx"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/home/belangerj/projects/bliss/lib/Lexer/Parser.cxx"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="include/bliss/CodeGen/CodeGen.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/Lexer/Parser.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <df root="." name="0">
-      <df name="doc">
-      </df>
-      <df name="tests">
-        <df name="expression">
+    <df root="/home/belangerj/projects/bliss/include" name="0">
+      <df name="bliss">
+        <df name="AST">
+          <in>AST.h</in>
         </df>
-        <df name="lexical">
+        <df name="Basic">
         </df>
-        <in>testharness.c</in>
+        <df name="CodeGen">
+          <in>CodeGen.h</in>
+        </df>
+        <df name="Driver">
+        </df>
+        <df name="Lexer">
+          <in>Parser.h</in>
+          <in>Token.h</in>
+        </df>
       </df>
     </df>
+    <itemPath>/home/belangerj/projects/bliss/lib/AST/AST.cxx</itemPath>
+    <itemPath>/home/belangerj/projects/bliss/lib/Lexer/Parser.cxx</itemPath>
   </logicalFolder>
   <projectmakefile></projectmakefile>
   <confs>
