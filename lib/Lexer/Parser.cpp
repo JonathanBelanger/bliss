@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include "Lexer/Parser.h"
 
 /*
  * CurTok/getNextToken - Provide a simple token buffer.  CurTok is the current
@@ -560,4 +560,3 @@ static std::unique_ptr<PrototypeAST> Parser::ParseExtern()
     getNextToken(); /*  eat extern. */
     return ParsePrototype();
 }
-

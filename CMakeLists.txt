@@ -6,9 +6,9 @@ set(CMAKE_CXX_COMPILER clang++)
 project (bliss)
 
 include_directories(BEFORE SYSTEM
-    /home/belangerj/projects/llvm-project/llvm/include
-    /home/belangerj/projects/llvm-project/build/include
-    /home/belangerj/projects/llvm-project/build/lib/clang/10.0.0/include
+    /home/belanger/projects/llvm-project/llvm/include
+    /home/belanger/projects/llvm-project/build/include
+    /home/belanger/projects/llvm-project/build/lib/clang/10.0.0/include
     )
 
 set(CMAKE_CXX_FLAGS "-std=c++14")
@@ -16,11 +16,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STDC_CONSTANT_MACROS")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STDC_FORMAT_MACROS")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STDC_LIMIT_MACROS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${bliss_SOURCE_DIR}/include/bliss")
 
-add_executable(bliss lib/bliss.cxx)
+add_subdirectory(lib/Lexer)
+add_subdirectory(lib/AST)
+
+add_executable(bliss lib/bliss.cpp)
+
+add_dependencies(bliss
+    Lexer
+    AST
+    )
 
 target_link_libraries(bliss
-    -L/home/belangerj/projects/llvm-project/build/lib 
+    -L/home/belanger/projects/llvm-project/build/lib 
     LLVMX86Disassembler
     LLVMX86AsmParser
     LLVMX86CodeGen

@@ -1,28 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
-    <df root="/home/belangerj/projects/bliss/include" name="0">
-      <df name="bliss">
-        <df name="AST">
-          <in>AST.h</in>
+    <df root="." name="0">
+      <df name="build">
+        <df name="CMakeFiles">
+          <df name="3.13.4">
+            <df name="CompilerIdC">
+              <df name="tmp">
+              </df>
+              <in>CMakeCCompilerId.c</in>
+            </df>
+            <df name="CompilerIdCXX">
+              <df name="tmp">
+              </df>
+              <in>CMakeCXXCompilerId.cpp</in>
+            </df>
+          </df>
+          <df name="CMakeTmp">
+          </df>
+          <in>feature_tests.c</in>
+          <in>feature_tests.cxx</in>
         </df>
-        <df name="Basic">
-        </df>
-        <df name="CodeGen">
-          <in>CodeGen.h</in>
-        </df>
-        <df name="Driver">
-        </df>
-        <df name="Lexer">
-          <in>Parser.h</in>
-          <in>Token.h</in>
+        <df name="lib">
+          <df name="AST">
+            <df name="CMakeFiles">
+              <df name="AST.dir">
+              </df>
+            </df>
+          </df>
+          <df name="Lexer">
+            <df name="CMakeFiles">
+              <df name="Lexer.dir">
+              </df>
+            </df>
+          </df>
         </df>
       </df>
+      <df name="doc">
+      </df>
+      <df name="include">
+        <df name="bliss">
+          <df name="AST">
+            <in>AST.h</in>
+          </df>
+          <df name="Basic">
+            <in>CommonInclude.h</in>
+          </df>
+          <df name="CodeGen">
+            <in>CodeGen.h</in>
+          </df>
+          <df name="Lexer">
+            <in>Parser.h</in>
+            <in>Token.h</in>
+          </df>
+        </df>
+      </df>
+      <df name="lib">
+        <df name="AST">
+          <in>AST.cpp</in>
+          <in>CMakeLists.txt</in>
+        </df>
+        <df name="Lexer">
+          <in>CMakeLists.txt</in>
+          <in>Parser.cpp</in>
+          <in>Token.cpp</in>
+        </df>
+        <in>bliss.cpp</in>
+      </df>
+      <df name="tests">
+        <df name="expression">
+        </df>
+        <df name="lexical">
+        </df>
+        <in>testharness.c</in>
+      </df>
     </df>
-    <itemPath>/home/belangerj/projects/bliss/lib/AST/AST.cxx</itemPath>
-    <itemPath>/home/belangerj/projects/bliss/lib/Lexer/Parser.cxx</itemPath>
   </logicalFolder>
-  <projectmakefile></projectmakefile>
+  <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Default" type="0">
       <toolsSet>

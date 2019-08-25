@@ -21,9 +21,10 @@
  *
  * Created on August 19, 2019, 12:37 PM
  */
-
 #ifndef LLVM_BLISS_TOKEN_H
 #define LLVM_BLISS_TOKEN_H
+
+#include "Basic/CommonInclude.h"
 
 namespace bliss
 {
@@ -68,4 +69,3 @@ namespace bliss
 }
 
 #endif /* LLVM_BLISS_TOKEN_H */
-

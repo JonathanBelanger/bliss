@@ -4,13 +4,13 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
             <name>bliss</name>
-            <c-extensions/>
-            <cpp-extensions>cxx</cpp-extensions>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions>cpp,cxx</cpp-extensions>
             <header-extensions>h</header-extensions>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>/home/belangerj/projects/bliss/include</sourceRootElem>
+                <sourceRootElem>.</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "bliss/AST/AST.h"
+#include "AST/AST.h"
 
 namespace bliss
 {

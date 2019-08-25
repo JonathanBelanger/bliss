@@ -25,6 +25,8 @@
 #ifndef LLVM_BLISS_CODEGEN_H
 #define LLVM_BLISS_CODEGEN_H
 
+#include "Basic/CommonInclude.h"
+
 namespace bliss
 {
     class CodeGen
@@ -45,4 +47,3 @@ namespace bliss
 }
 
 #endif /* LLVM_BLISS_CODEGEN_H */
-

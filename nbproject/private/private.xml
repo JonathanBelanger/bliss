@@ -7,16 +7,4 @@
         <activeConfTypeElem>0</activeConfTypeElem>
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/home/belangerj/projects/bliss/include/bliss/Lexer/Token.h</file>
-            <file>file:/home/belangerj/projects/bliss/include/bliss/CodeGen/CodeGen.h</file>
-            <file>file:/home/belangerj/projects/bliss/include/bliss/Lexer/Parser.h</file>
-            <file>file:/home/belangerj/projects/bliss/lib/Lexer/Token.cxx</file>
-            <file>file:/home/belangerj/projects/bliss/lib/bliss.cxx</file>
-            <file>file:/home/belangerj/projects/bliss/lib/Lexer/Parser.cxx</file>
-            <file>file:/home/belangerj/projects/bliss/lib/AST/AST.cxx</file>
-        </group>
-    </open-files>
 </project-private>

@@ -25,6 +25,8 @@
 #ifndef LLVM_BLISS_AST_H
 #define LLVM_BLISS_AST_H
 
+#include "Basic/CommonInclude.h"
+
 namespace bliss
 {
 
@@ -194,4 +196,3 @@ namespace bliss
 }
 
 #endif /* LLVM_BLISS_AST_H */
-
