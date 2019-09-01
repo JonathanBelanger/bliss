@@ -16,56 +16,34 @@
  */
 
 /* 
- * File:   Token.h
+ * File:   Lexemes.h
  * Author: Jonathan D. Belanger
  *
- * Created on August 19, 2019, 12:37 PM
+ * Created on September 1, 2019, 5:37 PM
  */
-#ifndef LLVM_BLISS_TOKEN_H
-#define LLVM_BLISS_TOKEN_H
+#ifndef LLVM_BLISS_LEXEMES_H
+#define LLVM_BLISS_LEXEMES_H
 
 #include "Basic/CommonInclude.h"
 
+using namespace std;
 namespace bliss
 {
-    enum Tokens
+    class Lexeme
     {
-        tok_eof = -1,
-
-        /* commands */
-        tok_def = -2,
-        tok_extern = -3,
-
-        /* primary */
-        tok_identifier = -4,
-        tok_number = -5,
-
-        /* control */
-        tok_if = -6,
-        tok_then = -7,
-        tok_else = -8,
-        tok_for = -9,
-        tok_in = -10,
-
-        /* operators */
-        tok_binary = -11,
-        tok_unary = -12,
-
-        /* var definition */
-        tok_var = -13
-    };
-
-    class Token
-    {
-        private:
-        std::string IdentifierStr;
-        double NumVal;
-
         public:
-        Token();
-        ~Token();
-        Tokens gettok();
+        enum LexemeClassifier
+        {
+            LCUnknown,
+            LCKeywords,
+            LCPredeclared,
+            LCExplicitDecl,
+            LCDecimalLiteral,
+            LCQuotedString,
+            LCOperators,
+            LCPunctuation
+        };
     };
 }
 
-#endif /* LLVM_BLISS_TOKEN_H */
+#endif /* LLVM_BLISS_LEXEMES_H */

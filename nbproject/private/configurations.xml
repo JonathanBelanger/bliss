@@ -16,21 +16,11 @@
               <in>CMakeCXXCompilerId.cpp</in>
             </df>
           </df>
-          <df name="CMakeTmp">
-          </df>
-          <in>feature_tests.c</in>
-          <in>feature_tests.cxx</in>
         </df>
         <df name="lib">
-          <df name="AST">
+          <df name="Basic">
             <df name="CMakeFiles">
-              <df name="AST.dir">
-              </df>
-            </df>
-          </df>
-          <df name="Lexer">
-            <df name="CMakeFiles">
-              <df name="Lexer.dir">
+              <df name="Basic.dir">
               </df>
             </df>
           </df>
@@ -40,32 +30,22 @@
       </df>
       <df name="include">
         <df name="bliss">
-          <df name="AST">
-            <in>AST.h</in>
-          </df>
           <df name="Basic">
             <in>CommonInclude.h</in>
-          </df>
-          <df name="CodeGen">
-            <in>CodeGen.h</in>
+            <in>FileManager.h</in>
+            <in>InputChar.h</in>
+            <in>InputFile.h</in>
           </df>
           <df name="Lexer">
-            <in>Parser.h</in>
-            <in>Token.h</in>
+            <in>Lexemes.h</in>
           </df>
         </df>
       </df>
       <df name="lib">
-        <df name="AST">
-          <in>AST.cpp</in>
-          <in>CMakeLists.txt</in>
+        <df name="Basic">
+          <in>FileManager.cpp</in>
+          <in>InputFile.cpp</in>
         </df>
-        <df name="Lexer">
-          <in>CMakeLists.txt</in>
-          <in>Parser.cpp</in>
-          <in>Token.cpp</in>
-        </df>
-        <in>bliss.cpp</in>
       </df>
       <df name="tests">
         <df name="expression">
@@ -74,6 +54,7 @@
         </df>
         <in>testharness.c</in>
       </df>
+      <in>bliss.cpp</in>
     </df>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>

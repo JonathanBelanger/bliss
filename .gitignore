@@ -37,7 +37,8 @@
 *.app
 
 # End of https://www.gitignore.io/api/c++
-/build/
+build/
 
 # Netbeans project folder
 nbproject/
+

@@ -26,10 +26,13 @@
 #define LLVM_BLISS_COMMONINCLUDE_H
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -37,6 +40,7 @@
 #include <utility>
 #include <vector>
 
+#if 0
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/Optional.h"
 #include "llvm/ADT/STLExtras.h"
@@ -58,5 +62,6 @@
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
+#endif
 
 #endif /* LLVM_BLISS_COMMONINCLUDE_H */
