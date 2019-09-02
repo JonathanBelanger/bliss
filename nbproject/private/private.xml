@@ -10,7 +10,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/belanger/projects/bliss/Reader.cpp</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/Lexer/Lexer.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/Lexer/Keyword.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/Basic/InputChar.h</file>
+            <file>file:/home/belanger/projects/bliss/bliss.cpp</file>
+            <file>file:/home/belanger/projects/bliss/CMakeLists.txt</file>
+            <file>file:/home/belanger/projects/bliss/lib/Lexer/CMakeLists.txt</file>
+            <file>file:/home/belanger/projects/bliss/lib/Lexer/Lexer.cpp</file>
+            <file>file:/home/belanger/projects/bliss/lib/Basic/InputFile.cpp</file>
         </group>
     </open-files>
 </project-private>

@@ -61,81 +61,125 @@ InputFile::~InputFile()
  */
 void InputFile::initChars(int where)
 {
-    charVec[where]->setChar(inputStream->get());
+    char c = inputStream->get();
+    InputChar::CharClass cClass;
+
     if (inputStream->eof() == true)
     {
-        charVec[where]->setChar('\0');
-        charVec[where]->setClass(InputChar::CCEndOfFile);
-    }
-    else if (isalpha(charVec[where]->getChar()))
-    {
-        charVec[where]->setClass(InputChar::CCPrintLetter);
-    }
-    else if (isdigit(charVec[where]->getChar()))
-    {
-        charVec[where]->setClass(InputChar::CCPrintDigit);
-    }
-    else if ((charVec[where]->getChar() == '.') || (charVec[where]->getChar() == '^') ||
-             (charVec[where]->getChar() == '*') || (charVec[where]->getChar() == '/') ||
-             (charVec[where]->getChar() == '+') || (charVec[where]->getChar() == '-') ||
-             (charVec[where]->getChar() == '=') || (charVec[where]->getChar() == ',') ||
-             (charVec[where]->getChar() == ';') || (charVec[where]->getChar() == ':') ||
-             (charVec[where]->getChar() == '(') || (charVec[where]->getChar() == ')') ||
-             (charVec[where]->getChar() == '[') || (charVec[where]->getChar() == ']') ||
-             (charVec[where]->getChar() == '<') || (charVec[where]->getChar() == '>'))
-    {
-        charVec[where]->setClass(InputChar::CCPrintDelim);
-    }
-    else if ((charVec[where]->getChar() == '$') || (charVec[where]->getChar() == '_') ||
-             (charVec[where]->getChar() == '%') || (charVec[where]->getChar() == '!') ||
-             (charVec[where]->getChar() == '\''))
-    {
-        charVec[where]->setClass(InputChar::CCPrintSpecial);
-    }
-    else if ((charVec[where]->getChar() == '"') || (charVec[where]->getChar() == '&') ||
-             (charVec[where]->getChar() == '?') || (charVec[where]->getChar() == '@') ||
-             (charVec[where]->getChar() == '\\') || (charVec[where]->getChar() == '`') ||
-             (charVec[where]->getChar() == '{') || (charVec[where]->getChar() == '|') ||
-             (charVec[where]->getChar() == '}') || (charVec[where]->getChar() == '~'))
-    {
-        charVec[where]->setClass(InputChar::CCPrintFree);
-    }
-    else if (charVec[where]->getChar() == ' ')
-    {
-        charVec[where]->setClass(InputChar::CCNonprintSP);
-    }
-    else if (charVec[where]->getChar() == 0x09)
-    {
-        charVec[where]->setClass(InputChar::CCNonprintHT);
-    }
-    else if (charVec[where]->getChar() == 0x0b)
-    {
-        charVec[where]->setClass(InputChar::CCLinemarkVT);
-    }
-    else if (charVec[where]->getChar() == 0x0c)
-    {
-        charVec[where]->setClass(InputChar::CCLinemarkFF);
-    }
-    else if (charVec[where]->getChar() == 0x0a)
-    {
-        charVec[where]->setClass(InputChar::CCLinemarkLF);
-    }
-    else if (charVec[where]->getChar() == 0x0d)
-    {
-        charVec[where]->setClass(InputChar::CCLinemarkCR);
+        c = '\0';
+        cClass = InputChar::CCEndOfFile;
     }
     else
     {
-        charVec[where]->setClass(InputChar::CCUnknown);
+        offset++;   // Count every character read, except EOF.
+
+        /*
+         * If this is the first character read, set the line and
+         * column to 1.  If the last character read was a LF, VT,
+         * or FF and the current character is not CR, then increment
+         * the line and set the column to 1.  Otherwise, increment
+         * the column.
+         */
+        if (line == 0)
+        {
+            line = column = 1;
+        }
+        else if ((nextLine == true) && (c != 0x0d))
+        {
+            line++;
+            column = 1;
+            nextLine = false;
+        }
+        else
+        {
+            column++;
+        }
+        nextLine = ((c >= 0x0a) && (c <= 0x0c));
+        switch(c)
+        {
+            /* (Horizontal) Tab */
+            case 0x09:
+                cClass = InputChar::CCNonprintHT;
+                break;
+
+            /* Line Feed */
+            case 0x0a:
+                cClass = InputChar::CCLinemarkLF;
+                break;
+
+             /* Virtical Tab */
+            case 0x0b:
+                cClass = InputChar::CCLinemarkVT;
+                break;
+
+            /* Form Feed */
+            case 0x0c:
+                cClass = InputChar::CCLinemarkFF;
+                break;
+
+            /* Carriage Return */
+            case 0x0d:
+                cClass = InputChar::CCLinemarkCR;
+                break;
+
+            case ' ':
+                cClass = InputChar::CCNonprintSP;
+                break;
+
+            /* $ _ % ! ' */
+            case '!':   case '$':   case '%':   case '\'':  case '_':
+                cClass = InputChar::CCPrintSpecial;
+                break;
+
+            /* . ^ * / + - = , ; : ( ) [ ] < > */
+            case '(':   case ')':   case '*':   case '+':   case ',':
+            case '-':   case '.':   case '/':   case ':':   case ';':
+            case '<':   case '=':   case '>':   case '[':   case ']':
+            case '^':
+                cClass = InputChar::CCPrintDelim;
+                break;
+
+            /* " & ? @ \ ` { | } ~ */
+            case '"':   case '&':   case '?':   case '@':   case '\\':
+            case '`':   case '{':   case '|':   case '}':   case '~':
+                cClass = InputChar::CCPrintFree;
+                break;
+
+            /* A B C ... Z   a b c ... z */
+            case 'A':   case 'B':   case 'C':   case 'D':   case 'E':
+            case 'F':   case 'G':   case 'H':   case 'I':   case 'J':
+            case 'K':   case 'L':   case 'M':   case 'N':   case 'O':
+            case 'P':   case 'Q':   case 'R':   case 'S':   case 'T':
+            case 'U':   case 'V':   case 'W':   case 'X':   case 'Y':
+            case 'Z':   case 'a':   case 'b':   case 'c':   case 'd':
+            case 'e':   case 'f':   case 'g':   case 'h':   case 'i':
+            case 'j':   case 'k':   case 'l':   case 'm':   case 'n':
+            case 'o':   case 'p':   case 'q':   case 'r':   case 's':
+            case 't':   case 'u':   case 'v':   case 'w':   case 'x':
+            case 'y':   case 'z':
+                cClass = InputChar::CCPrintLetter;
+                break;
+
+            /* 0 1 2 ... 9 */
+            case '0':   case '1':   case '2':   case '3':   case '4':
+            case '5':   case '6':   case '7':   case '8':   case '9':
+                cClass = InputChar::CCPrintDigit;
+                break;
+
+            default:
+                cClass = InputChar::CCUnknown;
+                break;
+        }
     }
+    charVec[where]->setCharInfo(c, cClass, line, column, offset);
     return;
 }
-            
+
 /**
  * Get the next character from the input file.  This is actually the previous
  * character, as we always read one character ahead from the file.
  *
- *  NOTE: This call is destructive, in that a read in character cannot be 
+ *  NOTE: This call is destructive, in that a read in character cannot be
  *  unread.
  *
  * @return A pointer to an InputChar class.
@@ -163,10 +207,10 @@ InputChar *InputFile::getNextChar()
             index %= INPUT_CHAR_DEPTH;
             initChars(index);
         }
-    }
-    if (charVec[retIndex]->getClass() == InputChar::CCEndOfFile)
-    {
-        atEOF = true;
+        else
+        {
+            atEOF = true;
+        }
     }
     return charVec[retIndex];
 }

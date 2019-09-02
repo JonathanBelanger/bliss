@@ -64,7 +64,31 @@ namespace bliss
              * 
              * @return ASCII coded character
              */
-            char getChar() { return c; }
+            char getChar() { return inChar; }
+
+            /**
+             * This function is called to get the line number from where the
+             * character was read.
+             * 
+             * @return ASCII coded character
+             */
+            uint32_t getLine() { return inLine; }
+
+            /**
+             * This function is called to get the column number from where the
+             * character was read.
+             * 
+             * @return ASCII coded character
+             */
+            uint32_t getColumn() { return inColumn; }
+
+            /**
+             * This function is called to get the offset from start of file
+             * where the character was read.
+             * 
+             * @return ASCII coded character
+             */
+            uint32_t getOffset() { return inOffset; }
 
             /**
              * This function is called to get the character class associated with the
@@ -72,24 +96,33 @@ namespace bliss
              *
              * @return An enumeration specifying the character class
              */
-            CharClass getClass() { return cc; }
+            CharClass getClass() { return inCharClass; }
 
             /* SETTERS */
-            
-            /**
-             * This function is called to save a character read from the file.
-             *
-             * @param nextChar - ASCII coded character
-             */
-            void setChar(char nextChar) { c = nextChar; }
 
             /**
-             * This function is called to save the character class for the character
-             * read from the file.
+             * This function is called to save information about the character read
+             * from the file.
              *
-             * @param nextCC - Character classification enumeration value
+             * @param nextChar - ASCII coded character
+             * @param nextCharClass - the Character Classification for nextChar
+             * @param line - line in the file where nextChar was read
+             * @param column - column (offset from start of line) in the file where
+             *                 nextChar was read
+             * @param offset - offset, from start of file, where the nextChar was read
              */
-            void setClass(CharClass nextCC) { cc = nextCC; }
+            void setCharInfo(char nextChar,
+                             CharClass nextCharClass,
+                             uint32_t line,
+                             uint32_t column,
+                             uint32_t offset)
+            {
+                inChar = nextChar;
+                inCharClass = nextCharClass;
+                inLine = line;
+                inColumn = column;
+                inOffset = offset;
+            }
 
             /* CONSTRUCTORS */
             InputChar(){};
@@ -101,8 +134,11 @@ namespace bliss
 
         private:
             /* CLASS DATA */
-            char c;             // ASCII coded character read from the file.
-            CharClass cc;       // Character classification enumeration
+            char inChar;            // ASCII coded character read from the file.
+            CharClass inCharClass;  // Character classification enumeration
+            uint32_t inLine;
+            uint32_t inColumn;
+            uint32_t inOffset;
     };
 }
 

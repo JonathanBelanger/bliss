@@ -108,7 +108,11 @@ namespace bliss
             std::array<InputChar *, INPUT_CHAR_DEPTH> charVec;  // Character info vector
             bool atEOF;                                         // EOF processed
             bool opened;                                        // File opened
+            bool nextLine;                                      // Increment line counter on next read
             int index;                                          // Index for next character
+            uint32_t line;                                      // Current line in the file
+            uint32_t column;                                    // Current column in the file
+            uint32_t offset;                                    // Current offset in the file
     };
 }
 

@@ -16,11 +16,23 @@
               <in>CMakeCXXCompilerId.cpp</in>
             </df>
           </df>
+          <df name="bliss.dir">
+          </df>
+          <df name="CMakeTmp">
+          </df>
+          <in>feature_tests.c</in>
+          <in>feature_tests.cxx</in>
         </df>
         <df name="lib">
           <df name="Basic">
             <df name="CMakeFiles">
               <df name="Basic.dir">
+              </df>
+            </df>
+          </df>
+          <df name="Lexer">
+            <df name="CMakeFiles">
+              <df name="Lexer.dir">
               </df>
             </df>
           </df>
@@ -37,7 +49,8 @@
             <in>InputFile.h</in>
           </df>
           <df name="Lexer">
-            <in>Lexemes.h</in>
+            <in>Keyword.h</in>
+            <in>Lexer.h</in>
           </df>
         </df>
       </df>
@@ -45,6 +58,9 @@
         <df name="Basic">
           <in>FileManager.cpp</in>
           <in>InputFile.cpp</in>
+        </df>
+        <df name="Lexer">
+          <in>Lexer.cpp</in>
         </df>
       </df>
       <df name="tests">

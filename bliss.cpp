@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * File:   Reader.cpp
  * Author: Jonathan D. Belanger
  *
@@ -40,23 +40,26 @@ using namespace std;
 using namespace bliss;
 
 FileManager* FileManager::fmp = NULL;
-
+void dump();
 /*
- * This function is called to test the input file processing and character 
+ * This function is called to test the input file processing and character
  * classification code.
  */
 int main(int argc, char** argv)
 {
     FileManager *fileMgr = FileManager::get();
     InputFile *in = nullptr;
-
+    dump();
     in = fileMgr->pushFile("/home/belanger/projects/bliss/tests/lexical/lexfuncs1.bli");
- 
+
     if (in != nullptr)
     {
         while(!in->getEOF())
         {
             InputChar *c = in->getNextChar();
+            if (c->getClass() != InputChar::CCEndOfFile)
+                cout << c->getChar();
+#if 0
             if (isprint(c->getChar()))
             {
                 cout << "'" << c->getChar() << "' -- ";
@@ -68,11 +71,11 @@ int main(int argc, char** argv)
             switch(c->getClass())
             {
                 case InputChar::CCPrintLetter:
-                    cout << "Letters";
+                    cout << "Letters\t";
                     break;
 
                 case InputChar::CCPrintDigit:
-                    cout << "Digits";
+                    cout << "Digits\t";
                     break;
 
                 case InputChar::CCPrintDelim:
@@ -80,19 +83,19 @@ int main(int argc, char** argv)
                     break;
 
                 case InputChar::CCPrintSpecial:
-                    cout << "Special";
+                    cout << "Special\t";
                     break;
 
                 case InputChar::CCPrintFree:
-                    cout << "Free";
+                    cout << "Free\t";
                     break;
 
                 case InputChar::CCNonprintSP:
-                    cout << "Blank";
+                    cout << "Blank\t";
                     break;
 
                 case InputChar::CCNonprintHT:
-                    cout << "Tab";
+                    cout << "Tab\t";
                     break;
 
                 case InputChar::CCLinemarkVT:
@@ -120,7 +123,9 @@ int main(int argc, char** argv)
                     cout << "*** Unknown ***";
                     break;
             }
-            cout << "\n";
+            cout << "\t(" << c->getLine() << ", " << c->getColumn() << ") offset: "  <<
+                    c->getOffset() << ")" << "\n";
+#endif
         }
     }
     fileMgr->popFile();
