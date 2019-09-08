@@ -1,0 +1,947 @@
+---
+title: Differences between OpenVMS Alpha and OpenVMS I64 BLISS
+abstract: |
+    This document describes the differences between the OpenVMS Alpha and OpenVMS I64 BLISS compilers.
+toc: true
+numbersections: true
+fancylists: true
+simpletables: true
+geometry: margin=1.0in
+urlcolor: blue
+header-includes: |
+    \usepackage{fancyhdr}
+    \pagestyle{fancy}
+    \lfoot{BLISS}
+    \rfoot{Page \thepage}
+include-before: |
+    `\newpage{}`{=latex}
+---
+
+# The Compilers
+
+BLISS-32EN and BLISS-64EN are native compilers running on, and
+generating code for, OpenVMS for Alpha systems.
+
+BLISS-32IN and BLISS-64IN are native compilers running on, and
+generating code for OpenVMS for I64 systems.
+
+The BLISS-32xx compilers do operations 32 bits wide (i.e. BLISS values
+are longwords).  The default width is 32 bits.  In this document, they
+are collectively referred to as "the 32-bit compilers."
+
+The BLISS-64xx compilers do operations 64 bits wide (i.e. BLISS values
+are quadwords).  The default width is 64 bits.  In this document, they
+are collectively referred to as "the 64-bit compilers."
+
+The compilers are invoked as follows:
+
+-------------     ----------------------------------------------
+Compiler          Command
+-------------     ----------------------------------------------
+BLISS-32EN        BLISS/A32 or BLISS (On OpenVMS Alpha systems)
+BLISS-64EN        BLISS/A64
+BLISS-32IN        BLISS/I32 or BLISS (On OpenVMS I64 systems)
+BLISS-64IN        BLISS/I64
+-------------     ----------------------------------------------
+
+# Files
+
+## Filetypes
+
+The default filetype for object files for the OpenVMS compilers is
+.OBJ.
+
+The default output filetype for library files is .L32 for BLISS-32EN
+and BLISS-32IN, and .L64 for BLISS-64EN and BLISS-64IN.  Library files
+are NOT compatible between dialects.
+
+The search list for BLISS-32EN is:
+
+> For source code:   .B32E, .B32, .BLI \
+> For require files: .R32E, .R32, .REQ \
+> For library files: .L32E, .L32, .LIB
+
+The search list for BLISS-64EN is:
+
+> For source code:   .B64E, .B64, .BLI \
+> For require files: .R64E, .R64, .REQ \
+> For library files: .L64E, .L64, .LIB
+
+The search list for BLISS-32IN is:
+
+> For source code:   .B32I, .B32, .BLI \
+> For require files: .R32I, .R32, .REQ \
+> For library files: .L32I, .L32, .LIB
+
+The search list for BLISS-64IN is:
+
+> For source code:   .B64I, .B64, .BLI \
+> For require files: .R64I, .R64, .REQ \
+> For library files: .L64I, .L64, .LIB
+
+
+## Output File Location Defaults
+
+For the OpenVMS compilers, regardless of whether they run on Alpha or
+I64, the location of the output files depends on where in the command
+line the ouptut qualifier was found.
+
+In both Alpha and I64 BLISS, if an output file qualifier, such as
+/OBJECT, /LIST or /LIBRARY, is used after an input file specification
+and does not include an output file specification, the output file
+specification defaults to the device, directory, and file name of the
+immediately preceding input file.
+
+Thus,
+
+> BLISS /A32 or /I32  [FOO]BAR/OBJ    -- Puts BAR.OBJ in directory FOO \
+> BLISS /A32 or /I32 /OBJ [FOO]BAR    -- Puts BAR.OBJ in default directory \
+> BLISS /A32 or /I32 [FOO]BAR/OBJ=[]  -- Puts BAR.OBJ in default directory
+
+
+# Alpha BLISS Features Not Available
+
+This section describes those Alpha BLISS features that will not be
+supported by OpenVMS I64 BLISS.
+
+
+## Alpha BLISS Machine-specific Builtins
+
+Support for the following Alpha BLISS machine-specific builtins is
+being dropped:
+
+----------   -----------------
+RPCC         ZAP
+TRAPB        ZAPNOT
+DRAINT       CMP_STORE_LONG
+WRITE_MBX    CMP_STORE_QUAD
+CMPBGE
+----------   -----------------
+
+CMP_STORE_LONG and CMP_STORE_QUAD will be replaced by CMP_SWAP_LONG
+and CMP_SWAP_QUAD.  See section 2.4.9.
+
+
+## Alpha BLISS PALcode Builtin Functions
+
+Support for the following Alpha BLISS PALcode builtins is being
+dropped:
+
+------------------ ------------------ ------------------
+CALL_PAL           PAL_MFPR_PCBB      PAL_MTPR_SIRR
+PAL_BPT            PAL_MFPR_PRBR      PAL_MTPR_SSP
+PAL_BUGCHK         PAL_MFPR_PTBR      PAL_MTPR_TBIA
+PAL_CFLUSH         PAL_MFPR_SCBB      PAL_MTPR_TBIAP
+PAL_CHME           PAL_MFPR_SISR      PAL_MTPR_TBIS
+PAL_CHMK           PAL_MFPR_SSP       PAL_MTPR_TBISD
+PAL_CHMS           PAL_MFPR_TBCHK     PAL_MTPR_TBISI
+PAL_CHMU           PAL_MFPR_USP       PAL_MTPR_USP
+PAL_DRAINA         PAL_MFPR_VPTB      PAL_MTPR_VPTB
+PAL_HALT           PAL_MFPR_WHAMI     PAL_PROBER
+PAL_GENTRAP        PAL_MTPR_ASTEN     PAL_PROBEW
+PAL_IMB            PAL_MTPR_ASTSR     PAL_RD_PS
+PAL_LDQP           PAL_MTPR_DATFX     PAL_READ_UNQ
+PAL_MFPR_ASN       PAL_MTPR_ESP       PAL_RSCC
+PAL_MFPR_ASTEN     PAL_MTPR_FEN       PAL_STQP
+PAL_MFPR_ASTSR     PAL_MTPR_IPIR      PAL_SWPCTX
+PAL_MFPR_ESP       PAL_MTPR_IPL       PAL_SWASTEN
+PAL_MFPR_FEN       PAL_MTPR_MCES      PAL_WRITE_UNQ
+PAL_MFPR_IPL       PAL_MTPR_PRBR      PAL_WR_PS_SW
+PAL_MFPR_MCES      PAL_MTPR_SCBB      PAL_MTPR_PERFMON
+------------------ ------------------ ------------------
+
+Macros will be placed in STARLET.REQ FOR PALCALL builtins.  The VMS
+Group will supply the supporting code.  The privileged CALL_PALs wil
+call exec routines and the unprivileged CALL_PALs will execute system
+services.
+
+
+## Alpha BLISS Register Names
+
+The following registers (IPF use is indicated) are not supported for
+naming in REGISTER, GLOBAL REGISTER, EXTERNAL REGISTER or as
+parameters to LINKAGE declarations.
+
+-------- -----------------------------------
+R0       zero register
+R1       global pointer
+R2       volatile and GEM scratch register
+R12      stack pointer
+R13      thread pointer
+R14-R16  volatile and GEM scratch registers
+R17-R18  volatile scratch registers
+-------- -----------------------------------
+
+
+## INTERRUPT and EXCEPTION Linkages
+
+INTERRUPT and EXCEPTION linkages will not be supported.
+
+
+## "BUILTIN Rn"
+
+The ability to specify a I64 register name to the BUILTIN keyword has
+been dropped.
+
+
+# OpenVMS I64 BLISS Features
+
+OpenVMS I64 BLISS will only provide those existing Alpha BLISS
+features necessary to support OpenVMS on I64.  Where Alpha BLISS
+enabled support for features of operating systems other than OpenVMS
+such functionality will not be carried forward in this compiler.
+
+
+## OpenVMS I64 BLISS Builtins
+
+Only those builtins necessary for the correct operation of OpenVMS on
+I64 are supported by the BLISS I64 compilers.
+
+
+### Common BLISS Builtins
+
+The following existing Common BLISS builtins will be supported:
+
+----------------- --------------- --------------
+ABS               CH$FIND_NOT_CH  CH$WCHAR
+ACTUALCOUNT       CH$FIND_SUB     CH$WCHAR_A
+ACTUALPARAMETER   CH$GEQ          MAX
+ARGPTR            CH$GTR          MAXA
+BARRIER           CH$LEQ          MAXU
+CH$ALLOCATION     CH$LSS          MIN
+CH$A_RCHAR        CH$MOVE         MINA
+CH$A_WCHAR        CH$NEQ          MINU
+CH$COMPARE        CH$PLUS         NULLPARAMETER
+CH$COPY           CH$PTR          REF
+CH$DIFF           CH$RCHAR        SETUNWIND
+CH$EQL            CH$RCHAR_A      SIGN
+CH$FAIL           CH$SIZE         SIGNAL
+CH$FILL           CH$TRANSLATE    SIGNAL_STOP
+CH$FIND_CH        CH$TRANSTABLE
+----------------- --------------- --------------
+
+
+#### RETURNADDRESS builtin
+
+A new builtin function RETURNADDRESS will return the PC of the
+caller's caller.
+
+This builtin takes no arguments and the format is:
+
+```
+RETURNADDRESS()
+```
+
+
+### Machine-specific Builtins
+
+The following Alpha BLISS machine-specific builtins will be supported:
+
+```
+BARRIER
+ESTABLISH
+REVERT
+
+ROT
+SLL
+SRA
+SRL
+UMULH
+
+ADAWI
+
+ADD_ATOMIC_LONG   AND_ATOMIC_LONG  OR_ATOMIC_LONG
+ADD_ATOMIC_QUAD   AND_ATOMIC_QUAD  OR_ATOMIC_QUAD
+```
+
+The XXX_ATOMIC_XXX will no longer support the optional retry-count
+input argument.  See section 2.4.5 for details.
+
+```
+TESTBITSSI TESTBITCC  TESTBITCS
+TESTBITCCI TESTBITSS  TESTBITSC
+```
+
+The TESTBITxx instructions will no longer support the optional
+retry-count input argument or the optional success-flag output
+argument.  See section 2.4.6 for details.
+
+------- ------- ------- ------- ------
+ADDD    DIVD    MULD    SUBD    CMPD
+ADDF    DIVF    MULF    SUBF    CMPF
+ADDG    DIVG    MULG    SUBG    CMPG
+ADDS    DIVS    MULS    SUBS    CMPS
+ADDT    DIVT    MULT    SUBT    CMPT
+
+CVTDF   CVTFD   CVTGD   CVTSF   CVTTD
+CVTDG   CVTFG   CVTGF   CVTSI   CVTTG
+CVTDI   CVTFI   CVTGI   CVTSL   CVTTI
+CVTDL   CVTFL   CVTGL   CVTSQ   CVTTL
+CVTDQ   CVTFQ   CVTGQ   CVTST   CVTTQ
+CVTDT   CVTFS   CVTGT           CVTTS
+
+CVTID   CVTLD   CVTQD
+CVTIF   CVTLF   CVTQF
+CVTIG   CVTLG   CVTQG
+CVTIS   CVTLS   CVTQS
+CVTIT   CVTLT   CVTQT
+
+CVTRDL  CVTRDQ
+CVTRFL  CVTRFQ
+CVTRGL  CVTRGQ
+CVTRSL  CVTRSQ
+CVTRTL  CVTRTQ
+------- ------- ------- ------- ------
+
+
+###  New Machine-specific Builtins
+
+A number of new builtins are being added for OpenVMS I64 BLISS that
+provide access to single I64 instructions which may be used by the
+operating system.
+
+
+
+#### Builtins for Single I64 Instructions
+
+Each name capitalized below is a new builtin function which may be
+specified.  The lower-case name in parenthesis is the actual I64
+instruction executed.  The arguments to these instructions (and
+therefore their associated BLISS builtin names) are detailed in the
+"Intel IA-64 Architecture Software Developer's Manual".
+
+------------------  -----------------  --------------  -------------
+BREAK   (break)     LOADRS (loadrs)    RUM   (rum)     HINT   (hint)
+BREAK2  (break)\*    PROBER (probe.r)   SRLZD (srlz.d)
+FC      (fc)        PROBEW (probe.w)   SRLZI (srlz.i)
+FLUSHRS (flushrs)   PCTE   (ptc.e)     SSM   (ssm)
+FWB     (fwb)       PCTG   (ptc.g)     SUM   (sum)
+INVALAT (invala)    PCTGA  (ptc.ga)    SYNCI (sync.i)
+ITCD    (itc.d)     PTCL   (ptc.l)     TAK   (tak)
+ITCI    (itc.i)     PTRD   (ptr.d)     THASH  (thash)
+ITRD    (itr.d)     PTRI   (ptr.i)     TPA    (tpa)
+ITRI    (itr.i)     RSM    (rsm)       TTAG   (ttag)
+------------------  -----------------  --------------  -------------
+
+\*The BREAK2 builtin requires two parameters.  The first parameter,
+which must be a compiletime literal, specifies the 21-bit immediate
+value of the BREAK instruction.  The second parameter, may be any
+expression whose value is moved into IPF general register R17 just
+prior prior to executing the BREAK instruction.
+
+
+
+#### Access to Processor Registers
+
+The OpenVMS I64 BLISS compiler will provide for builtin functions for
+access to read and write the many and varied processor registers in
+the IPF implementations.
+
+They are:
+
+------- ------- ---------- ---------
+GETREG  SETREG  GETREGIND  SETREGIND
+------- ------- ---------- ---------
+
+These builtins execute the mov.i instruction which is detailed in the
+"Intel IA-64 Architecture Software Developer's Manual".
+
+The two GET builtins return the value of the register specified.
+
+To specify the register a specially encoded integer constant is used
+which is defined in an Intel C header file.  See Appendix A for the
+contents of this file.
+
+
+### PALcode Builtins
+
+Support for the following Alpha BLISS PALcode builtin functions is
+being retained:
+
+--------------  -------------
+PAL_INSQHIL     PAL_REMQHIL
+PAL_INSQHILR    PAL_REMQHILR
+PAL_INSQHIQ     PAL_REMQHIQ
+PAL_INSQHIQR    PAL_REMQHIQR
+PAL_INSQTIL     PAL_REMQTIL
+PAL_INSQTILR    PAL_REMQTILR
+PAL_INSQTIQ     PAL_REMQTIQ
+PAL_INSQTIQR    PAL_REMQTIQR
+PAL_INSQUEL     PAL_REMQUEL
+PAL_INSQUEL_D   PAL_REMQUEL_D
+PAL_INSQUEQ     PAL_REMQUEQ
+PAL_INSQUEQ_D   PAL_REMQUEQ_D
+--------------  -------------
+
+The 24 queue-manipulation PALcalls will be implemented by BLISS as a
+call to a VMS-provided SYS$PAL_xxxx run-time routine.
+
+
+## BLI$CALLG
+
+The VAX idiom "CALLG( .AP, ...)" was replaced by an assembly routine
+BLI$CALLG(ARGPTR(), .RTN) for OpenVMS Alpha BLISS.  This routine as
+defined for OpenVMS ALpha BLISS will be re-written for the I64
+architecture and supported for OpenVMS I64 BLISS.
+
+
+## I64 Registers
+
+The I64 General registers which may be named in REGISTER, GLOBAL
+REGISTER, EXTERNAL REGISTER and as parameters to LINKAGE declarations
+are as follows:
+
+```
+R3-R11
+R19-R31
+```
+
+In addition, 8 parameter registers will be able to be named for
+parameters in LINKAGE declarations only.  They are:
+
+```
+R32-R39
+```
+
+There are currently no plans to support the naming of the I64 General
+registers R40-R127.
+
+Naming of any of the I64 Floating Point, Predicate, Branch and
+Application registers via the REGISTER, GLOBAL REGISTER, EXTERNAL
+REGISTER and LINKAGE declarations will not be provided.
+
+A register conflict message will be issued when a user request for a
+particular register cannot be satisfied.
+
+
+## ALPHA_REGISTER_MAPPING switch
+
+A new module level switch ALPHA_REGISTER_MAPPING is being provided for
+OpenVMS I64 BLISS.
+
+This switch may be specified either in the MODULE declaration or a
+SWITCHES declaration.  Use of this switch will cause a re-mapping of
+Alpha register numbers to I64 register numbers as described below.
+
+Any register number specified as part of a REGISTER, GLOBAL REGISTER,
+EXTERNAL REGISTER or as parameters to GLOBAL, PRESERVE, NOPRESERVE or
+NOT USED in linkage declarations in the range of 0-31 will be remapped
+according to the IMACRO mapping table as follows:
+
+```
+0  =    GEM_TS_REG_K_R8      16 =    GEM_TS_REG_K_R14
+1  =    GEM_TS_REG_K_R9      17 =    GEM_TS_REG_K_R15
+2  =    GEM_TS_REG_K_R28     18 =    GEM_TS_REG_K_R16
+3  =    GEM_TS_REG_K_R3      19 =    GEM_TS_REG_K_R17
+4  =    GEM_TS_REG_K_R4      20 =    GEM_TS_REG_K_R18
+5  =    GEM_TS_REG_K_R5      21 =    GEM_TS_REG_K_R19
+6  =    GEM_TS_REG_K_R6      22 =    GEM_TS_REG_K_R22
+7  =    GEM_TS_REG_K_R7      23 =    GEM_TS_REG_K_R23
+8  =    GEM_TS_REG_K_R26     24 =    GEM_TS_REG_K_R24
+9  =    GEM_TS_REG_K_R27     25 =    GEM_TS_REG_K_R25
+10 =    GEM_TS_REG_K_R10     26 =    GEM_TS_REG_K_R0
+11 =    GEM_TS_REG_K_R11     27 =    GEM_TS_REG_K_R0
+12 =    GEM_TS_REG_K_R30     28 =    GEM_TS_REG_K_R0
+13 =    GEM_TS_REG_K_R31     29 =    GEM_TS_REG_K_R29
+14 =    GEM_TS_REG_K_R20     30 =    GEM_TS_REG_K_R12
+15 =    GEM_TS_REG_K_R21     31 =    GEM_TS_REG_K_R0
+The mappings for register numbers:
+
+16-20
+26-28
+30-31
+```
+
+translate into registers which are considered invalid specifications
+for OpenVMS I64 BLISS (see sections 2.3.3 and 2.4.3 in the OpenVMS I64
+BLISS specification).  Declarations including any these registers when
+ALPHA_REGISTER_MAPPING is specfied will generate an error such as:
+
+```
+         r30 = 30,
+.........^
+%BLS64-W-TEXT, Alpha register 30 cannot be declared, invalid mapping to
+IPF register 12 at line number 9 in file ddd:[xxx]TESTALPHAREGMAP.BLI
+```
+
+Notice that the source line names register number 30 but the error
+text indicates register 12 is the problem.  It is the translated
+register for 30, register 12, which is illegal to specify.
+
+
+### ALPHA_REGISTERMAPPING and Linkage Declarations
+
+There is a special set of mappings for Alpha registers R16-R21 if
+those registers are specified as linkage I/O parameters.
+
+For linkage I/O paramters ONLY the mappings for R16-R21 are as
+follows:
+
+```
+16 =    GEM_TS_REG_K_R32     19 =    GEM_TS_REG_K_R35
+17 =    GEM_TS_REG_K_R33     20 =    GEM_TS_REG_K_R36
+18 =    GEM_TS_REG_K_R34     21 =    GEM_TS_REG_K_R37
+```
+
+#### ALPHA_REGISTER_MAPPING and "NOTUSED"
+
+When ALPHA_REGISTER_MAPPING is specified, any Alpha register that maps
+to an IA64 scratch register and is specified as NOTUSED in a linkage
+declaration will be placed in the PRESERVE set.
+
+This will cause the register to be saved on entry to the routine
+declaring it NOTUSED and restored on exit.
+
+
+## /ANNOTATIONS qualifier
+
+The OpenVMS I64 BLISS compiler will support a new compiliation
+qualifier /ANNOTATIONS.  This qualifier provides information in the
+source listing regarding optimizations compiler is making (or not)
+during compilation.
+
+The qualifier accepts a number of keywords which reflect the different
+listing annotations available.  They are:
+
+```
+ALL
+NONE
+CODE   - Used for annotations of machine code listing.
+         Only NOP instructions are currenly annotated..
+DETAIL - Provides greater detail, used in conjunction
+         with other keywords.
+```
+
+The remaining keywords reflect GEM optimizations:
+
+```
+INLINING
+LOOP_TRANSFORMS
+LOOP_UNROLLING
+PREFETCHING
+SHRINKWRAPPING
+SOFTWARE_PIPELINING
+TAIL_CALLS
+TAIL_RECURSION
+LINKAGES
+```
+
+All keywords with the exception of ALL and NONE are negatable.  The
+qualifier itself is also negatable.  By default it is not present in
+the command line.
+
+If the /ANNOTATIONS qualifier is specified without any parameters the
+default is ALL.
+
+
+## /ALPHA_REGISTER_MAPPING qualifier
+
+The OpenVMS I64 BLISS compiler will support a new compilation
+qualifier to enable ALPHA_REGISTER_MAPPING without having to modify
+the source.
+
+This is a positional qualifier.
+
+Specifying this qualifier on the compilation line for a module will be
+equivalent to setting the ALPHA_REGISTER_MAPPING switch in the module
+header.
+
+
+## /ALPHA_REGISTER_MAPPING informationals
+
+For OpenVMS I64 BLISS three new informational messages have been
+added.
+
+If the /ALPHA_REGISTER_MAPPING qualifier was specified on the command
+line the follwing will be displayed:
+
+```
+%BLS64-I-TEXT, Alpha Register Mapping enabled by the command line
+```
+
+If the switch ALPHA_REGISTER_MAPPING is specified in the module header
+or as an argument to the SWITCH declaration the following will be
+displayed:
+
+```
+MODULE SIMPLE (MAIN=TEST, ALPHA_REGISTER_MAPPING)=
+..........................^
+%BLS64-I-TEXT, Alpha Register Mapping enabled
+```
+
+If the switch NOALPHA_REGISTER_MAPPING is specified in the module
+header or as an argument to the SWITCH declaration the following will
+be displayed:
+
+```
+MODULE SIMPLE (MAIN=TEST, NOALPHA_REGISTER_MAPPING)=
+..........................^
+%BLS64-I-TEXT, Alpha Register Mapping disabled
+```
+
+
+## ADD, AND, Builtin Functions for Atomic Operations
+
+The ADD_ATOMIC_XXXX, AND_ATOMIC_XXXX and OR_ATOMIC_XXXX builtin
+functions for atomic updating of memory are supported by OpenVMS I64
+BLISS.  They are listed in section 2.4.1.2.
+
+Because the I64 instructions to support these builtins will wait until
+the operation succeeds the optional retry-count input parameter has
+been eliminated.  These builtins now have the form:
+
+```
+<op>_ATOMIC_<size>(ptr, expr
+                   [;old_value] ) !Optional output
+
+ Value:   1 Operation succeeded
+          0 Operation failed
+
+<op> is one of AND, ADD OR
+<size> is one of LONG or QUAD
+```
+
+The operation is addition (or ANDing or ORing) of the expression EXPR
+to the data-segment pointed to by PTR in an atomic fashion.
+
+PTR must be a naturally-aligned address.
+
+The optional output parameter OLD_VALUE is set to the previous value
+of the data-segment pointed to by PTR.
+
+Any attempt to use the OpenVMS Alpha BLISS optional retry_count will
+result in a syntax error.
+
+
+## TESTBITxxI and TESTBITxx Builtin Functions for Atomic Operations
+
+The TESTBITxxI and TESTBITxx builtin functions for atomic operations
+is supported by OpenVMS I64 BLISS.  They are listed in section
+2.4.1.2.
+
+Because the I64 instruction to support these builtins will wait until
+the operation succeeds the optionial input parameter retry_count and
+the optional output parameter success_flag have been eliminated.
+These builtins now have the form:
+
+```
+TESTBITxxx( field )
+```
+
+Any attempt to use the OpenVMS Alpha BLISS optional retry_count or
+success_flag arguments will result in a syntax error.
+
+
+## Granularity of Byte, Longword and Quadword Writes
+
+OpenVMS I64 BLISS will support the /GRANULARITY=keyword qualifier, the
+switch DEFAULT_GRANULARITY=n, and the data attribute GRANUALRITY(n) as
+described below.
+
+Users can control the granularity of stores and fetches by using the
+command line qualifier /GRANULARITY=keyword, the switch
+DEFAULT_GRANULARITY=n, and the data attribute GRANULARITY(n).
+
+The keyword in the command line qualifier must be either BYTE,
+LONGWORD, or QUADWORD.  The parameter n must be either 0(byte),
+2(longword) or 3(quadword).
+
+When these are used together, the data attribute has the highest
+priority.  The switch, when used in a SWITCHES declaration, sets the
+granularity of data declared after it within the same scope.  The
+switch may also be used in the module header.  The command line
+qualifier has the lowest priority.
+
+
+## Shift Builtin Functions
+
+Builtin functions for shifts in a known direction will be supported
+for OpenVMS I64 BLISS.  They are listed in section 2.4.1.2.
+
+They are only valid for shift amounts in the range 0..%BPVAL-1.
+
+
+## Compare and Swap Builtin Functions
+
+OpenVMS I64 will provide support for the following new compare and
+swap builtin functions:
+
+* CMP_SWAP_LONG(addr, comparand, value)
+
+* CMP_SWAP_QUAD(addr, comparand, value)
+
+These functions do the following interlocked operations:  compare the
+longword or quadword at addr with comparand, and if they are equal,
+store value at addr.  They return an indicator of success (1) or
+failure (0).
+
+**NOTE**: These new builtin functions will be provided for
+OpenVMS Alpha BLISS as well.
+
+
+## I64-specific Multimedia Instructions
+
+There are no plans to support access to the I64-specific
+multimedia-type instructions.
+
+
+## Linkages
+
+###  CALL linkage
+
+The CALL linkage, as described below for OpenVMS Alpha Bliss, will be
+supported by OpenVMS I64 BLISS.
+
+Routines compiled with a 32-bit compiler can call routines compiled
+with a 64-bit compiler and vice versa.  Parameters are truncated when
+shortened, and sign-extended when lengthened.
+
+By default, CALL linkages pass an argument count.  This can be
+overridden using the NOCOUNT linkage option.
+
+Though the arguments are passed in quadwords, the 32-bit compilers can
+only "see" the lower 32 bits.
+
+
+### JSB Linkage
+
+The OpenVMS I64 BLISS compilers have a JSB linkage type.  Routines
+declared with the JSB linkage will fit in with the JSB rules currently
+being developed by IVMS.
+
+
+## /[NO]TIE
+
+Support for this qualifier will continue for OpenVMS I64.
+
+TIE is used to enable the compiled code to be used in combination with
+translated images, either because the code might call into a
+translated image or might be called from a translated image.
+
+In particular, TIE
+
+#. Causes the inclusion of procedure signature information in
+the compiled program.  This may increase the size and
+possibly also the number of relocations processed during
+linking and image activation, but does not otherwise affect
+performance.
+
+#. Causes calls to procedure values (sometimes called indirect
+or computed calls) to be compiled using a service routine
+(OTS$CALL_PROC); this routine determines whether the target
+procedure is native IPF code or in a translated image and
+proceeds accordingly.
+\*\*\*TBD\*\*\* specify amount of overhead for a call that
+actually invokes another native IPF routine.
+
+
+/NOTIE is the default.
+
+
+## /ENVIRONMENT=([NO]FP) and ENVIRONMENT([NO]FP)
+
+The /ENVIRONMENT=([NO]FP) qualifier and the ENVIRONMENT([NO]FP) switch
+were provided for OpenVMS Alpha BLISS to cause the compiler to disable
+the use of floating point registers for certain integer division
+operations.
+
+For OpenVMS I64 BLISS, the /ENVIRONMENT=NOFP command qualifier or
+ENVIRONMENT(NOFP) switch does not totally disable floating point due
+to the architectural features of I64.  Instead, source code is still
+restricted to not have floating point operations, but the generated
+code for certain operations (in particular, integer multiplication and
+division and the constructs that imply them) are restricted to use a
+small subset of the floating point registers.  Specifically, if this
+option is specified, the compiler is restricted to using f6-f11, and
+will set the ELF EF_IA_64_REDUCEFP option described in the Intel
+Itanium Processor-specific Application Binary Interface, section
+4.1.1.6.
+
+The /ENVIRONMENT=FP command qualifier and ENVIRONMENT(FP) switch are
+unaffected.
+
+
+## Floating Point Support
+
+### Floating Point Builtin Functions
+
+BLISS does not have a high level of support for floating-point
+numbers.  The extent of the support involves the ability to create
+floating-point literals, and there are machine-specific builtins for
+floating-point arithmetic and conversion operations.
+
+For a complete list see section 2.4.1.2.
+
+None of the floating point builtin functions detect overflow, so they
+do not return a value.
+
+
+### Floating Point Literals
+
+The floating point literals supported by OpenVMS I64 BLISS is the same
+set supported by OpenVMS Alpha BLISS:  %E, %D, %G, %S and %T.
+
+
+### Floating Point Registers
+
+Direct use of the I64 floating-point registers is not supported.
+
+
+### Calling Non-BLISS Routines with Floating Point Parameters
+
+It is possible to call standard non-BLISS routines that expect
+floating-point parameters passed by value, and that return a
+floating-point or complex value.
+
+The standard functions %FFLOAT, %DFLOAT, %GFLOAT, %SFLOAT and %TFLOAT
+will be supported by OpenVMS I64 BLISS.
+
+
+## New and Expanded Lexicals
+
+BLISS will add new compiler-state lexicals to support the OpenVMS I64
+compilers:  BLISS32I and BLISS64I.
+
+*  %BLISS will now recognize BLISS32E, BLISS64E, BLISS32V, BLISS32I and BLISS64I. \
+   %BLISS(BLISS32) is true for all 32-bit BLISS compilers. \
+   %BLISS(BLISS32V) is true only for VAX BLISS (BLISS-32). \
+   %BLISS(BLISS32E) is true for all 32-bit Alpha compilers. \
+   %BLISS(BLISS64E) is true for all 64-bit Alpha compilers. \
+   %BLISS(BLISS32I) is true for all 32-bit I64 compilers. \
+   %BLISS(BLISS64I) is true for all 64-bit I64 compilers. \
+* The lexicals %BLISS32I and %BLISS64I will be added.  Their
+behavior will parallel that of the new parameters to %BLISS.
+* Support for the I64 architecture as a keyword to the %HOST
+and %TARGET lexicals has been added for OpenVMS I64 BLISS.
+
+
+## OpenVMS I64 BLISS Support for IPF Short Data Sections
+
+The IPF calling standard requires that all global data objects with a
+size of 8 bytes or smaller be allocated in short data sections.
+
+Short data sections can be addressed with an efficient code sequence
+that involves adding a 22-bit literal to the contents of the GP base
+register.  This code sequence limits the combined size of all the
+short data sections.  A linker error will occur if the total amount of
+data allocated to short data sections exceeds a size of 2**22 bytes.
+
+Compilers on IPF can use GP relative addressing when accessing short
+globals and short externals.
+
+OpenVMS I64 BLISS will have a new behavior for the PSECT attribute
+GP_RELATIVE and a new PSECT attribute SHORT to support allocating
+short data sections.
+
+Specifying the GP_RELATIVE keyword as a PSECT attribute will cause
+that PSECT to be labeled as containing short data so that the linker
+will allocate the PSECT close to the GP base address.
+
+The syntax of the SHORT attribute is as follows:
+
+```
+"SHORT" "(" psect-name ")"
+```
+
+The following rules apply to the SHORT attribute:
+
+
+#.  If the psect-name in a SHORT attribute is not yet declared
+then its appearance in a SHORT attribute constitutes a
+declaration.  The attributes of the PSECT containing the
+SHORT attribute become the attributes of the PSECT named in
+the SHORT attribute, except that the PSECT name declared in
+the SHORT attribute does not have the SHORT attribute and the
+PSECT name declared in the SHORT attribute does have the
+GP_RELATIVE attribute.
+#.  If the psect-name in a SHORT attribute has been previously
+declared then its attributes are not changed.  A warning
+message is generated if the PSECT named in a SHORT attribute
+does not have the GP_RELATIVE attribute.
+#.  If a data object with storage class OWN, GLOBAL or PLIT has a
+size of 8 or fewer bytes and the data object is specified to
+be allocated to a PSECT that includes the SHORT attribute,
+then that object is allocated to the PSECT named in the SHORT
+attribute.  Note that this is a one-step process that is not
+recursive.  If a short data object has it allocation PSECT
+renamed by the SHORT attribute, then the SHORT attribute of
+the renamed PSECT is not considered for any further renaming.
+#.  Data objects with sizes larger then 8 bytes ignore the SHORT
+attribute.
+#.  Data objects in the CODE, INITIAL and LINKAGE storage classes
+ignore the SHORT attribute, regardless of their size.
+#.  For the purposes of PSECT renaming by means of the SHORT
+attribute, the size of a PLIT object does not include the
+size of the count word that precedes the PLIT data.
+
+Example:
+
+```
+PSECT
+
+  NODEFAULT = $GLOBAL_SHORT$
+    (READ,WRITE,NOEXECUTE,NOSHARE,NOPIC,CONCATENATE,LOCAL,ALIGN(3),
+    GP_RELATIVE),
+
+! The above declaration of $GLOBAL_SHORT$ is not needed.  If the above
+! declaration were deleted then the SHORT($GLOBAL_SHORT$) attribute in
+! the following declaration would implicitly make an identical
+! declaration of $GLOBAL_SHORT$.
+
+  GLOBAL = $GLOBAL$
+    (READ,WRITE,NOEXECUTE,NOSHARE,NOPIC,CONCATENATE,LOCAL,ALIGN(3),
+    SHORT($GLOBAL_SHORT$)),
+
+  NODEFAULT = MY_GLOBAL
+    (READ,WRITE,NOEXECUTE,SHARE,NOPIC,CONCATENATE,LOCAL,ALIGN(3)),
+
+  PLIT = $PLIT$
+    (READ,NOWRITE,NOEXECUTE,SHARE,NOPIC,CONCATENATE,GLOBAL,ALIGN(3),
+    SHORT($PLIT_SHORT$));
+
+GLOBAL
+        X1,                     ! allocated in $GLOBAL_SHORT$
+        Y1 : VECTOR[2,LONG],    ! allocated in $GLOBAL_SHORT$
+        Z1 : VECTOR[3,LONG],    ! allocated in $GLOBAL$
+        A1 : PSECT(MY_GLOBAL),  ! allocated in MY_GLOBAL
+        B1 : VECTOR[3,LONG] PSECT(MY_GLOBAL), ! allocated in MY_GLOBAL
+        C1 : VECTOR[3,LONG]
+                PSECT($GLOBAL_SHORT$); ! allocated in $GLOBAL_SHORT$
+
+PSECT GLOBAL = MY_GLOBAL;
+! use MY_GLOBAL as default for both noshort/short
+
+GLOBAL
+        X2,                     ! allocated in MY_GLOBAL
+        Y2 : VECTOR[2,LONG],    ! allocated in MY_GLOBAL
+        Z2 : VECTOR[3,LONG],    ! allocated in MY_GLOBAL
+        A2 : PSECT($GLOBAL$),   ! allocated in $GLOBAL_SHORT$
+        B2 : VECTOR[3,LONG] PSECT($GLOBAL$); ! allocated in $GLOBAL$;
+
+! Note that the allocations of A1, X2 and Y2 violate the calling
+! standard rules.  These variables cannot be shared with other
+! languages, such as C or C++.
+
+PSECT GLOBAL = $GLOBAL$;
+! back to using $GLOBAL$/$GLOBAL_SHORT$ as default noshort/short
+
+GLOBAL BIND
+        P1 = UPLIT("abcdefghi"),        ! allocated in $PLIT$
+        P2 = PLIT("abcdefgh"),          ! allocated in $PLIT_SHORT$
+        P3 = PSECT(GLOBAL) PLIT("AB"),  ! allocated in $GLOBAL_SHORT$
+        p4 = PSECT($PLIT_SHORT$)
+                PLIT("abcdefghijklmn"), ! allocated in $PLIT_SHORT$
+        P5 = PSECT(MY_GLOBAL) PLIT("AB"); ! allocated in MY_GLOBAL
+
+! Note that the allocations of A1, X2, Y2 and P5 violate the calling
+! standard rules.  These variables cannot be shared with other
+! languages, such as C or C++.  They can be shared with modules
+! written in BLISS and MACRO.
+```
+**NOTE**: The current Openvms I64 BLISS design does not support
+using GP_RELATIVE addressing mode on EXTERNAL variable
+references.  However, the usual GENERAL addressing
+mode used by EXTERNAL variables will correctly
+reference a GP_RELATIVE section.  There are no current
+plans to add an ADDRESSING_MODE(GP_RELATIVE) attribute
+to BLISS.

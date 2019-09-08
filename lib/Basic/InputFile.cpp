@@ -24,6 +24,7 @@ using namespace bliss;
  */
 InputFile::InputFile(string fn)
 {
+    inputFilename = fn;
     inputStream = new ifstream(fn.c_str());
     opened = inputStream->is_open();
     if (opened)
@@ -205,7 +206,19 @@ InputChar *InputFile::getNextChar()
         {
             index++;
             index %= INPUT_CHAR_DEPTH;
-            initChars(index);
+
+            /*
+             * If pushBackChar() was called, then don't bother reading in the
+             * next character from the file.  We already have what we need.
+             */
+            if (pushCalled == false)
+            {
+                initChars(index);
+            }
+            else
+            {
+                pushCalled = false;
+            }
         }
         else
         {
@@ -227,4 +240,34 @@ InputChar *InputFile::getNextChar()
 InputChar *InputFile::peakNextChar()
 {
     return charVec[index];
+}
+
+/**
+ * Push back the character just read from the input file that was returned
+ * on the call to getNetChar().
+ *
+ *  NOTE: This call is destructive, in that the read in characters vector
+ *  is updated to point to the previously read character.  The character is
+ *  already in the stack, we are just resetting the index.
+ *
+ * @return A pointer to an InputChar class
+ */
+void InputFile::pushBackChar()
+{
+
+    /*
+     * If this function was previously called, or no characters have been read
+     * in, then don't do anything and just return.
+     */
+    if ((pushCalled == false) && (index != -1))
+    {
+
+        /*
+         * If the index is equal to 0, then set it to the maximum.  Otherwise,
+         * subtract one and set the pushCalled flag.
+         */
+        index = (index == 0 ? INPUT_CHAR_DEPTH : index) - 1;
+        pushCalled = true;
+    }
+    return;
 }

@@ -1,0 +1,1856 @@
+
+
+
+              Differences between VAX BLISS-32 and Alpha BLISS
+
+   This document describes the differences between VAX BLISS-32 and the
+   various BLISS compilers for Alpha.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     1
+
+   The Compilers
+
+
+   1  The Compilers
+
+   BLISS-32EN and BLISS-64EN are native compilers running on, and
+   generating code for, OpenVMS for Alpha systems.
+
+   BLISS-32AON and BLISS-64AON are native compilers running on, and
+   generating code for Tru64 UNIX for Alpha systems.
+
+   The various BLISS-32xx compilers do operations 32 bits wide (i.e.
+   BLISS values are longwords).  The default width is 32 bits.  In this
+   document, they are collectively referred to as "the 32-bit compilers."
+
+   The various BLISS-64xx compilers do operations 64 bits wide (i.e.
+   BLISS values are quadwords).  The default width is 64 bits.  In this
+   document, they are collectively referred to as "the 64-bit compilers."
+
+   The compilers are invoked as follows:
+
+   Compiler          Command
+
+   BLISS-32EN        BLISS/A32 or BLISS
+   BLISS-64EN        BLISS/A64
+   BLISS-32AON       bliss -32 or bliss
+   BLISS-64AON       bliss -64
+
+
+   2  Files
+
+   2.1  Filetypes
+
+   The default filetype for object files for the OpenVMS compilers is
+   .OBJ.  The default filetype for object files for the UNIX compilers is
+   .o.
+
+   The default output filetype for library files is .L32 for BLISS-32EN
+   and .L64 for BLISS-64EN.  For the 32-bit UNIX compilers, the default
+   is .l32.  For the 32-bit UNIX compilers, the default is .l64.  Library
+   files are NOT compatible between dialects.
+
+   The search list for BLISS-32EN is:
+        For source code:   .B32E, .B32, .BLI
+        For require files: .R32E, .R32, .REQ
+        For library files: .L32E, .L32, .LIB
+
+   The search list for BLISS-64EN is:
+        For source code:   .B64E, .B64, .BLI
+        For require files: .R64E, .R64, .REQ
+        For library files: .L64E, .L64, .LIB
+
+   The search list for BLISS-32AON is:
+        For source code:   .b32, .bli
+
+
+                                     2
+
+                                                                    Files
+
+
+        For require files: .r32, .req
+        For library files: .l32, .lib
+
+   The search list for BLISS-64AON is:
+        For source code:   .b64, .bli
+        For require files: .r64, .req
+        For library files: .l64, .lib
+
+
+   2.2  Output File Location Defaults
+
+   For the OpenVMS compilers, the location of output files may be
+   different than with BLISS-32.  This depends on where in the command
+   line the output qualifier was found (i.e. the changes below occur for
+   "BLISS [FOO]BAR/OBJ," but not for "BLISS/OBJ [FOO]BAR." We are sorry
+   for this change, but this non-intuitive behavior is specified by the
+   VMS DCL Concepts manual (section 1.3.4)).
+
+   In BLISS-32, output files are always created in the current default
+   directory unless otherwise specified by the user.  In Alpha BLISS, if
+   an output file qualifier, such as /OBJECT, /LIST or /LIBRARY, is used
+   after an input file specification and does not include an output file
+   specification, the output file specification defaults to the device,
+   directory, and file name of the immediately preceding input file.
+
+        Thus,
+
+        BLISS /A32 [FOO]BAR/OBJ    -- Puts BAR.OBJ in directory FOO
+        BLISS /A32 /OBJ [FOO]BAR   -- Puts BAR.OBJ in default directory
+        BLISS /A32 [FOO]BAR/OBJ=[] -- Puts BAR.OBJ in default directory
+
+
+
+   3  VAX-Specific Features Not Available
+
+   Certain VAX-specific features are not available in Alpha BLISS.  For
+   each of the VAX features listed below, we offer a work-around.  Where
+   possible, the work-around has been put in BLISS-32 V4.7.
+
+
+   3.1  VAX Machine Built-ins
+
+   While some VAX machine built-ins do have equivalents on Alpha, others
+   do not.  In most cases these non-portable built-ins can be replaced by
+   one or another of the following:
+
+        1.  COMMON BLISS character functions (the "CH$" functions),
+
+        2.  COMMON BLISS linkage functions (e.g. ACTUALCOUNT),
+
+
+
+
+                                     3
+
+   VAX-Specific Features Not Available
+
+
+        3.  Other COMMON BLISS functions (e.g. ROT),
+
+        4.  Alpha machine built-ins,
+
+        5.  Alpha PAL built-ins.
+
+
+   The latter two choices are not part of BLISS-32 V4.7.
+
+   If none of the above are appropriate, you may call a routine written
+   in another language (e.g., assembly language).
+
+
+   3.2  AP Register
+
+   The parameter-passing mechanism is different on Alpha, and there is no
+   equivalent to the AP register.
+
+   References to AP which are used to access the parameter list can be
+   replaced by COMMON BLISS linkage functions such as ACTUALPARAMETER and
+   ACTUALCOUNT.  The COMMON BLISS function ARGPTR is supported on Alpha
+   (but requires the compiler to "fake" an argument block, and so impacts
+   performance adversely, particularly for the 32-bit compilers).  ARGPTR
+   returns a pointer to a VAX-format argument list (i.e. starting with a
+   count, and structured as a vector).  Vector elements are BLISS values,
+   32 bits long in the 32-bit compilers and 64 bits long in the 64-bit
+   compilers.
+
+   It is important to note that this means:
+
+         o  The values in the ARGPTR vector are copies of the actuals,
+            not the actuals themselves;
+
+         o  There is no easy way for 32-bit code to look at the upper 32
+            bits of an actual parameter.
+
+
+   One common VAX idiom is "CALLG( .AP, ...)", which passes a routine's
+   own input parameter list on to another routine.  For fixed-length
+   parameter lists, this is easy for users to imitate in COMMON BLISS,
+   but for variable-length ones it is not.  To support this idiom in
+   Alpha BLISS, we provide an assembly routine BLI$CALLG.  This routine
+   is currently available only for BLISS-32EN code.  We hope to make it
+   available for other dialects.
+
+   BLI$CALLG takes two arguments:  the first is a pointer to the
+   in-memory argument list built by the ARGPTR built-in, and the second
+   is the address of a routine to call.  BLI$CALLG is designed to handle
+   a valid argument list.  If anything else is passed to it, there will
+   be unpredictable results.
+
+
+
+                                     4
+
+                                      VAX-Specific Features Not Available
+
+
+   We anticipate that users will replace "CALLG(.AP,.RTN)" by
+   "BLI$CALLG(ARGPTR(),.RTN)".
+
+   Because the compiler has to "home" register arguments for ARGPTR, it
+   will be more efficient to use normal calls than to use
+   BLI$CALLG(ARGPTR(),...).  This contrasts with CALLG(.AP,...), which is
+   more efficient than a normal call.
+
+   Use of the AP as a scratch register holding a local variable is not
+   portable, but the larger number of registers offered on the Alpha will
+   allow another register to be used in its place.
+
+   The name "AP" is not recognized by the compilers, and will cause an
+   error.
+
+
+   3.3  FP Register
+
+   The Alpha calling standards do not directly support dynamic condition
+   handling, so constructs of the type ".FP = handler" are invalid.
+
+   COMMON BLISS has the ENABLE mechanism to establish static condition
+   handlers.
+
+   The Alpha BLISS compilers provide two new built-ins named "ESTABLISH"
+   and "REVERT".  Their semantics parallel the VAX idiom of assignments
+   to the location pointed to by the FP register.
+
+         o  ESTABLISH( rtn )
+
+            Establishes RTN as the current handler.  It has no value.
+
+         o  REVERT()
+
+            Disestablishes any established handler routine.  It also has
+            no value.
+
+
+   These built-ins cannot be used in the same routine as ENABLE.  No
+   enable vector is passed to a handler that is established using
+   ESTABLISH.
+
+   When a routine which has established a handler returns, that handler
+   is disestablished automatically.
+
+   Programs which inspect the frame will have to be re-written, as the
+   frame layout has changed for Alpha.
+
+   Because all references to the VAX FP must be changed, use of the name
+   "FP" in a BUILTIN declaration is an error.  Access to the Alpha FP may
+   be achieved by use of register 29, the Alpha frame pointer.  However,
+
+
+                                     5
+
+   VAX-Specific Features Not Available
+
+
+   this is almost certain to cause a register conflict and prevent the
+   generation of code; we recommend that all manipulation of the real FP
+   take place in Alpha assembler.
+
+
+   3.4  SP
+
+   Because all references to the VAX SP must be changed, use of the name
+   "SP" in a BUILTIN declaration is an error.  Access to the Alpha SP may
+   be achieved by use of register 30, the Alpha stack pointer.  However,
+   this is almost certain to cause a register conflict and prevent the
+   generation of code; we recommend that all manipulation of the real SP
+   take place in Alpha assember.
+
+
+   3.5  PC
+
+   Use of the name "PC" is an error, as there is no equivalent to the VAX
+   PC on Alpha.
+
+
+   4  QUAD
+
+   The 64-bit compilers recognize "QUAD" as specifying a data-segment of
+   eight bytes (64 bits), in the same way that LONG is recognized as
+   specifying 32 bits.  QUAD is not recognized by the 32-bit compilers,
+   as the 32-bit version of the BLISS language provides no method for
+   manipulating data-segments larger than 32 bits in size.
+
+   QUAD may be used in the 64-bit compilers wherever BYTE, WORD, and LONG
+   may be used in BLISS-32.
+
+   The default size for data-segments in the 64-bit compilers is LONG or
+   QUAD, depending on the presence or absence of the compile-time switch
+   /ASSUME=LONG_DEFAULT.
+
+
+   5  Alignment
+
+   The ALIGN attribute is allowed on EXTERNAL, BIND, and GLOBAL BIND
+   declarations in addition to the OWN, GLOBAL, LOCAL and STACKLOCAL
+   declarations on which BLISS-32 allows it.  In the Alpha compilers, in
+   addition to telling the compiler on what boundaries to allocate data,
+   it tells the compiler what assumptions it can make regarding the
+   alignment of data that the compiler does not allocate in this
+   compilation unit.
+
+
+
+
+
+
+
+                                     6
+
+                                                          ALIAS Attribute
+
+
+   6  ALIAS Attribute
+
+   The ALIAS attribute indicates that a variable may be changed by
+   routine calls and indirect assignments.  ALIAS may be used on any of
+   the following declarations:  EXTERNAL, GLOBAL, OWN, FORWARD, MAP,
+   BIND, GLOBAL BIND, LOCAL, STACKLOCAL.
+
+   The BLISS language assumes that named storage segments will in general
+   be changed only by using the name of the variable.  Also, BLISS
+   expects that two different named pointer variables do not point to the
+   same block of storage.
+
+   If it is necessary to have more than one pointer to the same named
+   variable or block of storage, these pointers should be declared with
+   the ALIAS attribute.
+
+   Any variable passed using a VMS item-list must be treated as ALIAS.
+
+   The Alpha BLISS compilers automatically mark as ALIAS any variable
+   whose address is used in a context other than fetch or store.  These
+   are the variables that got the "consider VOLATILE" diagnostic when
+   /CHECK=ADDRESS_TAKEN was used.  This diagnostic now reads:  "assuming
+   ALIAS".
+
+   In most cases, Alpha-only BLISS source code can rely on the automatic
+   ALIAS analysis by the Alpha BLISS compiler.  Since VAX BLISS-32 does
+   not do this, code that is common between Alpha and VAX needs to use
+   explicit ALIAS attributes.  This requires VAX BLISS V4.7; older
+   versions do not support the ALIAS attribute.
+
+
+   7  VOLATILE attribute
+
+   The VOLATILE attribute is stronger in Alpha BLISS than in VAX BLISS.
+   On VAX, VOLATILE means that the variable can change at any time.  On
+   Alpha, it has the following properties:
+
+         o  Always causes one memory access for long/quad read/write and
+            byte/word reads
+
+         o  Strict source ordering (no reordering of reads, for example)
+
+         o  Proper size (for long/quad)
+
+         o  Only supported for aligned accesses
+
+         o  Yields byte granularity
+
+   As a result, VOLATILE is sufficient for I/O registers.
+
+   The compiler now includes new GEM support for the VOLATILE attribute.
+
+
+                                     7
+
+   VOLATILE attribute
+
+
+   This may require source code changes in existing Alpha BLISS programs.
+   Specifically, writing to an unaligned 16-bit (word) field in a
+   VOLATILE structure causes an unrecoverable alignment (ROPRAND) fault.
+
+   The compiler has added a diagnostic to issue a warning for unaligned
+   VOLATILE references:
+
+   %BLS32-W-UNAVOLACC, volatile access appears unaligned, but must be
+   aligned at run-time
+
+   BLISS users should modify their code to completely eliminate all
+   UNAVOLACC warnings.
+
+   What MUST Be Done to ensure correct operation:
+
+        1.  Any references to VOLATILE unaligned 16-bit words must be
+            changed to eliminate unrecoverable faults.
+
+        2.  All uses of structures that contain 16-bit words should be
+            examined to ensure that either:
+
+            1.  The 16-bit field is aligned, or
+
+            2.  The structure is not accessed using REF VOLATILE
+
+
+   What SHOULD be done to get good performance:
+
+        1.  Unaligned access of other types are recoverable but take
+            extra time.  In almost all cases, it is desirable to change
+            the VOLATILE attribute to ALIAS to avoid unnecessary
+            alignment faults.
+
+
+
+
+   8  Linkages
+
+   8.1  CALL linkage
+
+   The CALL linkage is the standard linkage on Alpha.  See the
+   appropriate Alpha Calling Standard specification for details.
+
+   Routines compiled with a 32-bit compiler can call routines compiled
+   with a 64-bit compiler and vice versa.  Parameters are truncated when
+   shortened, and sign-extended when lengthened.
+
+   By default, CALL linkages pass an argument count.  This can be
+   overridden using the NOCOUNT linkage option described below.
+
+   Though the arguments are passed in quadwords, the 32-bit compilers can
+
+
+                                     8
+
+                                                                 Linkages
+
+
+   only "see" the lower 32 bits.
+
+
+   8.2  JSB Linkage
+
+   The OpenVMS compilers have a JSB linkage type.  Routines declared with
+   the JSB linkage type are frameless routines, i.e. they do not modify
+   the FP register.  The other compilers have no JSB linkages.
+
+
+   8.3  Global Registers
+
+   Routines with linkages with GLOBAL REGISTERS which did not declare
+   those registers as EXTERNAL REGISTERs follow the BLISS-32 rules:
+
+         o  If the global register is not declared at all, its value will
+            be preserved;
+
+         o  If the register is specifically declared (e.g. as a GLOBAL
+            register), the value of the register will be preserved and a
+            new, nested lifetime started for the register.
+
+
+
+   8.4  INTERRUPT and EXCEPTION Linkages
+
+   The OpenVMS compilers have INTERRUPT and EXCEPTION linkage types.  See
+   the System Reference Manual for details.  Routines with these linkages
+   cannot be called from BLISS.
+
+
+   8.5  COUNT and NOCOUNT Linkage Attributes
+
+   The linkage attributes COUNT and NOCOUNT allow the user to specify
+   whether the argument count should be passed from the caller to the
+   callee.  These attributes are legal only for the CALL linkage type.
+   The default is COUNT.  The default can be controlled on a module-wide
+   basis by using either the command line qualifier /[NO]COUNT
+   (-[no]counted_linkages for UNIX compilers) or the module head switch
+   [NO]COUNT.  As usual, a switch setting given in a module head
+   overrides the command line qualifier.  The linkage functions
+   ACTUALCOUNT, ACTUALPARAMETER, NULLPARAMETER, and ARGPTR may not be
+   used in routines whose linkages are NOCOUNT.
+
+
+   9  Machine Specific Features
+
+
+
+
+
+
+
+                                     9
+
+   Machine Specific Features
+
+
+   9.1  Alpha Registers
+
+   Alpha integer registers are available, using the same syntax used on
+   the VAX for access to VAX registers.  Alpha floating registers are not
+   available.
+
+   Many of the registers are not available for use by user code, as they
+   are reserved for special uses.  A register conflict message will be
+   issued when a user request for a particular register cannot be
+   satisfied.
+
+
+   9.2  PALcode Built-in Functions
+
+   The following PALcode instructions are available as built-in functions
+   in the OpenVMS compilers.
+
+   BPT      INSQHIL     REMQHIL     BUGCHK     MTPR_ASTSR    MFPR_MCES
+   CHME     INSQTIL     REMQTIL     IMB        MTPR_FEN      MFPR_SSP
+   CHMK     INSQUEL     REMQUEL     PROBER     MTPR_PRBR     MFPR_WHAMI
+   CHMS     INSQHIQ     REMQHIQ     PROBEW     MTPR_SIRR     MFPR_PTBR
+   CHMU     INSQTIQ     REMQTIQ     RD_PS      MTPR_TBIAP    MFPR_SISR
+   HALT     INSQUEQ     REMQUEQ     SWASTEN    MTPR_IPIR     MFPR_IPL
+            INSQUEL_D   REMQUEL_D   WR_PS_SW   MTPR_MCES     MFPR_PCBB
+            INSQUEQ_D   REMQUEQ_D   CFLUSH     MTPR_TBIS     MFPR_SCBB
+            INSQHILR    REMQHILR    DRAINA     MTPR_SSP      MFPR_TBCHK
+            INSQHIQR    REMQHIQR    LDQP       MTPR_ASTEN    MFPR_ESP
+            INSQTILR    REMQTILR    STQP       MTPR_IPL      MFPR_USP
+            INSQTIQR    REMQTIQR    SWPCTX     MTPR_SCBB     MFPR_FEN
+                                    GENTRAP    MTPR_TBIA     MFPR_PRBR
+                                    RSCC       MTPR_ESP      MFPR_ASTEN
+                                    READ_UNQ   MTPR_USP      MFPR_ASTSR
+                                    WRITE_UNQ  MTPR_VPTB     MFPR_VPTB
+                                               MTPR_TBISD
+                                               MTPR_TBISI
+                                               MTPR_DATFX
+                                               MTPR_ASN
+                                               MTPR_PERFMON
+
+   The following PALcode instructions are available as built-in functions
+   in the other compilers:
+
+   BPT      IMB        HALT     GENTRAP
+
+   Refer to the SRM for information regarding inputs and outputs.  Please
+   note that all of above names are preceeded by a PAL_ to distinguish
+   them from similar VAX builtins.
+
+   CALL_PAL is a generic PALcode built-in.  The first parameter, which
+   must be a compile-time constant expression, is the function field of
+   the CALL_PAL instruction.  The remaining parameters are the inputs to
+
+
+                                     10
+
+                                                Machine Specific Features
+
+
+   the CALL_PAL instruction.
+
+
+   9.3  New Built-in Functions for Atomic Operations
+
+   The following new built-in functions allow atomic updating of memory:
+
+   ADD_ATOMIC_LONG, ADD_ATOMIC_QUAD, AND_ATOMIC_LONG, AND_ATOMIC_QUAD,
+   OR_ATOMIC_LONG, OR_ATOMIC_QUAD
+
+   The operations have the form:
+
+      <op>_ATOMIC_<size>( ptr, expr
+           [ , retry_count ]       ! Optional input
+           [; old_value    ] )     ! Optional output
+
+      Value:       1       Operation succeeded
+                   0       Operation failed
+
+      <op> is one of AND, ADD, OR
+      <size> is one of LONG or QUAD
+
+
+   The operation is addition (or ANDing or ORing) of the expression EXPR
+   to the data-segment pointed to by PTR within a
+   load-locked/store-conditional code sequence.  The operation will be
+   tried RETRY_COUNT times.  If the operation cannot be performed
+   successfully in the specified number of trials, the built-in's value
+   is zero.
+
+   PTR must be a naturally-aligned address.
+
+   The optional output parameter OLD_VALUE is set to the previous value
+   of the data-segment pointed to by PTR.
+
+   For the 32-bit compilers, the EXPR parameter will be sign-extended and
+   the OLD_VALUE parameter will be truncated for the QUAD operations.
+
+
+   9.4  Compatible Built-in Functions for Atomic Operations
+
+   TESTBITSSI, TESTBITCCI, TESTBITSS, TESTBITSC, TESTBITCS, TESTBITCC and
+   ADAWI have been implemented in an upward-compatible manner.
+
+   The TESTBITxx built-ins are AST-atomic.  This is a weaker form of
+   atomicity than the TESTBITxxI built-ins have.  The operations have the
+   form:
+
+      TESTBITxxx( field
+           [ , retry_count ]       ! Optional input
+           [; success-flag ] )     ! Optional output
+
+
+                                     11
+
+   Machine Specific Features
+
+
+      Value:       1       Bit was set (TESTBITSSI) or clear (TESTBITCCI)
+                   0       Otherwise
+
+   BLISS-32's ADAWI returns the contents of the PSL.  Since the PSL
+   doesn't exist on Alpha, the return value of ADAWI is a simulated
+   partial VAX PSL, where only the condition codes are significant.
+
+      ADAWI( address, addend)
+
+      Value:       PSL 0:3 (Simulated partial VAX PSL)
+
+
+
+
+   9.5  New Shift Built-in Functions
+
+   Built-in functions for shifts in a known direction have been added.
+   They are only valid for shift amounts in the range 0..%BPVAL-1.
+
+
+       result = SLL(value, amount)        Shift left logical
+       result = SRL(value, amount)        Shift right logical
+       result = SRA(value, amount)        Shift right arithmetic
+
+
+   9.6  Other Machine-specific Built-in Functions
+
+   Other machine specific built-in functions are:
+
+         o  ROT(value, shift) -- rotates value by shift bits, returning
+            the rotated value.
+
+         o  TRAPB() -- generates the TRAPB instruction.
+
+         o  RPCC() -- generates the RPCC instruction.
+
+         o  WRITE_MBX(dest-address, value-to-store) --
+            generates the STQ_C instruction required for writing to
+            mailboxes.  See the section "Mailbox Posting" in the I/O
+            Architecture chapter of the SRM for details.  This function
+            returns 1 for success and 0 for failure.
+
+         o  UMULH, CMPBGE, ZAP, and ZAPNOT --
+            UMULH, CMPBGE, ZAP and ZAPNOT each have two input parameters
+            and have a value.  They correspond to the Alpha instructions
+            with the same names.
+
+         o  CMP_STORE_LONG and CMP_STORE_LONG --
+                CMP_STORE_LONG(addr, comparand, value, destination) and
+                CMP_STORE_QUAD(addr, comparand, value, destination)
+            do the following interlocked operations:  compare the
+
+
+                                     12
+
+                                                Machine Specific Features
+
+
+            longword or quadword at addr with comparand, and if they are
+            equal, store value at destination.  They return an indicator
+            of success (1) or failure (0).
+
+
+
+
+   10  Floating Point Support
+
+   BLISS does not have a high level of support for floating-point
+   numbers.  There are ways to create floating-point literals, and there
+   are machine-specific built-ins for floating-point arithmetic and
+   conversion operations.
+
+
+   10.1  Floating Point Built-in Functions
+
+   Alpha supports both VAX (except H) and IEEE floating point numbers.
+   Alpha BLISS has the following floating point functions.  "*" can be
+   replaced by F, D, G, S, and T.  "L" indicates longword, "Q" indicates
+   quadword, and "I" indicates BLISS fullword (longword in the 32-bit
+   compilers and quadword in the 64-bit compilers).  "R" indicates
+   rounding.
+
+   ADD*, SUB*, MUL*, DIV*, CMP*, CVTL*, CVT*L, CVTQ*, CVT*Q, CVTI*,
+   CVT*I, CVTR*L, CVTR*Q, CVTFD, CVTDF, CVTFG, CVTGF, CVTST, CVTTS,
+   CVTDG, CVTGD
+
+   The following floating point functions are provisionally implemented.
+   Since there is no direct machine support for conversions between VAX
+   and IEEE floating point types, these functions may be replaced by
+   calls to a runtime library:
+
+   CVTFS, CVTSF, CVTDT, CVTTD, CVTGT, CVTTG
+
+   None of the floating point built-in functions detect overflow, so they
+   do not return a value.
+
+
+   10.2  Floating Point Literals
+
+   In addition to BLISS-32's %E, %D, and %G floating point literals,
+   Alpha BLISS has %S and %T literals.
+
+
+   10.3  Floating Point Registers
+
+   Direct use of the Alpha floating-point registers is not supported.
+
+
+
+
+
+                                     13
+
+   Floating Point Support
+
+
+   10.4  Calling Non-BLISS Routines with Floating Point Parameters
+
+   It is possible to call standard non-BLISS routines that expect
+   floating-point parameters passed by value, and that return a
+   floating-point or complex value.
+
+   The standard functions %FFLOAT, %DFLOAT, %GFLOAT, %SFLOAT and %TFLOAT
+   have been added.  Each function serves two purposes.  When used as an
+   input-parameter, it fetches the floating point number whose address is
+   the function's argument and passes it to the routine.  When used as an
+   output-parameter, it stores the routine's floating return value at the
+   address that is the function's argument.  The first letter in the
+   function name indicates the type of floating-point number.
+
+   When these functions are used as output-parameters, there can be no
+   more than two, and they must agree in format.  If there are two output
+   parameters, the first is the real part of the called routine's complex
+   return value and the second is the imaginary part.  Output parameters
+   are not normally allowed in calls to routines with standard linkages,
+   but in this case they are allowed.  Since standard calls that return
+   floating-point values cannot also return integer values, such a call
+   is effectively NOVALUE.
+
+
+   Example 1:
+
+       Call printf, passing in the control string, an integer,
+       and a T-float:
+
+           EXTERNAL ROUTINE printf: NOVALUE;
+           MACRO tfloat = VECTOR[8,BYTE] %;
+           LOCAL float: tfloat;
+           printf(string, .integer, %TFLOAT(float));
+
+   Example 2:
+
+       Call ots$powgg, whose two parameters and return value
+       are G-floats:
+
+           EXTERNAL ROUTINE ots$powgg;
+           MACRO gfloat = VECTOR[8,BYTE] %;
+           LOCAL
+               base: gfloat,
+               result: gfloat;
+           BIND e=UPLIT(%G'2.718');
+           ots$powgg(%GFLOAT(base), %GFLOAT(e); %GFLOAT(result));
+
+
+
+
+
+
+
+                                     14
+
+                                                   Floating Point Support
+
+
+   Example 3:
+
+       Call math$ccos, which has an F-floating complex parameter passed by value
+       and returns an F-floating complex value:
+
+           EXTERNAL ROUTINE math$ccos;
+           MACRO
+               fcomplex = VECTOR[2,LONG] %,
+               real(x) = x[0] %,
+               imag(x) = x[1] %;
+           LOCAL
+               input: fcomplex,
+               output: fcomplex;
+           math$ccos(%FFLOAT(real(input)), %FFLOAT(imag(input));
+                     %FFLOAT(real(output)), %FFLOAT(imag(output)));
+
+
+   11  Floating-point Instructions Used in Integer Division
+
+   In some cases, integer division is implemented using floating-point
+   instructions.  To avoid this, use either the command line qualifier
+   /ENVIRONMENT=NOFP or the module switch ENVIRONMENT(NOFP).  These
+   switches have positive counterparts, /ENVIRONMENT=FP and
+   ENVIRONMENT(FP).
+
+   The compiler gives a warning when floating point built-in functions
+   are used with ENVIRONMENT(NOFP).
+
+
+   12  New and Expanded Lexicals
+
+   BLISS has added new compiler-state lexicals and expanded old ones to
+   support these compilers.  These are available in all the Alpha BLISS
+   compilers and in BLISS-32 V4.7.
+
+         o  %BLISS recognizes BLISS32E, BLISS64E and BLISS32V.
+            %BLISS(BLISS32) is true for all 32-bit BLISS compilers.
+            %BLISS(BLISS32V) is true only for VAX BLISS (BLISS-32).
+            %BLISS(BLISS32E) is true for all 32-bit Alpha compilers.
+            %BLISS(BLISS64E) is true for all 64-bit Alpha compilers.
+
+         o  %BLISS32E, %BLISS64E and %BLISS32V have been added.  Their
+            behavior parallels that of the new parameters to %BLISS.
+
+
+   Two new lexical functions, %HOST and %TARGET, have been added.  They
+   take one or two keywords as arguments.  These keywords represent the
+   host or target architecture and operating system.  %HOST returns 1 if
+   its arguments represent the system on which the compiler is running,
+   and 0 otherwise.  %TARGET returns 1 if its arguments represent the
+   system for which the compiler generates code, and 0 otherwise.
+
+
+                                     15
+
+   New and Expanded Lexicals
+
+
+   The following keywords are recognized by these functions.  For
+   compatibility with future compilers, unrecognized keywords do not
+   generate a diagnostic, but cause the functions to return 0.
+
+        Architecture          Operating System
+
+            VAX                   VMS
+            MIPS                  ULTRIX
+            ALPHA                 UNIX
+                                  OSF
+                                  WNT
+
+   There are three new lexical functions that return strings containing
+   the compiler's state.  %MODULE returns the current module name.
+   %ROUTINE returns the current routine name.  %IDENT returns the current
+   module ident.
+
+
+   13  Read and Write Barriers
+
+   To help support concurrent programming in the presence of caches and
+   pipelining, read and write barriers are required.
+
+   The new COMMON built-in BARRIER enforces reads before reads, writes
+   before writes and reads before writes, but not writes before reads, as
+   no planned or existing hardware will provide that function.
+
+
+   14  Mixed Case Names
+
+   Mixed case names are supported with the EXTERNAL_NAME attribute.  It
+   can be applied to the following declarations:  GLOBAL, EXTERNAL,
+   GLOBAL ROUTINE, EXTERNAL ROUTINE, GLOBAL LITERAL, EXTERNAL LITERAL,
+   GLOBAL BIND, and GLOBAL BIND ROUTINE.  The string specified by this
+   attribute is used as the external name for the linker.  THE
+   EXTERNAL_NAME attribute acts like the %STRING function for string
+   processing.
+
+   There is also a /NAMES command line qualifier that can be used to
+   force external names to upper or lower case.  The qualifier only
+   affects external names that don't have an EXTERNAL_NAME attribute.
+   For the OpenVMS compilers, the default is /NAMES=UPPERCASE.
+   /NAMES=LOWERCASE can be used to generate lower case names.  For the
+   UNIX compilers, the switch is -names upper or -names lower, with the
+   latter being the default.
+
+
+
+
+
+
+
+
+                                     16
+
+                                                         Mixed Case Names
+
+
+   Examples of this attribute follow:
+
+       GLOBAL                           ! Inside the module, the global X
+         X : EXTERNAL_NAME('xna')       ! is referenced by the name 'X'.
+                    INITIAL (2);        ! Outside the module, the name 'xna'
+                                        ! has to be used.
+
+       EXTERNAL                           ! Other string functions can be used
+         Y : EXTERNAL_NAME(%CHAR(65,66)); ! inside the EXTERNAL_NAME attribute.
+                                          ! In this case, the external name of
+                                          ! 'Y' would be 'AB'.
+
+
+
+   15  Link Time Constant Expressions
+
+   Link time constant expressions (LTCEs) are required for PLITs and for
+   the PRESET and INITIAL attributes on static variables.  Due to
+   differences between object languages, the class of expressions that
+   are considered link-time constants in the Alpha BLISS compilers is a
+   subset of BLISS-32 LTCEs.
+
+   For the OpenVMS compilers, LTCEs are those expressions of the form
+   (e1-e2) where each operand is either a constant, a symbol,
+   (symbol-constant), or (symbol+constant).
+
+   For the UNIX compilers, LTCEs are those expressions of the form
+   "symbol +/- constant".
+
+   For UNIX, LTCEs cannot be used to statically initialize fields that
+   are neither a longword nor a quadword in length.  If an INITIAL or
+   PRESET attribute attempts to do this, the warning "Link-time
+   expression cannot be stored less than a fullword" will be given.
+
+
+   16  Atomicity of Operations
+
+   BLISS supports AST programming and concurrent programming on the VAX
+   with the VOLATILE attribute for data-segments and the existing
+   atomicity of such VAX operations as MOVB.  On Alpha the two kinds of
+   programming require that code generated for operations which must be
+   atomic be different from that generated for "normal" operations.
+
+   See the sections on built-in functions for atomic operations for
+   methods of updating variables atomically.
+
+
+
+
+
+
+
+
+                                     17
+
+   Atomicity of Operations
+
+
+   16.1  Granularity of Byte and Word Writes
+
+   VAX systems support byte and word granularity of writes.  This is
+   important for references to those bytes by both AST routines and
+   concurrent processes.  The Alpha architecture has only longword and
+   quadword granularity.  This is a problem when asynchronous or
+   concurrent write access is made to neighboring bytes or words.
+   Special instruction sequences must be used to preserve high
+   granularity.
+
+   Users can control the granularity of stores and fetches by using the
+   command line qualifier /GRANULARITY=keyword, the switch
+   DEFAULT_GRANULARITY=n, and the data attribute GRANULARITY(n).  The
+   parameter n must be in the range 0 (byte) to 3 (quad).  The keyword in
+   the command line qualifier must be BYTE, LONGWORD, or QUADWORD.
+
+   When these are used together, the data attribute has the highest
+   priority.  The switch, when used in a SWITCHES declaration, sets the
+   granularity of data declared after it within the same scope.  The
+   switch may also be used in the module header.  The command line
+   qualifier has the lowest priority.
+
+
+   17  Shift Operator
+
+   The shift operator is limited to the range of -63..63.  Any shift
+   outside of this range is undefined.
+
+
+   18  Incompatibility of GLOBAL BIND and GLOBAL BIND ROUTINE
+
+   The data-name-value of GLOBAL BIND cannot be a routine.  The
+   routine-name-value of GLOBAL BIND ROUTINE must be a routine.
+
+
+   19  Qualifiers
+
+   19.1  /ASSUME Qualifier
+
+   A new qualifier, /ASSUME, has been added.  It takes four options,
+   [NO]ALIAS, [NO]LONG_DEFAULT, [NO]REF_LONG and [NO]SIGNED_LONG.
+
+
+   19.1.1  /ASSUME=[NO]ALIAS
+
+   /ASSUME=NOALIAS means the compiler can assume that aliasing is not
+   done with pointers or references outside of named data segments.  An
+   example of aliasing with a pointer is "X = A; .X = 2" (X is used as a
+   pointer to named data segment A).  An example of aliasing outside of a
+   named data segment is "OWN A:  VECTOR[2], B; .A[2]" (A[2] is used to
+   refer to B which is outside of the named data segment A).
+
+
+                                     18
+
+                                                               Qualifiers
+
+
+   /ASSUME=ALIAS tells the compiler not to make this assumption and to
+   behave conservatively.  The default is NOALIAS.
+
+   NOALIAS means the same as SAFE in BLISS-32.  ALIAS means the same as
+   NOSAFE in BLISS-32.
+
+   The granularity for setting the source regions where the compiler
+   assumes aliasing is present has been changed to routine from module.
+   If all the code in a routine may be assumed to contain no aliasing,
+   the compiler treats the routine as such.  If any part of a routine
+   contains code that the compiler must assume contains aliasing, the
+   compiler will assume the whole routine may contain aliasing.
+
+   The /ASSUME=[NO]ALIAS qualifier is used to indicate whether or not the
+   compiler can assume aliasing may take place for the whole module.  See
+   the explanation of this qualifier for further details.  The [NO]SAFE
+   switch is used to indicate whether or not the compiler can assume
+   aliasing may take place for a compound (BEGIN - END) block.  SAFE
+   means assume no aliasing.  NOSAFE means assume aliasing.
+
+
+   19.1.2  /ASSUME=[NO]LONG_DEFAULT (64-bit compilers only)
+
+   The /ASSUME=LONG_DEFAULT qualifier and the module switch LONG_DEFAULT
+   cause the default allocation unit for the 64-bit compilers to be LONG
+   rather than QUAD.  This applies to scalars, VECTOR, BLOCK, and
+   BLOCKVECTOR.  In addition, ARGPTR returns a longword vector, LONG is
+   the default allocation unit for INITIAL, PLIT and UPLIT, and the PLIT
+   count is a longword.  Also, fetches and stores are 32 bits when no
+   size is specified or implied.
+
+
+
+   19.1.3  /ASSUME=[NO]REF_LONG (64-bit compilers only)
+
+   The 64-bit compiler qualifier /ASSUME=REF_LONG and the module switch
+   REF_LONG turn all variables declared as REF structure into signed
+   longwords.
+
+
+   19.1.4  /ASSUME=[NO]SIGNED_LONG (64-bit compilers only)
+
+   The /ASSUME=SIGNED_LONG qualifier and the module switch SIGNED_LONG
+   have effects similar to /ASSUME=(LONG_DEFAULT,REF_LONG).  The only
+   difference is that scalars and VECTOR default to LONG SIGNED.
+
+
+
+
+
+
+
+
+                                     19
+
+   Qualifiers
+
+
+   19.2  /CHECK Qualifier
+
+   The /CHECK qualifier has five new options, [NO]ADDRESS_TAKEN,
+   [NO]ALIGNMENT, [NO]LONGWORD and [NO]SHARE, [NO]SHORT_ADDRESS,
+   [NO]PARAMETERS.  The /CHECK qualifier also accepts ALL and NONE
+   keywords in Alpha BLISS.
+
+
+   19.3  /CHECK=[NO]ADDRESS_TAKEN
+
+   The Alpha compilers check the usage of variable addresses in value
+   contexts.  Under the control of /CHECK=ADDRESS_TAKEN, an informational
+   message will be given for a use of an address of a variable as a value
+   if the variable has neither the ALIAS nor the VOLATILE attribute.  The
+   compiler will treat the variable as if it had the ALIAS attribute
+   whether /CHECK=ADDRESS_TAKEN is specified or not.  In this situation,
+   the ALIAS attribute serves as documentation, and will be useful in
+   backporting to BLISS-32.
+
+   Examples:
+
+       local a, b;
+       external routine r;
+
+       ! These get no message.
+       !
+       a = 0;
+       a = .b;
+       r( a );
+
+       ! These get the message 'Address of variable <name> in 
+       ! value context; assuming ALIAS attribute'
+       !
+       a = b;
+       a = (if .b then b else a);
+       if a then ...
+        :
+       
+
+
+   19.4  /CHECK=[NO]ALIGNMENT
+
+   When /CHECK=ALIGNMENT is specified, the compiler checks the alignment
+   of declarations (those that accept the ALIGN attribute MAP) and field
+   references.  A warning level message is issued when the compiler can
+   determine that a declaration or field reference is poorly aligned.  An
+   informational message is issued when a data declaration is well
+   aligned by coincidence (i.e. the alignment attribute is less than the
+   default, but the segment happens to fall on the proper boundary).
+
+
+
+
+                                     20
+
+                                                               Qualifiers
+
+
+   19.5  /CHECK=[NO]LONGWORD (64-bit compilers only)
+
+   The option LONGWORD has been added to the /CHECK qualifier for the
+   64-bit compilers.  This option tells the compiler to check for
+   declarations that specify LONG without specifying SIGNED or UNSIGNED.
+   /CHECK=LONGWORD understands that /ASSUME=LONG_DEFAULT can change
+   variables to unsigned longwords.
+
+   /CHECK=LONGWORD also checks for assignments of 64-bit quantities to
+   32-bit fields and for uses of 64-bit quantities as routine actuals.
+
+
+   19.6  /CHECK=[NO]SHARE
+
+   /CHECK=SHARE causes the compiler to generate a warning when
+   non-shareable data is placed in a shareable PSECT.  No such warning is
+   given with /CHECK=NOSHARE.  The default is /CHECK=SHARE.
+
+
+   19.7  /CHECK=[NO]SHORT_ADDRESS (64-bit compilers only)
+
+   /CHECK=SHORT_ADDRESS causes the compiler to issue diagnostics for
+   fetches from addresses less than 64 bits, stores into addresses less
+   than 64 bits, and stores of addresses in fields of less than 64 bits.
+   The default is /CHECK=NOSHORT_ADDRESS.
+
+
+   19.8  /CHECK=[NO]PARAMETERS
+
+   The qualifier /CHECK=PARAMETERS can be used to do limited checking of
+   parameter lists of routine calls.  If a formal is declared as
+   REF structure, and the corresponding actual is an undotted variable,
+   the size will be checked.  If the actual is smaller than expected, a
+   diagnostic is given.  The default is /CHECK=NOPARAMETERS.
+
+   To make this check more useful, parameter lists can now be specified
+   on EXTERNAL ROUTINE and FORWARD ROUTINE declarations.  The lexical
+   function %BLISS(PROTOTYPES) is true for compilers that allow these
+   parameter lists.
+
+
+   19.9  /NAMES
+
+   The /NAMES qualifier forces external names to upper or lower case.
+   The qualifier only affects external names that don't have an
+   EXTERNAL_NAME attribute (see above).  For OpenVMS, the default is
+   /NAMES=UPPERCASE.  For UNIX, the default is /NAMES=LOWERCASE.
+
+
+
+
+
+
+                                     21
+
+   Qualifiers
+
+
+   19.10  /[NO]INITIAL_PSECT
+
+   The /INITIAL_PSECT qualifier tells the compiler to put data used in
+   certain INITIAL and PRESET attributes for locals in the INITIAL PSECT.
+   /NOINITIAL_PSECT tells the compiler to put it in the PLIT PSECT.
+   /INITIAL_PSECT is the default.
+
+   The INITIAL PSECT is defined in a block that surrounds each module as
+   follows:
+
+       PSECT
+           INITIAL = $INITIAL$ (NOWRITE,NOEXECUTE,CONCATENATE,LOCAL);
+
+   Because the compiler no longer puts data in the PLIT PSECT behind the
+   programmer's back, it is easier to make the PLIT PSECT shareable.
+
+
+   19.11  /SYNTAX_LEVEL
+
+   A new command-line qualifier has been added to allow new reserved
+   words to be added in an upward-compatible manner.
+
+
+       /SYNTAX_LEVEL=level
+
+   To compile with the original set of reserved words (see Appendix A of
+   the LRM) set the level to 1; to compile with the words QUAD, SHARED,
+   ALIAS, EXTERNAL_NAME and NOCHECK_ALIGNMENT as reserved words (and thus
+   having their specific BLISS meaning), set the level to 2; to compile
+   with the additional reserved word VARIABLE, set the level to 3.
+
+   Level equal to 2 is the default for Alpha BLISS.
+
+   QUAD, ALIAS, EXTERNAL_NAME, NOCHECK_ALIGNMENT and VARIABLE are
+   described elsewhere in this document.
+
+
+   19.12  /LANGUAGE
+
+   /LANGUAGE has been added as a command line qualifier.  Its behavior is
+   identical to the module switch LANGUAGE.
+
+
+   19.13  /[NO]TIE (OpenVMS only)
+
+   The command line qualifier /[NO]TIE is available in the OpenVMS
+   compilers only.
+
+   TIE is used to enable the compiled code to be used in combination with
+   translated images, either because the code might call into a
+   translated image or might be called from a translated image.
+
+
+                                     22
+
+                                                               Qualifiers
+
+
+   TIE is also required for code that is intended to be used in the AUD
+   environment.
+
+   In particular, TIE
+
+        1.  Causes the inclusion of procedure signature information in
+            the linkage section of this compilation.  This increases the
+            storage and possibly the number of address constants needed
+            for the linkage section but does not otherwise affect
+            performance.
+
+        2.  Causes calls to procedure values (sometimes called indirect
+            or computed calls) to be compiled using a service routine
+            (OTS$CALL_PROC); this routine determines whether the target
+            procedure is native Alpha code or in a translated image and
+            proceeds accordingly.  This adds a small amount of overhead
+            (about six instructions) for a call that actually invokes
+            another native Alpha routine.
+
+            /NOTIE is the default.
+
+
+
+   19.14  /INCLUDE
+
+   The /INCLUDE qualifier lets you specify a list of directories to
+   search for require and library files.  When /INCLUDE is used, any
+   filetype must be explicitly used in the require or library
+   declaration.
+
+   The format of the qualifier is
+
+                  /INCLUDE=(directory,...)
+
+
+   19.15  Other Qualifier Differences
+
+   The following BLISS-32 qualifiers are missing from Alpha BLISS:
+
+       /CROSS_REFERENCE
+       /DESIGN
+       /QUICK
+       /SOURCE_LIST=[NO]HEADER
+
+
+   The /MACHINE_CODE_LIST qualifier take keywords in BLISS-32 but is a
+   YES/NO qualifier in Alpha BLISS.
+
+   The /OPTIMIZE qualifier can either take values or be a YES/NO
+   qualifier for Alpha BLISS.  The form for it is:
+
+
+
+                                     23
+
+   Qualifiers
+
+
+           /NOOPTIMIZE
+           /OPTIMIZE[=LEVEL=n]
+
+       Levels range from 0 to 5.  The default is /OPTIMIZE=LEVEL=4.
+       /NOOPTIMIZE is equivalent to /OPTIMIZE=LEVEL=0.
+
+       /OPTIMIZE=LEVEL=0 disables optimizations.
+
+       /OPTIMIZE=LEVEL=1 enables local optimizations and recognition of
+       common subexpressions.
+
+       /OPTIMIZE=LEVEL=2 enables global optimization.  This includes code
+       motion, strength reduction and test replacement, split lifetime
+       analysis, and code scheduling.
+
+       /OPTIMIZE=LEVEL=3 enables additional global optimizations that
+       improve speed (at the cost of extra code size), for example:
+       integer multiplication and division expansion (using shifts), loop
+       unrolling, and code replication to eliminate branches.
+
+       /OPTIMIZE=LEVEL=4 enables inline expansion of small procedures.
+
+       /OPTIMIZE=LEVEL=5 uses inline expansion more aggressively for
+       maximum execution speed.
+
+
+   19.16  Command line switches for UNIX compilers
+
+   The following is a table of equivalences between OpenVMS command line
+   qualifiers and the switches for UNIX.  For all switches that take
+   keywords, the keywords are spelled the same as on OpenVMS, except that
+   they are lowercase.
+
+   /OBJECT=file                             -o file
+                                            (when ld is run by the driver,
+                                             -o specifies the executable file)
+
+   /DEBUG                                   -g2
+
+   /TRACEBACK                               -g1
+
+   /NOTRACEBACK                             -g0
+
+   /[NO]MACHINE_CODE                        -[no]machine
+
+   /OPTIMIZE=LEVEL=n                        -On
+
+   /DIAGNOSTICS[=file]                      -diagnostics [file]
+
+   /LIBRARY[=file]                          -b_lib [file]
+
+
+
+                                     24
+
+                                                               Qualifiers
+
+
+   /ERROR_LIMIT=n                           -errlim n
+
+   /VARIANT=n                               -variant n
+
+   /SYNTAX_LEVEL=n                          -syntax_level n
+
+   /CHECK=[NO]keyword                       -check [no]keyword
+
+   /NAMES={UPPERCASE | LOWERCASE}           -names {upper | lower}
+
+   /LANGUAGE=keyword                        -b_lang keyword
+
+   /LIST[=file]                             -src_list [file]
+
+   /SOURCE_LIST=keyword                     -source keyword
+
+   /INCLUDE=path                            -Ipath
+
+   /TERMINAL=NOERRORS                       -w
+
+   /ASSUME=[NO]ALIAS                        -[no]alias
+
+   /ASSUME=[NO]LONG_DEFAULT                 -[no]def_long
+
+   /ASSUME=[NO]REF_LONG                     -[no]ref_long
+
+   /ASSUME=[NO]SIGNED_LONG                  -[no]signed_long
+
+   /ASSUME=BLOCK_ALIGNMENT=keyword          -block_align keyword
+
+   /GRANULARITY=keyword                     -granularity keyword
+
+   /ENVIRONMENT=[NO]FP                      -[no]float
+
+   /[NO]COUNT                               -[no]counted_linkages
+
+   /[NO]INITIAL_PSECT                       -[no]initial_psect
+
+
+   The -S [filename] switch, which tells the compiler to produce an
+   assemblable listing file, has no OpenVMS equivalent.
+
+   The following switches are used by the bliss driver for UNIX.  They
+   have no equivalent on OpenVMS systems:
+
+   -c      Do not run the cc driver after the BLISS compiler.  Otherwise
+           if there are no severe compilation errors, the cc driver is
+           run, which normally results in ld being run.
+
+   -v      Write intermediate commands to stderr ("verbose mode").
+
+
+
+                                     25
+
+   Qualifiers
+
+
+   -K      Do not delete temporary files.
+
+
+   20  PSECT Restrictions
+
+   Code and data cannot go in the same PSECT.  The CODE PSECT has the
+   default attributes of SHARE and NOREAD.
+
+   In BLISS-32AW, references to symbols in empty PSECTs are illegal.
+
+   The default alignment of PSECTs has been changed to octaword.  The
+   names of the absolute and literal PSECTs have been changed to $ABS$
+   and $LITERAL$ respectively.
+
+
+   21  ADDRESSING_MODE
+
+   The addressing-mode-attribute is ignored, as it is not meaningful on
+   the Alpha system.
+
+
+   22  Linkage PSECT Declaration
+
+   Linkage psect declarations are allowed in the Alpha BLISS compilers.
+   The declaration syntax is:
+
+       PSECT
+           LINK = psect-name(psect-attribute, ...)
+
+   The following psect-declaration is assumed to appear in a block that
+   surrounds each module:
+
+       PSECT
+           LINK = $LINK$ (READ, NOWRITE, NOEXECUTE, NOSHARE,
+                          NOPIC, CONCATENATE, LOCAL, ALIGN(3))
+
+
+
+   23  Limits
+
+   23.1  Actual Parameter Limit
+
+   The limit on the number of actual parameters has been raised from 64
+   to 256.
+
+
+   23.2  Name Length Limit
+
+   The maximum length of a name has been changed to 64 characters.
+   Please note that this name length might not be supported by existing
+   tools such as linkers.
+
+
+                                     26
+
+                                                                   Limits
+
+
+   23.3  CASE limit
+
+   The implementation limit for the range of a CASE expression has been
+   increased from 512 to 1024.
+
+
+   24  Numeric Literal Overflow
+
+   BLISS gives the informational message "Numeric literal overflow" when
+   it encounters numeric literals that cannot be represented in a
+   fullword.
+
+
+   25  REF Attribute Structure
+
+   The ALIGN and VOLATILE attributes can be placed between REF and the
+   structure name in data declarations.  Placing them there indicates
+   that the pointed-to structure (and not the pointer) has those
+   attributes.
+
+   Examples:
+
+        LOCAL
+            ptra: REF VOLATILE BLOCK,
+            ptrb: REF ALIGN(0) BLOCK;
+
+   Both ptra and ptrb have default alignment and are not volatile.  The
+   BLOCK pointed to by ptra is volatile, and the BLOCK pointed to by ptrb
+   is byte-aligned.  The ALIGN attribute is also allowed on EXTERNAL,
+   BIND, and GLOBAL BIND declarations.
+
+   If these attributes are placed either before REF or after the
+   structure name, the behavior is unchanged from previous BLISS
+   compilers:  ALIGN applies to the pointer only (not the pointed-to
+   structure), and VOLATILE applies to both the pointer and the
+   pointed-to structure.
+
+
+   26  New Switches
+
+   The following on-off switches have been added:
+        [NO]OVERFLOW
+             NOOVERFLOW suppresses overflow checking. 
+             OVERFLOW enables overflow checking.
+
+        [NO]CHECK_ADDRESS_TAKEN
+             Equivalent to /CHECK=[NO]ADDRESS_TAKEN.
+
+        [NO]CHECK_LONGWORD (64-bit compilers only)
+             Equivalent to /CHECK=[NO]LONGWORD.
+
+
+
+                                     27
+
+   New Switches
+
+
+        [NO]CHECK_ALIGNMENT
+             Equivalent to /CHECK=[NO]ALIGNMENT.
+
+        [NO]CHECK_FIELD
+             Equivalent to /CHECK=[NO]FIELD.
+
+        [NO]CHECK_OPTIMIZE
+             Equivalent to /CHECK=[NO]OPTIMIZE.
+
+        [NO]CHECK_REDECLARE 
+             Equivalent to /CHECK=[NO]REDECLARE.
+
+        [NO]CHECK_SHARE
+             Equivalent to /CHECK=[NO]SHARE.
+
+        [NO]CHECK_SHORT_ADDRESS
+             Equivalent to /CHECK=[NO]SHORT_ADDRESS.
+
+        [NO]CHECK_PARAMETERS
+             Equivalent to /CHECK=[NO]PARAMETERS.
+
+   These switches are available both in the module header and in the
+   SWITCHES statement.
+
+
+   27  Attributes May Be Duplicated
+
+   Harmless duplication of attributes does not cause a warning message
+   for the Alpha compilers.  The attributes which can be so duplicated
+   are:  VOLATILE, ALIAS, NOVALUE and WEAK.  The message can be
+   re-enabled by use of /CHECK=REDECLARE.
+
+
+   28  Field Attributes
+
+   Attributes have been added to field declarations.  The supported
+   attributes are VOLATILE and NOCHECK_ALIGNMENT.  All stores and fetches
+   of fields with the VOLATILE attribute are treated as VOLATILE
+   accesses.  If a field has the NOCHECK_ALIGNMENT attribute,
+   /CHECK=ALIGNMENT does not generate alignment diagnostics for stores
+   and fetches that use that field name.
+
+   Example:
+
+   FIELD foo=
+   SET
+      foo1 = [0,0,32,0] : VOLATILE,
+      foo2 = [5,0,16,0] : NOCHECK_ALIGNMENT
+   TES;
+
+
+
+
+                                     28
+
+                                                   New Routine Attributes
+
+
+   29  New Routine Attributes
+
+   The following attributes have been added to routines to indicate the
+   type of the return value:  allocation unit (BYTE, WORD, LONG, QUAD),
+   sign (SIGNED, UNSIGNED), FIELD, [REF] <structure>.
+   /CHECK=SHORT_ADDRESS gives a diagnostic when the return value of a
+   routine declared to return REF <structure> is assigned to a field less
+   than 64 bits.  /CHECK=LONGWORD gives a diagnostic when the return
+   value of a routine declared with an allocation unit is assigned to a
+   field shorter than that unit.
+
+   The VARIABLE attribute has been added to routine declarations.  This
+   attribute tells the compilers not to give a diagnostic when the number
+   of actuals in a routine call does not match the number of formals in
+   the routine declaration.  VARIABLE is a new reserved word.  In order
+   to use it, you must specify /SYNTAX_LEVEL=3.  The default syntax level
+   remains 2.
+
+
+   30  Global Register Re-declaration
+
+   Re-declaration of a GLOBAL REGISTER in a routine's linkage can
+   generate an informational message if it is requested with the
+   qualifier /CHECK=REDECLARE.
+
+       LINKAGE L3 = CALL : GLOBAL( THREE = 3 );
+
+       ROUTINE A : L3 = BEGIN
+           EXTERNAL REGISTER THREE;    ! Normal case, uses the R3 declared
+           :                           ! global in its caller.
+
+       ROUTINE B : L3 = BEGIN
+           GLOBAL REGISTER THREE = 3;  ! Other case, creates a new global.
+           :                           ! Not the R3 from its caller
+
+   Please note that the re-declaration is not a bug, unless you really
+   meant to use EXTERNAL REGISTER.  More detail on the use of global
+   registers is in the Language Reference Manual, in section 13.7.
+
+
+   31  Controlling Pointer Alignment
+
+   Users can control the compiler's assumptions about the alignment of
+   pointers.  When there is no ALIGN attribute on BINDs to non-LTCEs, and
+   there is no ALIGN attribute between REF and the structure name for
+   other declarations, the compiler can generate faster code if it
+   correctly assumes that the pointer is well aligned.
+
+   A switch, BLOCK_ALIGNMENT(option), and a command line qualifier,
+   /ASSUME=BLOCK_ALIGNMENT=option, have been added.
+
+
+
+                                     29
+
+   Controlling Pointer Alignment
+
+
+   If the option is FULLWORD (the default), the compiler assumes fullword
+   alignment of pointers in the following cases:
+
+         o  BINDs to non-LTCEs without the ALIGN attribute but with a
+            structure attribute that is the predeclared BLOCK or
+            BLOCKVECTOR,
+
+         o  variables that are declared REF BLOCK or REF BLOCKVECTOR with
+            no ALIGN attribute.
+
+
+   If the option is NATURAL, the compiler assumes natural alignment for
+   all fields that are on natural boundaries relative to the beginning of
+   the structure.
+
+   In no case do overly optimistic assumptions result in incorrect
+   results.  They may, however, cause alignment faults.
+
+
+   32  BLOCK_BYTE
+
+   The predeclared structure BLOCK_BYTE has been added.  This structure
+   is functionally equivalent to BLOCK[,BYTE].  The definition is
+
+   STRUCTURE
+       BLOCK_BYTE[O,P,S,E; BS] =
+           [BS]
+           (BLOCK_BYTE + O)<P,S,E>;
+
+   BLOCK_BYTE is like BLOCK as regards the BLOCK_ALIGNMENT qualifier.
+
+
+   33  Condition Handling
+
+   33.1  Handlers
+
+   Due to operating system differences, BLISS handlers for Tru64 UNIX
+   have different arguments than they do for other dialects.  The
+   operating systems call handlers with four arguments (ExceptionRecord,
+   EstablisherFrame, ContextRecord, DispatcherContext).  BLISS's jacket
+   will pass to the user's handler the first three, plus the enable
+   vector for ENABLEd (as opposed to ESTABLISHed) handlers.
+
+   Thus the calling sequence for handlers in UNIX BLISS is:
+
+   Handler(ExceptionRecord, EstablisherFrame, ContextRecord [,enable_vector])
+
+   where:
+
+       ExceptionRecord     The address of a primary exception record.
+
+
+
+                                     30
+
+                                                       Condition Handling
+
+
+       EstablisherFrame    Virtual frame pointer of the establisher.
+
+       ContextRecord       Address of an invocation context block containing
+                           the saved original context at the point where the
+                           exception occurred.  During an unwind, this is the
+                           address of the invocation context block for the
+                           establisher.
+
+       enable_vector       The same as in other dialects.
+
+   ExceptionRecord and EstablisherFrame are defined by the operating
+   system (see the calling standard for details).  In order to do an
+   unwind to the establisher's caller, you must pass the second argument
+   (EstablisherFrame) to the RETURN_UNWIND built-in which will not
+   return.  Other types of unwind must be done by directly using library
+   calls.
+
+
+   33.2  RETURN_UNWIND
+
+   The existing Common BLISS definition of SETUNWIND does not map
+   naturally onto Tru64 UNIX because the corresponding operating system
+   functions are immediate (do not return).  SETUNWIND is not available
+   on UNIX.  The replacement builtin, RETURN_UNWIND, takes one required
+   and one optional parameter.
+
+       RETURN_UNWIND (ESTAB_FRAME {, RETURN_VALUE } )
+
+       where
+
+       ESTAB_FRAME is the virtual frame pointer of the establisher.
+           [Note that the virtual frame pointer of the establisher is one
+           of the parameters passed to a handler by the exception
+           dispatcher.]
+
+       RETURN_VALUE is the value to be returned to the caller of the
+           establisher.
+
+       The effect of this call is to immediately terminate execution of
+       the calling handler (without returning) and to unwind to the
+       caller of the establisher.  Any intermediate procedure invocations
+       are terminated after their handlers are invoked to allow
+       appropriate cleanup operations.  If the RETURN_VALUE parameter is
+       specified, then that value becomes the value returned by the
+       establisher.  If RETURN_VALUE is not specified, then the return
+       value is undefined.
+
+
+
+
+
+
+
+                                     31
+
+   Condition Handling
+
+
+   33.3  SIGNALREF and SIGNALREF_STOP
+
+   In addition to the COMMON BLISS functions SIGNAL and SIGNAL_STOP, the
+   Alpha BLISS compilers have the executable functions SIGNALREF and
+   SIGNALREF_STOP.  The first parameter is the address of a 64-bit
+   condition-value.  They are otherwise identical to SIGNAL and
+   SIGNAL_STOP respectively.  These functions allow 64-bit
+   condition-values to be used in 32-bit dialects.  This is particularly
+   important on Tru64 UNIX, where the high-order longword of the
+   condition code is significant.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     32

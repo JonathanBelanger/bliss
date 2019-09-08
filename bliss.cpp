@@ -49,83 +49,12 @@ int main(int argc, char** argv)
 {
     FileManager *fileMgr = FileManager::get();
     InputFile *in = nullptr;
-    dump();
     in = fileMgr->pushFile("/home/belanger/projects/bliss/tests/lexical/lexfuncs1.bli");
 
     if (in != nullptr)
     {
         while(!in->getEOF())
         {
-            InputChar *c = in->getNextChar();
-            if (c->getClass() != InputChar::CCEndOfFile)
-                cout << c->getChar();
-#if 0
-            if (isprint(c->getChar()))
-            {
-                cout << "'" << c->getChar() << "' -- ";
-            }
-            else
-            {
-                cout << to_string(c->getChar()) << " -- ";
-            }
-            switch(c->getClass())
-            {
-                case InputChar::CCPrintLetter:
-                    cout << "Letters\t";
-                    break;
-
-                case InputChar::CCPrintDigit:
-                    cout << "Digits\t";
-                    break;
-
-                case InputChar::CCPrintDelim:
-                    cout << "Delimiters";
-                    break;
-
-                case InputChar::CCPrintSpecial:
-                    cout << "Special\t";
-                    break;
-
-                case InputChar::CCPrintFree:
-                    cout << "Free\t";
-                    break;
-
-                case InputChar::CCNonprintSP:
-                    cout << "Blank\t";
-                    break;
-
-                case InputChar::CCNonprintHT:
-                    cout << "Tab\t";
-                    break;
-
-                case InputChar::CCLinemarkVT:
-                    cout << "Linemark -- VT";
-                    break;
-
-                case InputChar::CCLinemarkFF:
-                    cout << "Linemark -- FF";
-                    break;
-
-                case InputChar::CCLinemarkLF:
-                    cout << "Linemark -- LF";
-                    break;
-
-                case InputChar::CCLinemarkCR:
-                    cout << "Linemark -- CR";
-                    break;
-
-                case InputChar::CCEndOfFile:
-                    cout << "End Of File";
-                    break;
-
-                case InputChar::CCUnknown:
-                default:
-                    cout << "*** Unknown ***";
-                    break;
-            }
-            cout << "\t(" << c->getLine() << ", " << c->getColumn() << ") offset: "  <<
-                    c->getOffset() << ")" << "\n";
-#endif
         }
     }
     fileMgr->popFile();

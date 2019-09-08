@@ -3,20 +3,16 @@
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation,
-    either version 3 of the License,
-    or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
-
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not,
-    see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "Lexer/Lexer.h"
 
@@ -309,7 +305,309 @@ KeywordTable keywords[] =
     KWD_TABLE(ZIP, Lexer::LTKeyword, false)
 };
 
-void dump()
+/* CONSTRUCTOR */
+Lexer::Lexer(KeywordTable *kwt, size_t kwtSize)
+{
+
+    /*
+     * Set the pointer to the keyword table.  This will be used to process the
+     * input files.
+     */
+    table = kwt;
+    tableSize = kwtSize;
+    return;
+}
+
+/**
+ * This function is called to move to the next lexeme in the current
+ * input file.  The previous lexeme information is overwritten and
+ * no longer available.
+ *
+ *  NOTE: Calling this function may get to an end of file prior to
+ *        completely reading in the next lexeme.  The function will
+ *        select a reasonable lexeme type and return with a true.
+ *        The next call will return the false value.
+ *
+ * @return true - if a lexeme was successfully read in
+ *         false - if an end of file was reached (file fully
+ *                 processed).
+ */
+bool
+Lexer::getNext()
+{
+    FileManager *fileMgr = FileManager::get();
+    InputFile *in = fileMgr->getCurrentFile();
+    InputChar *c;
+    InputChar::CharClass cc;
+    bool done = in->getEOF();
+    bool retVal = false;
+    bool started = false;
+
+    /*
+     * We are starting out and need to get to the first non-space character.
+     */
+    while (!done && !started)
+    {
+        c = in->peakNextChar();
+        cc = c->getClass();
+        switch (cc)
+        {
+
+            /*
+             * All the following are non-space characters.
+             */
+            case InputChar::CCPrintLetter:
+            case InputChar::CCPrintDigit:
+            case InputChar::CCPrintDelim:
+            case InputChar::CCPrintSpecial:
+            case InputChar::CCPrintFree:
+                started = true;
+                break;
+
+            /*
+             * An end-of-file at this point means that we are all done.
+             * Process the end-of-file and indicate that we are all done in
+             * here.
+             */
+            case InputChar::CCEndOfFile:
+                c = in->getNextChar();
+                done = true;
+                break;
+
+            /*
+             * Everything else is a space character.
+             */
+            default:
+                c = in->getNextChar();
+                break;
+        }
+    }
+
+    /*
+     * We either got to the first non-space character or end-of-file.  If the
+     * former, then start the processing to get the next lexeme.  If the
+     * latter, then there is nothing else to process.  The value of retVal
+     * already indicates that we are at the end of file (false).
+     */
+    if (!done)
+    {
+
+        /*
+         * Let's take a look at the first character and decide where we go from
+         * here.
+         *
+         * NOTE: At this point, end-of-file is not possible.
+         */
+        c = in->peakNextChar();
+        cc = c->getClass();
+        switch (cc)
+        {
+
+            // This is the start of a keyword
+            case InputChar::CCPrintLetter:
+
+                /*
+                 * The keyword parser expects to find the first character of
+                 * the keyword to be in the valueChar location.  We do this
+                 * because keywords starting with a '%' are processed below
+                 * and require looking at more than just the next character.
+                 */
+                c = in->getNextChar();
+                valueChar = c->getChar();
+                retVal = parseKeyword(in);
+                break;
+
+            // This is the start of a decimal literal
+            case InputChar::CCPrintDigit:
+                retVal = parseDecimalLiteral(in);
+                break;
+
+            /*
+             * This is the start of one of the following:
+             *  - operator
+             *  - punctuation mark
+             */
+            case InputChar::CCPrintDelim:
+                c = in->getNextChar();
+                switch (c->getChar())
+                {
+                    case '.':
+                    case '^':
+                    case '*':
+                    case '/':
+                    case '+':
+                    case '-':
+                    case '=':
+                        valueChar = c->getChar();
+                        type = LTOperator;
+                        break;
+
+                    default:
+                        valueChar = c->getChar();
+                        type = LTPunctuation;
+                        break;
+                }
+                retVal = true;
+                break;
+
+            /*
+             * This is the start of one of the following:
+             *  - quoted string
+             *  - embedded comment
+             *  - end of macro
+             *  - start of keyword
+             *  - trailing comment
+             */
+            case InputChar::CCPrintSpecial:
+                switch (c->getChar())
+                {
+
+                    // Quoted string.
+                    case '\'':
+                        retVal = parseQuotedString(in);
+                        break;
+
+                    /*
+                     * One of:
+                     *  - the start of embedded comment '%('
+                     *  - the end of a macro
+                     *  - the start of a keyword
+                     */
+                    case '%':
+
+                        /*
+                         * We have to parse a bit further and look at the
+                         * character after the percent, in order to know
+                         * with what we are dealing.  Save the '%' in the
+                         * valueChar location, the called parsing code or
+                         * caller will expect to find it there.
+                         */
+                        c = in->getNextChar();
+                        valueChar = c->getChar();
+                        c = in->peakNextChar();
+                        cc = c->getClass();
+
+                        /*
+                         * If the next character after the '%' is a letter,
+                         * or dollar-sign '$', or underscore '_', then we
+                         * have a keyword.
+                         */
+                        if ((cc == InputChar::CCPrintLetter) ||
+                            ((cc == InputChar::CCPrintSpecial) &&
+                             ((c->getChar() == '$') ||
+                              (c->getChar() == '_'))))
+                        {
+                            retVal = parseKeyword(in);
+                        }
+
+                        /*
+                         * If the next character after the '%' is an open
+                         * parenthesis, then we have the start of an
+                         * embedded comment.
+                         */
+                        else if ((cc == InputChar::CCPrintDelim) &&
+                                 (c->getChar() == '('))
+                        {
+                            retVal = parseEmbeddedComment(in);
+                        }
+
+                        /*
+                         * If the next character after the '%' is anything
+                         * else, including end-of-file, then return the
+                         * implementation specific indication that the
+                         * lexeme is a percent sign.  The code processing
+                         * the lexemes will know what to do with this.
+                         */
+                        else
+                        {
+                            type = LTPercentSign;
+                            retVal = true;
+                        }
+                        break;
+
+                    // Keyword
+                    case '$':
+                    case '_':
+
+                        /*
+                         * The keyword parser expects to find the first character of
+                         * the keyword to be in the valueChar location.  We do this
+                         * because keywords starting with a '%' are processed above
+                         * and require looking at more than just the next character.
+                         */
+                        c = in->getNextChar();
+                        valueChar = c->getChar();
+                        retVal = parseKeyword(in);
+                        break;
+
+                    // Trailing comment
+                    case '!':
+                        retVal = parseTrailingComment(in);
+                        break;
+
+                    // Syntax error
+                    default:
+
+                        /*
+                         * Swallow the next character in hopes that we can
+                         * recover and continue parsing.
+                         */
+                        c = in->getNextChar();
+                        cerr << "Syntax error (2) at line " << c->getLine() <<
+                                ", column " << c->getColumn() <<
+                                " in " << in->getFilename() <<
+                                ", unrecognized character, ";
+                        if (isprint(c->getChar()))
+                        {
+                            cerr << "'" << c->getChar() << "'";
+                        }
+                        else
+                        {
+                            cerr << to_string(c->getChar());
+                        }
+                        cerr << "\n";
+                        retVal = true;
+                        break;
+                }
+                break;
+
+            // Syntax error
+            default:
+
+                /*
+                 * Swallow the next character in hopes that we can
+                 * recover and continue parsing.
+                 */
+                c = in->getNextChar();
+                cerr << "Syntax error (1) at line " << c->getLine() <<
+                        ", column " << c->getColumn() <<
+                        " in " << in->getFilename() <<
+                        ", unrecognized character, ";
+                if (isprint(c->getChar()))
+                {
+                    cerr << "'" << c->getChar() << "'";
+                }
+                else
+                {
+                    cerr << to_string(c->getChar());
+                }
+                cerr << "\n";
+                retVal = true;
+                break;
+        }
+    }
+
+    /*
+     * retVal will be set to false if we reached end-of-file.
+     */
+    return retVal;
+}
+
+/**
+ * This function is called to dump the contents of the KeywordTable
+ * to standard out.
+ */
+void Lexer::dumpTable()
 {
     for (int ii = 0; ii < KWD_MAX; ii++)
     {
@@ -325,4 +623,703 @@ void dump()
                 ")\n";
     }
     return;
+}
+
+/**
+ * This function is called when a keyword Lexeme is being parsed.
+ *
+ * @param in - InputFile handle
+ * @return true - if a lexeme was successfully read in
+ *         false - if an end of file was reached (file fully processed).
+ */
+bool
+Lexer::parseKeyword(InputFile *in)
+{
+    bool retVal = false;
+    bool done = false;
+    bool lookup = false;
+    InputChar *c;
+    InputChar::CharClass cc;
+
+    /*
+     * There are three kinds of keyword lexemes.  They are:
+     *
+     *  LTKeyword
+     *  LTPredeclared
+     *  LTExplicitDeclared
+     *
+     * At this point we know we have one of them, but are not sure which.  We
+     * extract the lexeme and then look it up in the keyword table to determine
+     * which.
+     *
+     * Additionally, there are reserved and unreserved keywords.  Reserved
+     * keywords cannot be used as Explicit Declared.  Unreserved keywords can.
+     *
+     * Pre-declared keywords are ones created by the compiler.  These can also
+     * be replaced by Explicit Declared.
+     *
+     * TODO: We need to keep track of all Explicitly Declared keywords so that
+     *       we can determined which is which when processing keywords.
+     *
+     * NOTE: When an Unreserved or Predeclared keyword are encountered, it
+     *       could be because they are going to be overridden.  Since we are
+     *       never sure until it is overridden, this code will return what it
+     *       does know for these.  Once overridden, then we can return that
+     *       knowledge.
+     *
+     * At this point, we have no idea what kind of keyword we have.
+     */
+    valueStr = valueChar;
+    while (!done)
+    {
+        c = in->peakNextChar();
+        cc = c->getClass();
+        switch (cc)
+        {
+            case InputChar::CCPrintLetter:
+            case InputChar::CCPrintDigit:
+                c = in->getNextChar();
+                valueStr += c->getChar();
+                break;
+
+            case InputChar::CCPrintDelim:
+            case InputChar::CCNonprintSP:
+            case InputChar::CCNonprintHT:
+            case InputChar::CCLinemarkVT:
+            case InputChar::CCLinemarkFF:
+            case InputChar::CCLinemarkLF:
+            case InputChar::CCLinemarkCR:
+            case InputChar::CCEndOfFile:
+                retVal = done = lookup = true;
+                break;
+
+            case InputChar::CCPrintSpecial:
+                if ((c->getChar() == '$') ||
+                    (c->getChar() == '_'))
+                {
+                    c = in->getNextChar();
+                    valueStr += c->getChar();
+                }
+                else if (c->getChar() == '!')
+                {
+                    retVal = done = lookup = true;
+                }
+                else if (c->getChar() == '%')
+                {
+                    c = in->getNextChar();
+                    c = in->getNextChar();
+                    cc = c->getClass();
+                    if ((cc == InputChar::CCPrintDelim) &&
+                        (c->getChar() == '('))
+                    {
+                        in->pushBackChar(); // push back the "%" character.
+                        retVal = done = lookup = true;
+                    }
+                }
+                else
+                {
+                    cerr << "Syntax error (11) at line " << c->getLine() <<
+                            ", column " << c->getColumn() <<
+                            " in " << in->getFilename() <<
+                            ", expected character, ";
+                    if (isprint(c->getChar()))
+                    {
+                        cerr << "'" << c->getChar() << "'";
+                    }
+                    else
+                    {
+                        cerr << to_string(c->getChar());
+                    }
+                    cerr << "\n";
+                    retVal = done = true;
+                }
+                break;
+
+            case InputChar::CCUnknown:
+                c = in->getNextChar();
+                /* FALLTHROUGH */
+
+            case InputChar::CCPrintFree:
+                cerr << "Syntax error (12) at line " << c->getLine() <<
+                        ", column " << c->getColumn() <<
+                        " in " << in->getFilename() <<
+                        ", expected character, ";
+                if (isprint(c->getChar()))
+                {
+                    cerr << "'" << c->getChar() << "'";
+                }
+                else
+                {
+                    cerr << to_string(c->getChar());
+                }
+                cerr << "\n";
+                retVal = done = true;
+                break;
+        }
+    }
+
+    /*
+     * If we have something to look up in the keyword table, then do so now.
+     */
+    if (lookup)
+    {
+        size_t top = 0;
+        size_t bottom = tableSize;
+        size_t lookingAt = ((bottom - top) / 2) + top;
+        bool found = false;
+
+        done = false;
+        while(!done)
+        {
+            int cmp = valueStr.compare(table[lookingAt].keywordStr);
+
+            cout << "Comparing " << valueStr << " to " << table[lookingAt].keywordStr;
+            if (cmp < 0)
+            {
+                cout << " less than";
+                bottom = lookingAt;
+            }
+            else if (cmp > 0)
+            {
+                cout << " greater than";
+                top = lookingAt + 1;
+            }
+            else
+            {
+                cout << " equal";
+                done = found = true;
+            }
+            lookingAt = ((bottom - top) / 2) + top;
+            if (top >= bottom)
+            {
+                done = true;
+            }
+        }
+
+        if (found == false)
+        {
+            type = LTExplicitDeclared;
+            keyword = KWD::__MAX_ITEMS;
+            reserved = false;
+        }
+        else
+        {
+            type = table[lookingAt].keywordVal;
+            keyword = table[lookingAt].keyword;
+            reserved = table[lookingAt].reserved_builtin;
+        }
+    }
+    return retVal;
+}
+
+/**
+ * This function is called when a Decimal Literal Lexeme is being parsed.
+ *
+ * @param in - InputFile handle
+ * @return true - if a lexeme was successfully read in
+ *         false - if an end of file was reached (file fully processed).
+ */
+bool
+Lexer::parseDecimalLiteral(InputFile *in)
+{
+    bool retVal = false;
+    bool done = false;
+    InputChar *c;
+    InputChar::CharClass cc;
+    uint64_t tmpValue;
+
+    /*
+     * Decimal literals have the form of:
+     *  0
+     *  23000
+     *
+     * One or more spaces must appear between two lexemes if each lexeme is any
+     * one of the following:
+     *  - A name
+     *  - A keyword
+     *  - A decimal-literal
+     * This rule requires the use of spaces wherever two lexemes would
+     * otherwise merge to form a single, longer lexeme.
+     *
+     * Either way, we know we are returning a decimal literal.
+     */
+    type = LTDecimalLiteral;
+    c = in->getNextChar();
+    tmpValue = value = '0' - c->getChar();
+    while (!done)
+    {
+        c = in->peakNextChar();
+        cc = c->getClass();
+        switch (cc)
+        {
+            case InputChar::CCPrintDigit:
+                c = in->getNextChar();
+                tmpValue = (value * 10) + '0' - c->getChar();
+                if (tmpValue < value)
+                {
+                    cerr << "Syntax error (7) at line " << c->getLine() <<
+                            ", column " << c->getColumn() <<
+                            " in " << in->getFilename() <<
+                            ", decimal literal overflow.\n";
+                    retVal = done = true;
+                }
+                value = tmpValue;
+                break;
+
+            case InputChar::CCLinemarkCR:
+            case InputChar::CCLinemarkFF:
+            case InputChar::CCLinemarkLF:
+            case InputChar::CCLinemarkVT:
+            case InputChar::CCNonprintHT:
+            case InputChar::CCNonprintSP:
+            case InputChar::CCEndOfFile:
+                retVal = done = true;
+                break;
+
+            case InputChar::CCPrintLetter:
+            case InputChar::CCPrintFree:
+            case InputChar::CCPrintDelim:
+
+                /*
+                 * Swallow the next character in hopes that we can recover and
+                 * continue parsing.  We are not going to consider this done.
+                 * Just throw this character away and move on to the next.
+                 */
+                c = in->getNextChar();
+                cerr << "Syntax error (8) at line " << c->getLine() <<
+                        ", column " << c->getColumn() <<
+                        " in " << in->getFilename() <<
+                        ", unrecognized character, ";
+                if (isprint(c->getChar()))
+                {
+                    cerr << "'" << c->getChar() << "'";
+                }
+                else
+                {
+                    cerr << to_string(c->getChar());
+                }
+                cerr << "\n";
+                retVal = done = true;
+                break;
+
+            case InputChar::CCPrintSpecial:
+                if (c->getChar() == '%')
+                {
+                    c = in->getNextChar();
+                    cc = c->getClass();
+                    if ((cc == InputChar::CCPrintDelim) &&
+                        (c->getChar() == '('))
+                    {
+
+                        /*
+                         * The character just processed was a `%` and the next
+                         * character is a '(', for an embedded comment, push
+                         * the '%' back and indicate that we are done.
+                         */
+                        in->pushBackChar();
+                    }
+                }
+                else if (c->getChar() != '!')
+                {
+
+                    /*
+                     * Swallow the next character in hopes that we can recover and
+                     * continue parsing.  We are not going to consider this done.
+                     * Just throw this character away and move on to the next.
+                     */
+                    c = in->getNextChar();
+                    cerr << "Syntax error (9) at line " << c->getLine() <<
+                            ", column " << c->getColumn() <<
+                            " in " << in->getFilename() <<
+                            ", unrecognized character, ";
+                    if (isprint(c->getChar()))
+                    {
+                        cerr << "'" << c->getChar() << "'";
+                    }
+                    else
+                    {
+                        cerr << to_string(c->getChar());
+                    }
+                    cerr << "\n";
+                }
+                retVal = done = true;
+                break;
+
+            case InputChar::CCUnknown:
+
+                /*
+                 * Swallow the next character in hopes that we can recover and
+                 * continue parsing.  Just throw this character away and
+                 * consider ourselves done.
+                 */
+                c = in->getNextChar();
+                cerr << "Syntax error (10) at line " << c->getLine() <<
+                        ", column " << c->getColumn() <<
+                        " in " << in->getFilename() <<
+                        ", unrecognized character, ";
+                if (isprint(c->getChar()))
+                {
+                    cerr << "'" << c->getChar() << "'";
+                }
+                else
+                {
+                    cerr << to_string(c->getChar());
+                }
+                cerr << "\n";
+                retVal = done = true;
+                break;
+        }
+    }
+    return retVal;
+}
+
+/**
+ * This function is called when a Quoted String Lexeme is being parsed.
+ *
+ * @param in - InputFile handle
+ * @return true - if a lexeme was successfully read in
+ *         false - if an end of file was reached (file fully processed).
+ */
+bool
+Lexer::parseQuotedString(InputFile *in)
+{
+    bool retVal = false;
+    bool done = false;
+    bool haveQuote = true;
+    InputChar *c = in->getNextChar();  // swallow first single quote
+    InputChar::CharClass cc;
+
+    /*
+     * The quoted string starts and ends with a single quote character ('), and
+     * can contain any character class, except unknown and end-of-file.  While
+     * processing, if a single quote is followed by a single quote, then the
+     * first quote is dropped, the second quote retained, and the quoted string
+     * is not yet ended.  This allows for sequences and return values as
+     * follows:
+     *
+     *  "'He said, ''Go!'''" which equals "He said, 'Go!'"
+     *
+     *  (double quotes used for clarity)
+     *
+     * Either way, we know we are returning a quote string.
+     */
+    type = LTQuotedString;
+
+    /*
+     * Loop until we have everything we came looking to get.
+     */
+    while (!done)
+    {
+        c = in->peakNextChar();
+        cc = c->getClass();
+        if (cc == InputChar::CCUnknown)
+        {
+
+            /*
+             * Swallow the next character in hopes that we can recover and
+             * continue parsing.  We are not going to consider this done.
+             * Just throw this character away and move on to the next.
+             */
+            c = in->getNextChar();
+            cerr << "Syntax error (3) at line " << c->getLine() <<
+                    ", column " << c->getColumn() <<
+                    " in " << in->getFilename() <<
+                    ", unrecognized character, ";
+            if (isprint(c->getChar()))
+            {
+                cerr << "'" << c->getChar() << "'";
+            }
+            else
+            {
+                cerr << to_string(c->getChar());
+            }
+            cerr << "\n";
+        }
+        else if (cc == InputChar::CCEndOfFile)
+        {
+
+            /*
+             * Apparently, the next character is an end-of-file, and we have
+             * not completed reading in the quoted string.  Return what we
+             * have, as if it were completed.  NOTE: We don't read in the
+             * end-of-file here, we'll leave that for later.
+             */
+            retVal = done = true;
+        }
+        else
+        {
+
+            /*
+             * OK, we have something we can use.  If this is a single quote,
+             * then we are either done here and can swallow it, or we have an
+             * escaped single quote.
+             */
+            if ((cc == InputChar::CCPrintSpecial) && (c->getChar() == '\''))
+            {
+
+                /*
+                 * Get the character for processing.
+                 */
+                c = in->getNextChar();
+
+                /*
+                 * If the previous character we processed was a single quote,
+                 * then this is an escaped one.  Add it to the quoted string
+                 * and clear the haveQuote flag.
+                 */
+                if (haveQuote)
+                {
+                    valueStr += c->getChar();
+                    haveQuote = false;
+                }
+                else
+                {
+                    retVal = done = true;
+                }
+            }
+            else
+            {
+
+                /*
+                 * Everything else is simply added to the end of the quoted
+                 * string.
+                 */
+                c = in->getNextChar();
+                valueStr += c->getChar();
+                haveQuote = false;
+            }
+        }
+    }
+    return retVal;
+}
+
+/**
+ * This function is called when a Trailing Comment Lexeme is being parsed.
+ *
+ * @param in - InputFile handle
+ * @return true - if a lexeme was successfully read in
+ *         false - if an end of file was reached (file fully processed).
+ */
+bool
+Lexer::parseTrailingComment(InputFile *in)
+{
+    bool retVal = false;
+    bool done = false;
+    InputChar *c;
+    InputChar::CharClass cc;
+
+    /*
+     * A trailing comment is an exclamation character followed by the remainder
+     * of the line on which the comment begins.  The end-of-line is determined
+     * by a linemark.  A linemark is a line-feed (LF), vertical-tab (VT), or
+     * form-feed(FF) and may be preceded or succeeded by a carriage-return
+     * (CR).  The linemark combination will be swallowed.  All other characters
+     * are added to the comment sting, including the exclamation point (!)
+     *
+     * Either way, we know we are returning a trailing comment.
+     */
+    type = LTTrailingComment;
+
+    while (!done)
+    {
+        c = in->getNextChar();
+        cc = c->getClass();
+
+        /*
+         * Is it a carriage-return linemark?
+         */
+        if (cc == InputChar::CCLinemarkCR)
+        {
+            c = in->peakNextChar(); // look at the next character
+            cc = c->getClass();
+
+            /*
+             * If it is another of the linemarks, then swallow it as well.
+             */
+            if ((cc == InputChar::CCLinemarkFF) ||
+                (cc == InputChar::CCLinemarkLF) ||
+                (cc == InputChar::CCLinemarkVT))
+            {
+                c = in->getNextChar();
+            }
+            retVal = done = true;
+        }
+
+        /*
+         * Is it a form-feed, line-feed, or vertical-tab?
+         */
+        else if ((cc == InputChar::CCLinemarkFF) ||
+                 (cc == InputChar::CCLinemarkLF) ||
+                 (cc == InputChar::CCLinemarkVT))
+        {
+            c = in->peakNextChar(); // look at the next character
+            cc = c->getClass();
+
+            /*
+             * If it is a carriage-return linemark, then swallow it as well.
+             */
+            if (cc == InputChar::CCLinemarkCR)
+            {
+                c = in->getNextChar();
+            }
+            retVal = done = true;
+        }
+        else if (cc == InputChar::CCUnknown)
+        {
+
+            /*
+             * Swallow the next character in hopes that we can recover and
+             * continue parsing.  We are not going to consider this done.
+             * Just throw this character away and move on to the next.
+             */
+            c = in->getNextChar();
+            cerr << "Syntax error (4) at line " << c->getLine() <<
+                    ", column " << c->getColumn() <<
+                    " in " << in->getFilename() <<
+                    ", unrecognized character, ";
+            if (isprint(c->getChar()))
+            {
+                cerr << "'" << c->getChar() << "'";
+            }
+            else
+            {
+                cerr << to_string(c->getChar());
+            }
+            cerr << "\n";
+        }
+        else
+        {
+
+            /*
+             * OK, add this character to the lexeme value string.
+             */
+            valueStr += c->getChar();
+
+            /*
+             * Before we move on, check that the next character is not an
+             * end-of-file.  If it is, then we are done.
+             */
+            c = in->peakNextChar();
+            cc = c->getClass();
+            if (cc == InputChar::CCEndOfFile)
+            {
+                retVal = done = true;
+            }
+        }
+    }
+    return retVal;
+}
+
+/**
+ * This function is called when an Embedded Comment Lexeme is being parsed.
+ *
+ * @param in - InputFile handle
+ * @return true - if a lexeme was successfully read in
+ *         false - if an end of file was reached (file fully processed).
+ */
+bool
+Lexer::parseEmbeddedComment(InputFile *in)
+{
+    bool retVal = false;
+    bool done = false;
+    InputChar *c;
+    InputChar::CharClass cc;
+
+    /*
+     * An embedded comment, beginning with the character sequence "%(", is
+     * terminated by the very next occurrence of the sequence ")%". This means
+     * that the embedded comment cannot be nested. Also, the sequence ")%" is a
+     * valid though ill-advised form of ending of a macro definition (see
+     * Bliss LRM Section 16.2).  Thus an extensive embedded comment could be
+     * inadvertently terminated by the occurrence of ")%" in a macro
+     * declaration where the ‘‘%’’ character was intended to terminate a macro
+     * definition. For these reasons the embedded comment should be used with
+     * care. Also, avoid using it to comment out a body of code.
+     *
+     * Unlike the trailing comment, the first character of the beginning
+     * sequence, "%", is in the ValueChar field.  Get it out of there and add
+     * it to the valueStr, then proceed to read in characters until the
+     * trailing sequence ")%".
+     *
+     * Either way, we know we are returning an embedded comment.
+     */
+    type = LTEmbeddedComment;
+    valueStr += valueChar;
+
+    /*
+     * Also, go get the "(" of the beginning sequence.
+     */
+    c = in->getNextChar();
+    valueStr += c->getChar();
+
+    /*
+     * Loop until we see the trailing ")%".
+     */
+    while (!done)
+    {
+        c = in->peakNextChar();
+        cc = c->getClass();
+
+        /*
+         * It is a syntax error if the file ends before the trailing sequence
+         * has been processed.  We are not going to process the end-of-file,
+         * yet.
+         */
+        if (cc == InputChar::CCEndOfFile)
+        {
+            cerr << "Syntax error (5) at line " << c->getLine() <<
+                    ", column " << c->getColumn() <<
+                    " in " << in->getFilename() <<
+                    ", end-of-file detected before embedded comment closed.\n";
+            retVal = done = true;
+        }
+        else if ((cc == InputChar::CCPrintDelim) &&
+                 (c->getChar() == ')'))
+        {
+            c = in->getNextChar();
+            valueStr += c->getChar();
+            c = in->peakNextChar();
+            cc = c->getClass();
+            if ((cc == InputChar::CCPrintSpecial) &&
+                (c->getChar() == '%'))
+            {
+                c = in->getNextChar();
+                valueStr += c->getChar();
+                retVal = done = true;
+            }
+        }
+        else if (cc == InputChar::CCUnknown)
+        {
+
+            /*
+             * Swallow the next character in hopes that we can recover and
+             * continue parsing.  We are not going to consider this done.
+             * Just throw this character away and move on to the next.
+             */
+            c = in->getNextChar();
+            cerr << "Syntax error (6) at line " << c->getLine() <<
+                    ", column " << c->getColumn() <<
+                    " in " << in->getFilename() <<
+                    ", unrecognized character, ";
+            if (isprint(c->getChar()))
+            {
+                cerr << "'" << c->getChar() << "'";
+            }
+            else
+            {
+                cerr << to_string(c->getChar());
+            }
+            cerr << "\n";
+        }
+        else
+        {
+
+            /*
+             * We don't really care what it is, just get and save it.
+             */
+            c = in->getNextChar();
+            valueStr += c->getChar();
+        }
+    }
+    return retVal;
 }

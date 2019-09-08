@@ -53,6 +53,9 @@
           <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
           <executablePath></executablePath>
           <ccTool>
+            <incDir>
+              <pElem>/home/belanger/projects/bliss/include/bliss</pElem>
+            </incDir>
             <preprocessorList>
               <Elem>_GNU_SOURCE</Elem>
               <Elem>__STDC_CONSTANT_MACROS</Elem>

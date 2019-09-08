@@ -29,7 +29,7 @@ using namespace bliss;
 InputFile *FileManager::pushFile(std::string fileName)
 {
     InputFile *retVal = new InputFile(fileName);
-    
+
     if(retVal->getOpened())
     {
         files.push_back(retVal);
@@ -52,4 +52,16 @@ void FileManager::popFile()
     InputFile *file = files.back();
     files.pop_back();
     delete file;
+}
+
+/**
+ * Get the current file being processed off the top of the list.
+ *
+ * @return
+ */
+InputFile *FileManager::getCurrentFile()
+{
+    InputFile *file = files.back();
+
+    return file;
 }

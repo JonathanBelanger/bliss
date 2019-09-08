@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * File:   InputFile.h
  * Author: Jonathan D. Belanger
  *
@@ -50,12 +50,12 @@ namespace bliss
             ~InputFile();
 
             /* GETTERS */
-            
+
             /**
              * Get the next character from the input file.  This is actually the previous
              * character, as we always read one character ahead from the file.
              *
-             *  NOTE: This call is destructive, in that a read in character cannot be 
+             *  NOTE: This call is destructive, in that a read in character cannot be
              *  unread.
              *
              * @return A pointer to an InputChar class.
@@ -74,6 +74,18 @@ namespace bliss
             InputChar *peakNextChar();
 
             /**
+             * Push back the character just read from the input file that was returned
+             * on the call to getNetChar().
+             *
+             *  NOTE: This call is destructive, in that the read in characters vector
+             *  is updated to point to the previously read character.  The character is
+             *  already in the stack, we are just resetting the index.
+             *
+             * @return A pointer to an InputChar class
+             */
+            void pushBackChar();
+
+            /**
              * The function is called to return an indicator that the input file was
              * successfully opened.
              *
@@ -86,10 +98,17 @@ namespace bliss
              * This function is called to return an indicator that the end of file has
              * been read in and returned on a call to getNextChar().
              *
-             * @return A boolean value indicating that the EOF has been reached and    
+             * @return A boolean value indicating that the EOF has been reached and
              *         processed (true) or not (false).
              */
-            bool getEOF() {return atEOF; }
+            bool getEOF() { return atEOF; }
+
+            /**
+             * This function is called to return the filename string for the file.
+             *
+             * @return A string value for the file name.
+             */
+            string getFilename() { return inputFilename; }
 
         private:
             /* SETTERS */
@@ -104,11 +123,13 @@ namespace bliss
             void initChars(int where);
 
             /* CLASS DATA */
-            ifstream *inputStream;                              // Input file
+            string inputFilename;                              // Input file name
+            ifstream *inputStream;                              // Input file stream
             std::array<InputChar *, INPUT_CHAR_DEPTH> charVec;  // Character info vector
             bool atEOF;                                         // EOF processed
             bool opened;                                        // File opened
             bool nextLine;                                      // Increment line counter on next read
+            bool pushCalled;                                    // A call to pushBackChar was made.
             int index;                                          // Index for next character
             uint32_t line;                                      // Current line in the file
             uint32_t column;                                    // Current column in the file

@@ -25,6 +25,7 @@
 #define LLVM_BLISS_LEXEMES_H
 
 #include "Basic/CommonInclude.h"
+#include "Basic/FileManager.h"
 #include "Lexer/Keyword.h"
 
 using namespace std;
@@ -43,11 +44,15 @@ namespace bliss
             LTDecimalLiteral,
             LTQuotedString,
             LTOperator,
-            LTPunctuation
+            LTPunctuation,
+            LTLinemark,
+            LTTrailingComment,
+            LTEmbeddedComment,
+            LTPercentSign   // This is not in the LRM, but used to terminate macros
         };
 
         /* CONSTRUCTORS */
-        Lexer(struct _keywordTable *tbl);
+        Lexer(struct _keywordTable *tbl, size_t tblSize);
         Lexer(Lexer const&) = delete;               // Prevent copy constructor
         Lexer& operator=(Lexer const&) = delete;   // Prevent assignment
 
@@ -62,7 +67,8 @@ namespace bliss
          *
          * @return One of the LexemeType enumerated values.
          */
-        LexemeType getType() { return type; }
+        LexemeType
+        getType() { return type; }
 
         /**
          * This function is called to return the KWD::Keyword value for the
@@ -71,7 +77,18 @@ namespace bliss
          *
          * @return One of the KWD::Keyword enumerate values.
          */
-        KWD::Keyword getKeyword() { return keyword; }
+        KWD::Keyword
+        getKeyword() { return keyword; }
+
+        /**
+         * This function is called to return the boolean value for the
+         * current keyword being reserved or not.
+         *
+         * @return true to indicate a reserved keyword
+         *         false to indicate not a reserved keyword
+         */
+        bool
+        getReserved() { return reserved; }
 
         /**
          * This function is called to get the string associated with the
@@ -80,7 +97,8 @@ namespace bliss
          *
          * @return A string value for the quoted string.
          */
-        string getString() { return valueStr; }
+        string
+        getString() { return valueStr; }
 
         /**
          * This function is called to get the value associated with the current
@@ -88,7 +106,8 @@ namespace bliss
          *
          * @return A 64-bit decimal value.
          */
-        uint64_t getValue() { return value; }
+        uint64_t
+        getValue() { return value; }
 
         /**
          * This function is called to get the character associated with the
@@ -97,7 +116,8 @@ namespace bliss
          *
          * @return An ASCII coded character.
          */
-        char getChar() { return valueChar; }
+        char
+        getChar() { return valueChar; }
 
         /* SETTERS */
 
@@ -115,15 +135,87 @@ namespace bliss
          *         false - if an end of file was reached (file fully
          *                 processed).
          */
-        bool getNextLexeme(){ return false; }
+        bool
+        getNext();
+
+        /* MISCELLANEOUS */
+
+        /**
+         * This function is called to dump the contents of the KeywordTable
+         * to standard out.
+         */
+        void
+        dumpTable();
 
         private:
+
+        /**
+         * This function is called when a keyword Lexeme is being parsed.
+         *
+         * @param in - InputFile handle
+         * @return true - if a lexeme was successfully read in
+         *         false - if an end of file was reached (file fully
+         *                 processed).
+         */
+        bool
+        parseKeyword(InputFile *in);
+
+        /**
+         * This function is called when a Decimal Literal Lexeme is being
+         * parsed.
+         *
+         * @param in - InputFile handle
+         * @return true - if a lexeme was successfully read in
+         *         false - if an end of file was reached (file fully
+         *                 processed).
+         */
+        bool
+        parseDecimalLiteral(InputFile *in);
+
+        /**
+         * This function is called when a Quoted String Lexeme is being parsed.
+         *
+         * @param in - InputFile handle
+         * @return true - if a lexeme was successfully read in
+         *         false - if an end of file was reached (file fully
+         *                 processed).
+         */
+        bool
+        parseQuotedString(InputFile *in);
+
+        /**
+         * This function is called when a Trailing Comment Lexeme is being
+         * parsed.
+         *
+         * @param in - InputFile handle
+         * @return true - if a lexeme was successfully read in
+         *         false - if an end of file was reached (file fully
+         *                 processed).
+         */
+        bool
+        parseTrailingComment(InputFile *in);
+
+        /**
+         * This function is called when an Embedded Comment Lexeme is being
+         * parsed.
+         *
+         * @param in - InputFile handle
+         * @return true - if a lexeme was successfully read in
+         *         false - if an end of file was reached (file fully
+         *                 processed).
+         */
+        bool
+        parseEmbeddedComment(InputFile *in);
+
+        /* DATA */
         LexemeType type;
         KWD::Keyword keyword;
         string valueStr;
         uint64_t value;
         char valueChar;
+        bool reserved;
         struct _keywordTable *table;
+        size_t tableSize;
     };
     typedef struct _keywordTable
     {

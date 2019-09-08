@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * File:   FileManager.h
  * Author: Jonathan D. Belanger
  *
@@ -74,6 +74,13 @@ namespace bliss
             void popFile();
 
             /* GETTERS */
+
+            /**
+             * Get the current file being processed off the top of the list.
+             *
+             * @return
+             */
+            InputFile *getCurrentFile();
 
         private:
             /* CONSTRUCTORS */
