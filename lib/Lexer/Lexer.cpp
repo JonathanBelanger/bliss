@@ -771,6 +771,7 @@ Lexer::parseKeyword(InputFile *in)
         done = false;
         while(!done)
         {
+            // TODO: We need to upcase the valueStr and then perform the compare.
             int cmp = valueStr.compare(table[lookingAt].keywordStr);
 
             cout << "Comparing " << valueStr << " to " << table[lookingAt].keywordStr;
