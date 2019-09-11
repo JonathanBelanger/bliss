@@ -26,11 +26,10 @@ top ones are:
 
 There are a few BLISS compilers out there:
 
- #. The original, which only runs on OpenVMS (VAX, Alpha, and IA64),
-[OpenVMS Freeware CD V8.0](https://www.digiater.nl/openvms/freeware/v80/bliss/)
- #. A [FreeVMS Portable BLISS for GCC](ftp://freevms.nvg.org/pub/vms/freevms/bliss)
- #. One implemented by VMS Sofware - [VSI June 2019 OpenVMS Roadmap](http://vmssoftware.com/pdfs/VSI_Roadmap_20190722.pdf)).
- #. One written by Matt Madison [The BLISS-M Compiler Project](http://madisongh.github.io/blissc)
+1. The original, which only runs on OpenVMS (VAX, Alpha, and IA64), [OpenVMS Freeware CD V8.0](https://www.digiater.nl/openvms/freeware/v80/bliss/)
+2. A [FreeVMS Portable BLISS for GCC](ftp://freevms.nvg.org/pub/vms/freevms/bliss)
+3. One implemented by VMS Sofware - [VSI June 2019 OpenVMS Roadmap](http://vmssoftware.com/pdfs/VSI_Roadmap_20190722.pdf)).
+4. One written by Matt Madison [The BLISS-M Compiler Project](http://madisongh.github.io/blissc)
 
 Current Status
 --------------
