@@ -1,19 +1,44 @@
 README for the BLISS-LLVM Compiler
-===============================
+==================================
 
 This is the source package for the BLISS compiler, a portable
 cross-compiler for the BLISS programming language.
 Visit the [project website](http://github.com/JonathanBelanger/blisscpp)
 for more information about BLISS.
 
+Why a BLISS compiler
+--------------------
+
+There are a number of reasons why I wanted to write a BLISS compiler.  The
+top ones are:
+
+ * When I worked at DEC on the IBM Interconnect product set, the OpenVMS versions
+ of these products, all 14 of them, were written in BLISS.
+ * I also wrote and SDL compiler, OpenSDL, that will eventually generate BLISS
+  REQUIRE output files, and I wanted a way to be able to test them.
+ * I love the BLISS way of defining MACROs.  The fact that a MACRO can refer to
+ itself, as well as other MACROs and vice versa, is incredibly powerful.
+ * I have never written a compiler before and was recently introduced to LLVM,
+ so it seems like a good place to start.
+ 
+ Available BLISS compilers
+ -------------------------
+
+There are a few BLISS compilers out there:
+
+#. The original, which only runs on OpenVMS (VAX, Alpha, and IA64),
+[OpenVMS Freeware CD V8.0](https://www.digiater.nl/openvms/freeware/v80/bliss/)
+#. A [FreeVMS Portable BLISS for GCC](ftp://freevms.nvg.org/pub/vms/freevms/bliss)
+#. One implemented by VMS Sofware - [VSI June 2019 OpenVMS Roadmap](http://vmssoftware.com/pdfs/VSI_Roadmap_20190722.pdf)).
+#. One written by Matt Madison [The BLISS-M Compiler Project](http://madisongh.github.io/blissc)
+
 Current Status
 --------------
 
-Work in progress.  This is a re-implementation of the BLISS-M compiler
-project [BLISS-M Project Website](http://madisongh.github.io/blissc) for
-more information.  BLISS-M was written in C and to LLVM 3.9-5.0.  This
-re-implementation will be written in C++ and to LLVM 8.0-9.0 (and possibly
-10.0).
+Work in progress.  This is, in effect, a re-implementation of the BLISS-M compiler
+project for more information.  BLISS-M was written in C and to LLVM 3.9-5.0.  This
+implementation will be written in C++ and to LLVM 8.0-9.0 (and possibly 10.0) and
+support any available LLVM enhancements.
 
 Prerequisites
 -------------
