@@ -640,6 +640,7 @@ Lexer::parseKeyword(InputFile *in)
     bool lookup = false;
     InputChar *c;
     InputChar::CharClass cc;
+    // TODO: We need a string that we can store an all uppercase version of the keyword.
 
     /*
      * There are three kinds of keyword lexemes.  They are:
@@ -680,6 +681,7 @@ Lexer::parseKeyword(InputFile *in)
             case InputChar::CCPrintDigit:
                 c = in->getNextChar();
                 valueStr += c->getChar();
+                // TODO: We need to upcase the characer into the all uppercase keyword string
                 break;
 
             case InputChar::CCPrintDelim:
@@ -699,6 +701,7 @@ Lexer::parseKeyword(InputFile *in)
                 {
                     c = in->getNextChar();
                     valueStr += c->getChar();
+                    // TODO: add to the all uppercase keyword string (no need to upcase).
                 }
                 else if (c->getChar() == '!')
                 {
@@ -771,7 +774,7 @@ Lexer::parseKeyword(InputFile *in)
         done = false;
         while(!done)
         {
-            // TODO: We need to upcase the valueStr and then perform the compare.
+            // TODO: We need to use the all uppercase keyword string in the compare.
             int cmp = valueStr.compare(table[lookingAt].keywordStr);
 
             cout << "Comparing " << valueStr << " to " << table[lookingAt].keywordStr;
