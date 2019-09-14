@@ -48,9 +48,10 @@
             <in>InputChar.h</in>
             <in>InputFile.h</in>
           </df>
-          <df name="Lexer">
+          <df name="FrontEnd">
             <in>Keyword.h</in>
             <in>Lexer.h</in>
+            <in>Parser.h</in>
           </df>
         </df>
       </df>
@@ -59,8 +60,9 @@
           <in>FileManager.cpp</in>
           <in>InputFile.cpp</in>
         </df>
-        <df name="Lexer">
+        <df name="FrontEnd">
           <in>Lexer.cpp</in>
+          <in>Parser.cpp</in>
         </df>
       </df>
       <df name="tests">

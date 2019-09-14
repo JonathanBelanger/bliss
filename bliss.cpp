@@ -35,12 +35,14 @@
  *  files.
  */
 #include "Basic/FileManager.h"
+#include "FrontEnd/Lexer.h"
 
 using namespace std;
 using namespace bliss;
 
-FileManager* FileManager::fmp = NULL;
-void dump();
+FileManager* FileManager::fmp = nullptr;
+Lexer *Lexer::lex = nullptr;
+
 /*
  * This function is called to test the input file processing and character
  * classification code.
@@ -48,16 +50,85 @@ void dump();
 int main(int argc, char** argv)
 {
     FileManager *fileMgr = FileManager::get();
-    InputFile *in = nullptr;
-    in = fileMgr->pushFile("/home/belanger/projects/bliss/tests/lexical/lexfuncs1.bli");
+    Lexer *lex = Lexer::get();
 
-    if (in != nullptr)
+    if (fileMgr->pushFile("/home/belanger/projects/bliss/tests/lexical/lexfuncs1.bli") ==
+            true)
     {
-        while(!in->getEOF())
+        while(lex->getNext())
         {
+            switch(lex->getType())
+            {
+                case Lexer::LTUnknown:
+                    cout << "Got an unknown Lexeme:\n" <<
+                            "  c:      " << lex->getChar() << "\n" <<
+                            "  string: " << lex->getString() << "\n" <<
+                            "  value:  " << lex->getValue() << "\n";
+                    break;
+
+                case Lexer::LTKeyword:
+                    cout << "Got a keyword:\n" <<
+                            "  keyword:  " << lex->getKeyword() << "\n" <<
+                            "  reserved: " << (lex->getReserved() ? "True\n" : "False\n") <<
+                            "  string:   " << lex->getString() << "\n";
+                    break;
+
+                case Lexer::LTPredeclared:
+                    cout << "Got a predeclared keyword:\n" <<
+                            "  keyword:  " << lex->getKeyword() << "\n" <<
+                            "  reserved: " << (lex->getReserved() ? "True\n" : "False\n") <<
+                            "  string:   " << lex->getString() << "\n";
+                    break;
+
+                case Lexer::LTExplicitDeclared:
+                    cout << "Got an explicit declared keyword:\n" <<
+                            "  keyword:  " << lex->getKeyword() << "\n" <<
+                            "  reserved: " << (lex->getReserved() ? "True\n" : "False\n") <<
+                            "  string:   " << lex->getString() << "\n";
+                    break;
+
+                case Lexer::LTDecimalLiteral:
+                    cout << "Got a decimal literal:\n" <<
+                            "  value: " << lex->getValue() << "\n";
+                    break;
+
+                case Lexer::LTQuotedString:
+                    cout << "Got a quoted string:\n" <<
+                            "  value: " << lex->getString() << "\n";
+                    break;
+
+                case Lexer::LTOperator:
+                    cout << "Got an operator:\n" <<
+                            "  char: " << lex->getChar() << "\n";
+                    break;
+
+                case Lexer::LTPunctuation:
+                    cout << "Got a punctuation:\n" <<
+                            "  char: " << lex->getChar() << "\n";
+                    break;
+
+                case Lexer::LTLinemark:
+                    cout << "Got a line mark:\n";
+                    break;
+
+                case Lexer::LTTrailingComment:
+                    cout << "Got a trailing comment:\n" <<
+                            "  string: " << lex->getString() << "\n";
+                    break;
+
+                case Lexer::LTEmbeddedComment:
+                    cout << "Got a embedded comment:\n" <<
+                            "  string: " << lex->getString() << "\n";
+                    break;
+
+                case Lexer::LTPercentSign:
+                    cout << "Got a percent sign:\n" <<
+                            "  char: " << lex->getChar() << "\n";
+                    break;
+            }
         }
+        fileMgr->popFile();
     }
-    fileMgr->popFile();
 
     return 0;
 }

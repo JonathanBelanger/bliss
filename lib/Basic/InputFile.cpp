@@ -29,11 +29,11 @@ InputFile::InputFile(string fn)
     opened = inputStream->is_open();
     if (opened)
     {
-        index = -1;
         for(int ii = 0; ii < INPUT_CHAR_DEPTH; ii++)
         {
             charVec[ii] = new InputChar;
         }
+        initChars(0);
     }
     return;
 }
@@ -191,18 +191,7 @@ InputChar *InputFile::getNextChar()
 
     if ((opened == true) && (atEOF == false))
     {
-        if (retIndex == -1)
-        {
-            int ii;
-
-            for(ii = 0; ii < INPUT_CHAR_DEPTH; ii++)
-            {
-                initChars(ii);
-            }
-            retIndex = 0;
-            index = 1;
-        }
-        else if (charVec[retIndex]->getClass() != InputChar::CCEndOfFile)
+        if (charVec[retIndex]->getClass() != InputChar::CCEndOfFile)
         {
             index++;
             index %= INPUT_CHAR_DEPTH;

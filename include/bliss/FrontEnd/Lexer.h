@@ -26,7 +26,7 @@
 
 #include "Basic/CommonInclude.h"
 #include "Basic/FileManager.h"
-#include "Lexer/Keyword.h"
+#include "FrontEnd/Keyword.h"
 
 using namespace std;
 
@@ -51,13 +51,21 @@ namespace bliss
             LTPercentSign   // This is not in the LRM, but used to terminate macros
         };
 
-        /* CONSTRUCTORS */
-        Lexer(struct _keywordTable *tbl, size_t tblSize);
-        Lexer(Lexer const&) = delete;               // Prevent copy constructor
-        Lexer& operator=(Lexer const&) = delete;   // Prevent assignment
-
-        /* DESTRUCTORS */
-        ~Lexer(){};
+        /**
+         * This function is called to return the address of the one and only Lexer.
+         * If one has not been instantiated, this call will do so.  If one has been
+         * instantiated, then the parameters are ignored.
+         *
+         * @return A pointer to the Lexer class.
+         */
+        static Lexer *get()
+        {
+            if (lex == nullptr)
+            {
+                lex = new Lexer();
+            }
+            return lex;
+        }
 
         /* GETTERS */
 
@@ -149,6 +157,14 @@ namespace bliss
 
         private:
 
+        /* CONSTRUCTORS */
+        Lexer();                                    // Private constructor
+        Lexer(Lexer const&) = delete;               // Prevent copy constructor
+        Lexer& operator=(Lexer const&) = delete;    // Prevent assignment
+
+        /* DESTRUCTORS */
+        ~Lexer(){};
+
         /**
          * This function is called when a keyword Lexeme is being parsed.
          *
@@ -207,7 +223,8 @@ namespace bliss
         bool
         parseEmbeddedComment(InputFile *in);
 
-        /* DATA */
+        /* CLASS DATA */
+        static Lexer *lex;
         LexemeType type;
         KWD::Keyword keyword;
         string valueStr;

@@ -4,8 +4,9 @@
     <df root="." name="0">
       <df name="include">
         <df name="bliss">
-          <df name="Lexer">
+          <df name="FrontEnd">
             <in>Keyword.h</in>
+            <in>Parser.h</in>
           </df>
         </df>
       </df>
@@ -14,8 +15,9 @@
           <in>FileManager.cpp</in>
           <in>InputFile.cpp</in>
         </df>
-        <df name="Lexer">
+        <df name="FrontEnd">
           <in>Lexer.cpp</in>
+          <in>Parser.cpp</in>
         </df>
       </df>
       <in>bliss.cpp</in>
@@ -70,6 +72,16 @@
           <preBuildFirst>true</preBuildFirst>
         </preBuild>
       </makefileType>
+      <item path="/home/belanger/projects/bliss/include/bliss/FrontEnd/Keyword.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="/home/belanger/projects/bliss/lib/FrontEnd/Lexer.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="bliss.cpp" ex="false" tool="1" flavor2="11">
         <ccTool flags="0">
           <incDir>
@@ -78,7 +90,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="include/bliss/Lexer/Keyword.h" ex="false" tool="3" flavor2="0">
+      <item path="include/bliss/FrontEnd/Parser.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="lib/Basic/FileManager.cpp" ex="false" tool="1" flavor2="11">
         <ccTool flags="0">
@@ -98,7 +110,7 @@
           </incDir>
         </ccTool>
       </item>
-      <item path="lib/Lexer/Lexer.cpp" ex="false" tool="1" flavor2="0">
+      <item path="lib/FrontEnd/Parser.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>

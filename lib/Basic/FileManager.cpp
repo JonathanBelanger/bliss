@@ -23,21 +23,24 @@ using namespace bliss;
  * This function is called to open a file and push it onto the stack.
  *
  * @param fileName - The file to be opened
- * @return A pointer to the InputFile class for this input file, or nullptr
- *         if the file open failed.
+ * @return - true if a file was successfully opened and pushed onto the stack
+ *         - false is there was an error opening the file.
  */
-InputFile *FileManager::pushFile(std::string fileName)
+bool FileManager::pushFile(std::string fileName)
 {
-    InputFile *retVal = new InputFile(fileName);
+    InputFile *in = new InputFile(fileName);
+    bool retVal;
 
-    if(retVal->getOpened())
+    if (in->getOpened())
     {
-        files.push_back(retVal);
+        files.push_back(in);
+        retVal = true;
     }
     else
     {
-        delete retVal;
-        retVal = nullptr;
+        delete in;
+        in = nullptr;
+        retVal = false;
     }
 
     return retVal;
@@ -46,12 +49,27 @@ InputFile *FileManager::pushFile(std::string fileName)
 /**
  * This function is called to pop off a file from the stack and delete the
  * InputFile (closing the file).
+ *
+ * @return - true if a file was successfully popped off the stack and closed.
+ *         - false if there were no more files to be popped off the stack.
  */
-void FileManager::popFile()
+bool FileManager::popFile()
 {
-    InputFile *file = files.back();
-    files.pop_back();
-    delete file;
+    bool retVal = false;
+
+    /*
+     * If there is anything else on the stack, then pop it off and close it.
+     * Set the return to true.
+     */
+    if (files.size() > 0)
+    {
+        InputFile *file = files.back();
+        files.pop_back();
+        delete file;
+        retVal = true;
+    }
+
+    return retVal;
 }
 
 /**

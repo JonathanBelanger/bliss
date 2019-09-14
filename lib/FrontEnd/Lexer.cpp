@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Lexer/Lexer.h"
+#include "FrontEnd/Lexer.h"
 
 using namespace std;
 using namespace bliss;
@@ -306,15 +306,15 @@ KeywordTable keywords[] =
 };
 
 /* CONSTRUCTOR */
-Lexer::Lexer(KeywordTable *kwt, size_t kwtSize)
+Lexer::Lexer()
 {
 
     /*
      * Set the pointer to the keyword table.  This will be used to process the
      * input files.
      */
-    table = kwt;
-    tableSize = kwtSize;
+    table = keywords;
+    tableSize = KWD_MAX;
     return;
 }
 
@@ -342,6 +342,16 @@ Lexer::getNext()
     bool done = in->getEOF();
     bool retVal = false;
     bool started = false;
+
+    /*
+     * Before we do anything, clean out the return values.
+     */
+    type = Lexer::LTUnknown;
+    keyword = KWD::__MAX_ITEMS;
+    valueStr = "";
+    value = 0;
+    valueChar = '\0';
+    reserved = false;
 
     /*
      * We are starting out and need to get to the first non-space character.
@@ -640,7 +650,7 @@ Lexer::parseKeyword(InputFile *in)
     bool lookup = false;
     InputChar *c;
     InputChar::CharClass cc;
-    // TODO: We need a string that we can store an all uppercase version of the keyword.
+    string UCKeyword;           // Uppercased version of the keyword.
 
     /*
      * There are three kinds of keyword lexemes.  They are:
@@ -671,6 +681,7 @@ Lexer::parseKeyword(InputFile *in)
      * At this point, we have no idea what kind of keyword we have.
      */
     valueStr = valueChar;
+    UCKeyword = toupper(valueChar);
     while (!done)
     {
         c = in->peakNextChar();
@@ -681,7 +692,7 @@ Lexer::parseKeyword(InputFile *in)
             case InputChar::CCPrintDigit:
                 c = in->getNextChar();
                 valueStr += c->getChar();
-                // TODO: We need to upcase the characer into the all uppercase keyword string
+                UCKeyword += toupper(c->getChar());
                 break;
 
             case InputChar::CCPrintDelim:
@@ -701,10 +712,40 @@ Lexer::parseKeyword(InputFile *in)
                 {
                     c = in->getNextChar();
                     valueStr += c->getChar();
-                    // TODO: add to the all uppercase keyword string (no need to upcase).
+                    UCKeyword += c->getChar();
                 }
-                else if (c->getChar() == '!')
+                else if ((c->getChar() == '!') ||
+                         (c->getChar() == '\''))
                 {
+
+                    /*
+                     * The BLISS LRM, says that lexemes can be separated by a
+                     * space or delimiter.  The delimiter characters are '.',
+                     * '^', '*', '/', '+', '-', '=', ',', ';', ':', '(', ')',
+                     * '[', ']', '<', and '>'.  A space is defined as:
+                     *
+                     *  1. A space is a linemark, a nonprinting character (as
+                     *     listed in the table in Section 2.1.1) or a comment.
+                     *  2. A comment is a trailing comment or an embedded
+                     *     comment.
+                     *  3. A trailing comment is an exclamation character
+                     *     followed by the remainder of the line on which the
+                     *     comment begins.
+                     *  4. An embedded comment begins with the two characters
+                     *     '%(', followed by the text of the comment, followed
+                     *     by the two characters ')%'.  The text must not
+                     *     contain the sequence ')%', because that would
+                     *     prematurely end the comment.  An embedded comment
+                     *     can begin after any lexeme of a module and can
+                     *     extend to any later position in the module. However,
+                     *     an embedded comment must end in the same source file
+                     *     in which it began.
+                     * By this definition, special characters, do not delimit a
+                     * lexeme.  The special characters are: '$', '_', '%', '!',
+                     * and '''.  Some of the test code will allow for the single
+                     * quote to end a lexeme.  We cannot do this for dollar or
+                     * under score.
+                     */
                     retVal = done = lookup = true;
                 }
                 else if (c->getChar() == '%')
@@ -774,23 +815,18 @@ Lexer::parseKeyword(InputFile *in)
         done = false;
         while(!done)
         {
-            // TODO: We need to use the all uppercase keyword string in the compare.
-            int cmp = valueStr.compare(table[lookingAt].keywordStr);
+            int cmp = UCKeyword.compare(table[lookingAt].keywordStr);
 
-            cout << "Comparing " << valueStr << " to " << table[lookingAt].keywordStr;
             if (cmp < 0)
             {
-                cout << " less than";
                 bottom = lookingAt;
             }
             else if (cmp > 0)
             {
-                cout << " greater than";
                 top = lookingAt + 1;
             }
             else
             {
-                cout << " equal";
                 done = found = true;
             }
             lookingAt = ((bottom - top) / 2) + top;
@@ -849,7 +885,7 @@ Lexer::parseDecimalLiteral(InputFile *in)
      */
     type = LTDecimalLiteral;
     c = in->getNextChar();
-    tmpValue = value = '0' - c->getChar();
+    tmpValue = value = c->getChar() - '0';
     while (!done)
     {
         c = in->peakNextChar();
@@ -858,7 +894,7 @@ Lexer::parseDecimalLiteral(InputFile *in)
         {
             case InputChar::CCPrintDigit:
                 c = in->getNextChar();
-                tmpValue = (value * 10) + '0' - c->getChar();
+                tmpValue = (tmpValue * 10) + c->getChar() - '0';
                 if (tmpValue < value)
                 {
                     cerr << "Syntax error (7) at line " << c->getLine() <<
@@ -877,12 +913,12 @@ Lexer::parseDecimalLiteral(InputFile *in)
             case InputChar::CCNonprintHT:
             case InputChar::CCNonprintSP:
             case InputChar::CCEndOfFile:
+            case InputChar::CCPrintDelim:
                 retVal = done = true;
                 break;
 
             case InputChar::CCPrintLetter:
             case InputChar::CCPrintFree:
-            case InputChar::CCPrintDelim:
 
                 /*
                  * Swallow the next character in hopes that we can recover and

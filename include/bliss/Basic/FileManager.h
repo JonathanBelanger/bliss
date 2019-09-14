@@ -62,16 +62,18 @@ namespace bliss
              * This function is called to open a file and push it onto the stack.
              *
              * @param fileName - The file to be opened
-             * @return A pointer to the InputFile class for this input file, or nullptr
-             *         if the file open failed.
+             * @return - true if a file was successfully opened and pushed onto the stack
+             *         - false is there was an error opening the file.
              */
-            InputFile *pushFile(std::string fileName);
+            bool pushFile(std::string fileName);
 
             /**
              * This function is called to pop off a file from the stack and delete the
              * InputFile (closing the file).
+             * @return - true if a file was successfully popped off and closed
+             *         - false is there are no more files on the stack.
              */
-            void popFile();
+            bool popFile();
 
             /* GETTERS */
 
