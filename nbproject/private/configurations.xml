@@ -30,9 +30,9 @@
               </df>
             </df>
           </df>
-          <df name="Lexer">
+          <df name="FrontEnd">
             <df name="CMakeFiles">
-              <df name="Lexer.dir">
+              <df name="FrontEnd.dir">
               </df>
             </df>
           </df>
@@ -42,6 +42,13 @@
       </df>
       <df name="include">
         <df name="bliss">
+          <df name="AST">
+            <in>ControlAST.h</in>
+            <in>ExecutableFuncAST.h</in>
+            <in>ExprAST.h</in>
+            <in>OperatorAST.h</in>
+            <in>PrimaryAST.h</in>
+          </df>
           <df name="Basic">
             <in>CommonInclude.h</in>
             <in>FileManager.h</in>
@@ -56,6 +63,8 @@
         </df>
       </df>
       <df name="lib">
+        <df name="AST">
+        </df>
         <df name="Basic">
           <in>FileManager.cpp</in>
           <in>InputFile.cpp</in>

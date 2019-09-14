@@ -4,6 +4,13 @@
     <df root="." name="0">
       <df name="include">
         <df name="bliss">
+          <df name="AST">
+            <in>ControlAST.h</in>
+            <in>ExecutableFuncAST.h</in>
+            <in>ExprAST.h</in>
+            <in>OperatorAST.h</in>
+            <in>PrimaryAST.h</in>
+          </df>
           <df name="FrontEnd">
             <in>Keyword.h</in>
             <in>Parser.h</in>
@@ -72,16 +79,6 @@
           <preBuildFirst>true</preBuildFirst>
         </preBuild>
       </makefileType>
-      <item path="/home/belanger/projects/bliss/include/bliss/FrontEnd/Keyword.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/belanger/projects/bliss/lib/FrontEnd/Lexer.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
       <item path="bliss.cpp" ex="false" tool="1" flavor2="11">
         <ccTool flags="0">
           <incDir>
@@ -89,6 +86,21 @@
             <pElem>build</pElem>
           </incDir>
         </ccTool>
+      </item>
+      <item path="include/bliss/AST/ControlAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/ExecutableFuncAST.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/bliss/AST/ExprAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/OperatorAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/PrimaryAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/FrontEnd/Keyword.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/bliss/FrontEnd/Parser.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -109,6 +121,8 @@
             <pElem>build/lib/Basic</pElem>
           </incDir>
         </ccTool>
+      </item>
+      <item path="lib/FrontEnd/Lexer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="lib/FrontEnd/Parser.cpp" ex="false" tool="1" flavor2="0">
       </item>

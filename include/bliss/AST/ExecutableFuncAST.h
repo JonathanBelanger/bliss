@@ -16,32 +16,38 @@
  */
 
 /*
- * File:   Parser.h
+ * File:   OperatorAST.h
  * Author: Jonathan D. Belanger
  *
- * Created on September 14, 2019, 12:23 PM
+ * Created on September 14, 2019, 5:28 PM
  */
 
-#ifndef LLVM_BLISS_PARSER_H
-#define LLVM_BLISS_PARSER_H
+#ifndef LLVM_BLISS_EXECUTABLEFUNCAST_H
+#define LLVM_BLISS_EXECUTABLEFUNCAST_H
 
-#include "Basic/CommonInclude.h"
-#include "Basic/FileManager.h"
-#include "FrontEnd/Keyword.h"
-#include "FrontEnd/Lexer.h"
 #include "AST/ExprAST.h"
-#include "AST/PrimaryAST.h"
-#include "AST/OperatorAST.h"
-#include "AST/ExecutableFuncAST.h"
-#include "AST/ControlAST.h"
 
 using namespace std;
 
 namespace bliss
 {
-    class Parser
+
+    /*
+     * executable-function --- executable-function-name ( -+- actual-parameter, ... -+- )
+     *                                                     +- nothing ---------------+
+     *
+     * executable-function-name -+- name
+     *                           +- % name
+     */
+    class ExecutableFuncAST : public ExprAST
     {
+        public:
+        ExecutableFuncAST(void *Val) : Val(Val) {}
+
+        private:
+        void *Val;
     };
 }
 
-#endif /* LLVM_BLISS_PARSER_H */
+
+#endif /* LLVM_BLISS_EXECUTABLEFUNCAST_H */
