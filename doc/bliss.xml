@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd"
+[
+    <!ENTITY int "(?:[0-9](?:'?[0-9]+)*)">
+    <!ENTITY hex_int "(?:[0-9A-Fa-f](?:'?[0-9A-Fa-f]+)*)">
+    <!ENTITY exp_float "(?:[eE][+-]?&int;)">
+    <!ENTITY exp_hexfloat "(?:[pP][-+]?&int;)">
+
+    <!ENTITY ispphash "(?:%|&#37;\:|\?\?%)">
+    <!ENTITY pphash "&ispphash;\s*">
+]>
+<language name="BLISS" section="Sources"
+          version="1" kateversion="5.0"
+          indenter="cstyle"
+          extensions="*.bli;*.BLI;*.req;*.REQ"
+          mimetype="text/x-bliss-src;text/x-sliss-req"
+          priority="5">
+<!--
+
+    Modified by Jonathan Belanger (jbelanger1@rochester.rr.com) from C/C++ to BLISS
+
+-->
+  <highlighting>
+    <list name="controlflow">
+      <item>CASE</item>
+      <item>FROM</item>
+      <item>TO</item>
+      <item>SET</item>
+      <item>TES</item>
+      <item>INRANGE</item>
+      <item>OUTRANGE</item>
+      <item>EXITLOOP</item>
+      <item>LEAVE</item>
+      <item>WITH</item>
+      <item>INCR</item>
+      <item>INCRU</item>
+      <item>INCRA</item>
+      <item>DECR</item>
+      <item>DECRU</item>
+      <item>DECRA</item>
+      <item>INCR</item>
+      <item>INCRU</item>
+      <item>BY</item>
+      <item>IF</item>
+      <item>THEN</item>
+      <item>ELSE</item>
+      <item>RETURN</item>
+      <item>SELECT</item>
+      <item>SELECTU</item>
+      <item>SELECTA</item>
+      <item>SELECTONE</item>
+      <item>SELECTONEU</item>
+      <item>SELECTONEA</item>
+      <item>OTHERWISE</item>
+      <item>ALWAYS</item>
+      <item>WHILE</item>
+      <item>UNTIL</item>
+      <item>DO</item>
+      <item>EQL</item>
+      <item>EQLU</item>
+      <item>EQLA</item>
+      <item>NEQ</item>
+      <item>NEQU</item>
+      <item>NEQA</item>
+      <item>LSS</item>
+      <item>LSSU</item>
+      <item>LSSA</item>
+      <item>LEQ</item>
+      <item>LEQU</item>
+      <item>LEQA</item>
+      <item>GTR</item>
+      <item>GTRU</item>
+      <item>GTRA</item>
+      <item>GEQ</item>
+      <item>GEQU</item>
+      <item>GEQA</item>
+      <item>NOT</item>
+      <item>AND</item>
+      <item>OR</item>
+      <item>EQV</item>
+      <item>XOR</item>
+      <item>ERRS</item>
+    </list>
+    <list name="keywords">
+      <item>MODULE</item>
+      <item>ELUDOM</item>
+      <item>BEGIN</item>
+      <item>END</item>
+      <item>OWN</item>
+      <item>EXTERNAL</item>
+      <item>LOCAL</item>
+      <item>STACKLOCAL</item>
+      <item>GLOBAL</item>
+      <item>FORWARD</item>
+      <item>ROUTINE</item>
+      <item>CODECOMMENT</item>
+      <item>MOD</item>
+      <item>SIGN</item>
+      <item>ABS</item>
+      <item>MIN</item>
+      <item>MINU</item>
+      <item>MINA</item>
+      <item>MAX</item>
+      <item>MAXU</item>
+      <item>MAXA</item>
+      <item>LITERAL</item>
+      <item>REGISTER</item>
+      <item>VECTOR</item>
+      <item>BITVECTOR</item>
+      <item>BLOCK</item>
+      <item>BLOCKVECTOR</item>
+      <item>INITIAL</item>
+      <item>FIELD</item>
+      <item>PRESET</item>
+      <item>VOLATILE</item>
+      <item>NOVALUE</item>
+      <item>ADDRESSING_MODE</item>
+      <item>ABSOLUTE</item>
+      <item>RELATIVE</item>
+      <item>GENERAL</item>
+      <item>LONG_RELATIVE</item>
+      <item>WORD_RELATIVE</item>
+      <item>WEAK</item>
+      <item>MAP</item>
+      <item>BIND</item>
+      <item>STRUCTURE</item>
+      <item>REF</item>
+      <item>VECTOR</item>
+      <item>LINKAGE</item>
+      <item>CALL</item>
+      <item>JSB</item>
+      <item>INTERRUPT</item>
+      <item>STANDARD</item>
+      <item>PRESERVE</item>
+      <item>NOPRESERVE</item>
+      <item>BUILTIN</item>
+      <item>ARGPTR</item>
+      <item>ACTUALCOUNT</item>
+      <item>ACTUALPARAMETER</item>
+      <item>NULLPARAMETER</item>
+      <item>ENABLE</item>
+      <item>SIGNAL</item>
+      <item>SIGNAL_STOP</item>
+      <item>SETUNWIND</item>
+      <item>MACRO</item>
+      <item>KEYWORDMACRO</item>
+      <item>BLISS</item>
+      <item>BLISS32</item>
+      <item>BLISS64</item>
+      <item>CH$A_RCHAR</item>
+      <item>CH$A_WCHAR</item>
+      <item>CH$ALLOCATION</item>
+      <item>CH$COMPARE</item>
+      <item>CH$COPY</item>
+      <item>CH$DIFF</item>
+      <item>CH$EQL</item>
+      <item>CH$FAIL</item>
+      <item>CH$FILL</item>
+      <item>CH$FIND_CH</item>
+      <item>CH$FIND_NOT_CH</item>
+      <item>CH$FIND_SUB</item>
+      <item>CH$GEQ</item>
+      <item>CH$GTR</item>
+      <item>CH$LEQ</item>
+      <item>CH$LSS</item>
+      <item>CH$MOVE</item>
+      <item>CH$NEQ</item>
+      <item>CH$PLUS</item>
+      <item>CH$PTR</item>
+      <item>CH$RCHAR</item>
+      <item>CH$RCHAR_A</item>
+      <item>CH$SIZE</item>
+      <item>CH$TRANSLATE</item>
+      <item>CH$TRANSTABLE</item>
+      <item>CH$WCHAR</item>
+      <item>CH$WCHAR_A</item>
+      <item>CODE</item>
+      <item>COMPILETIME</item>
+      <item>DEBUG</item>
+      <item>EXPAND</item>
+      <item>IDENT</item>
+      <item>LABEL</item>
+      <item>LANGUAGE</item>
+      <item>LIBRARY</item>
+      <item>REQUIRE</item>
+      <item>LIST</item>
+      <item>MAIN</item>
+      <item>NOASSEMBLY</item>
+      <item>NOBINARY</item>
+      <item>NOCODE</item>
+      <item>NOCOMMENTARY</item>
+      <item>NODEBUG</item>
+      <item>NODEFAULT</item>
+      <item>NOERRS</item>
+      <item>NOEXECUTE</item>
+      <item>NOEXPAND</item>
+      <item>NOLIBRARY</item>
+      <item>NONEXTERNAL</item>
+      <item>NOOBJECT</item>
+      <item>NOOPTIMIZE</item>
+      <item>NOPIC</item>
+      <item>NOREAD</item>
+      <item>NOREQUIRE</item>
+      <item>NOSAFE</item>
+      <item>NOSHARE</item>
+      <item>NOSOURCE</item>
+      <item>NOSYMBOLIC</item>
+      <item>NOTRACE</item>
+      <item>NOTUSED</item>
+      <item>NOUNAMES</item>
+      <item>NOVALUE</item>
+      <item>NOZIP</item>
+      <item>OPTIMIZE</item>
+      <item>OPTLEVEL</item>
+      <item>SOURCE</item>
+      <item>SWITCHES</item>
+      <item>SYMBOLIC</item>
+      <item>TRACE</item>
+      <item>UNAMES</item>
+      <item>UNDECLARE</item>
+      <item>VERSION</item>
+      <item>ZIP</item>
+      <item>%ALLOCATION</item>
+      <item>%ASSIGN</item>
+      <item>%BLISS</item>
+      <item>%BLISS32</item>
+      <item>%BLISS64</item>
+      <item>%BPADDR</item>
+      <item>%BPUNIT</item>
+      <item>%BPVAL</item>
+      <item>%CHAR</item>
+      <item>%CHARCOUNT</item>
+      <item>%COUNT</item>
+      <item>%CTCE</item>
+      <item>%DECLARED</item>
+      <item>%ELSE</item>
+      <item>%ERROR</item>
+      <item>%ERRORMACRO</item>
+      <item>%EXACTSTRING</item>
+      <item>%EXITITERATION</item>
+      <item>%EXITMACRO</item>
+      <item>%EXPAND</item>
+      <item>%EXPLODE</item>
+      <item>%FI</item>
+      <item>%FIELDEXPAND</item>
+      <item>%IDENTICAL</item>
+      <item>%IF</item>
+      <item>%INFORM</item>
+      <item>%ISSTRING</item>
+      <item>%LENGTH</item>
+      <item>%LTCE</item>
+      <item>%MESSAGE</item>
+      <item>%NAME</item>
+      <item>%NBITS</item>
+      <item>%NBITSU</item>
+      <item>%NULL</item>
+      <item>%NUMBER</item>
+      <item>%PRINT</item>
+      <item>%QUOTE</item>
+      <item>%QUOTENAME</item>
+      <item>%REF</item>
+      <item>%REMAINING</item>
+      <item>%REMOVE</item>
+      <item>%REQUIRE</item>
+      <item>%SBTTL</item>
+      <item>%SIZE</item>
+      <item>%STRING</item>
+      <item>%SWITCHES</item>
+      <item>%THEN</item>
+      <item>%TITLE</item>
+      <item>%UNQUOTE</item>
+      <item>%UPVAL</item>
+      <item>%VARIANT</item>
+      <item>%WARN</item>
+    </list>
+    <list name="types">
+      <item>LONG</item>
+      <item>BYTE</item>
+      <item>WORD</item>
+      <item>QUAD</item>
+      <item>BIT</item>
+      <item>ALIGN</item>
+      <item>%B</item>
+      <item>%C</item>
+      <item>%DECIMAL</item>
+      <item>%O</item>
+      <item>%E</item>
+      <item>%D</item>
+      <item>%G</item>
+      <item>%H</item>
+      <item>%P</item>
+      <item>SIGNED</item>
+      <item>UNSIGNED</item>
+      <item>%ASCIC</item>
+      <item>%ASCID</item>
+      <item>%ASCII</item>
+      <item>%ASCIZ</item>
+      <item>PLIT</item>
+      <item>UPLIT</item>
+      <item>PSECT</item>
+      <item>REP</item>
+      <item>OF</item>
+    </list>
+    <contexts>
+      <context attribute="Normal Text" lineEndContext="#stay" name="Normal">
+        <DetectSpaces />
+	<RegExpr attribute="Preprocessor" context="Outscoped" String="&pphash;if\s+0\s*$" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr context="AfterHash" String="&ispphash;" firstNonSpace="true" lookAhead="true" />
+        <StringDetect attribute="Region Marker" context="Region Marker" String="//BEGIN" beginRegion="Region1" firstNonSpace="true" />
+        <StringDetect attribute="Region Marker" context="Region Marker" String="//END" endRegion="Region1" firstNonSpace="true" />
+        <keyword attribute="Control Flow" context="#stay" String="controlflow"/>
+        <keyword attribute="Keyword" context="#stay" String="keywords"/>
+        <keyword attribute="Data Type" context="#stay" String="types"/>
+        <DetectIdentifier />
+        <DetectChar attribute="Symbol" context="#stay" char="{" beginRegion="Brace1" />
+        <DetectChar attribute="Symbol" context="#stay" char="}" endRegion="Brace1" />
+        <Detect2Chars attribute="Symbol" context="#stay" char="&lt;" char1="%" beginRegion="Brace1" /> <!-- Digraph: { -->
+        <Detect2Chars attribute="Symbol" context="#stay" char="%" char1="&gt;" endRegion="Brace1" /> <!-- Digraph: } -->
+
+        <!-- Match numbers -->
+        <RegExpr attribute="Decimal" context="Number" String="\.?[0-9]" lookAhead="true" />
+
+        <HlCChar attribute="Char" context="#stay"/>
+        <DetectChar attribute="String" context="String" char="&quot;"/>
+        <IncludeRules context="##Doxygen" />
+        <Detect2Chars attribute="Comment" context="Commentar 1" char="!"/>
+        <Detect2Chars attribute="Comment" context="Commentar 2" char="%" char1="(" beginRegion="Comment"/>
+        <AnyChar attribute="Symbol" context="#stay" String=":!%&amp;()+,-/.*&lt;=&gt;?[]|~^&#59;"/>
+      </context>
+
+      <context attribute="String" lineEndContext="#pop" name="String">
+        <LineContinue attribute="String" context="#stay"/>
+        <HlCStringChar attribute="String Char" context="#stay"/>
+        <DetectChar attribute="String" context="#pop" char="&quot;"/>
+      </context>
+
+      <context attribute="Region Marker" lineEndContext="#pop" name="Region Marker">
+      </context>
+
+      <context attribute="Comment" lineEndContext="#pop" name="Commentar 1">
+        <LineContinue attribute="Comment" context="#stay"/>
+        <IncludeRules context="##Alerts" />
+      </context>
+
+      <context attribute="Comment" lineEndContext="#stay" name="Commentar 2">
+        <Detect2Chars attribute="Comment" context="#pop" char=")" char1="%" endRegion="Comment"/>
+        <IncludeRules context="##Alerts" />
+      </context>
+
+      <context attribute="Error" lineEndContext="#pop" name="AfterHash">
+        <RegExpr attribute="Preprocessor" context="Include" String="&pphash;(?:include|include_next)" insensitive="true" firstNonSpace="true" />
+
+        <!-- define, elif, else, endif, error, if, ifdef, ifndef, line, pragma, undef, warning -->
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="&pphash;if?(?=\s+\S)" insensitive="true" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="&pphash;endif" insensitive="true" endRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Define" String="&pphash;define.*((?=\\))" insensitive="true" firstNonSpace="true" />
+
+        <!-- folding for apple style #pragma mark - label -->
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="&pphash;pragma\s+mark\s+-\s*$" insensitive="true" firstNonSpace="true" endRegion="pragma_mark" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="&pphash;pragma\s+mark" insensitive="true" firstNonSpace="true" endRegion="pragma_mark" beginRegion="pragma_mark" />
+
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="&pphash;(?:el(?:se|if)|define|undef|line|error|warning|pragma)" insensitive="true" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="&ispphash;\s+[0-9]+" insensitive="true" firstNonSpace="true" />
+      </context>
+
+      <context attribute="Preprocessor" lineEndContext="#pop" name="Include">
+        <LineContinue attribute="Preprocessor" context="#stay"/>
+        <RangeDetect attribute="Prep. Lib" context="#stay" char="&quot;" char1="&quot;"/>
+        <RangeDetect attribute="Prep. Lib" context="#stay" char="&lt;" char1="&gt;"/>
+        <IncludeRules context="Preprocessor" />
+      </context>
+
+      <context attribute="Preprocessor" lineEndContext="#pop" name="Preprocessor">
+        <LineContinue attribute="Preprocessor" context="#stay"/>
+        <IncludeRules context="##Doxygen" />
+        <Detect2Chars attribute="Comment" context="Commentar/Preprocessor" char="/" char1="*" beginRegion="Comment2" />
+        <Detect2Chars attribute="Comment" context="Commentar 1" char="/" char1="/" />
+      </context>
+
+      <context attribute="Preprocessor" lineEndContext="#pop" name="Define">
+        <LineContinue attribute="Preprocessor" context="#stay"/>
+      </context>
+
+      <context attribute="Comment" lineEndContext="#stay" name="Commentar/Preprocessor">
+        <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" endRegion="Comment2" />
+      </context>
+
+      <context attribute="Comment" lineEndContext="#stay" name="Outscoped" >
+        <DetectSpaces />
+        <IncludeRules context="##Alerts" />
+        <DetectIdentifier />
+        <DetectChar attribute="String" context="String" char="'"/>
+        <IncludeRules context="##Doxygen" />
+        <Detect2Chars attribute="Comment" context="Commentar 1" char="!"/>
+        <Detect2Chars attribute="Comment" context="Commentar 2" char="%" char1="(" beginRegion="Comment"/>
+        <RegExpr attribute="Comment" context="Outscoped intern" String="&pphash;if" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="#pop" String="&pphash;else" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="#pop" String="&pphash;" endRegion="PP" firstNonSpace="true" />
+      </context>
+
+      <context attribute="Comment" lineEndContext="#stay" name="Outscoped intern">
+        <DetectSpaces />
+        <IncludeRules context="##Alerts" />
+        <DetectIdentifier />
+        <DetectChar attribute="String" context="String" char="'"/>
+        <IncludeRules context="##Doxygen" />
+        <Detect2Chars attribute="Comment" context="Commentar 1" char="!"/>
+        <Detect2Chars attribute="Comment" context="Commentar 2" char="%" char1="(" beginRegion="Comment"/>
+        <RegExpr attribute="Comment" context="Outscoped intern" String="&pphash;if" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Comment" context="#pop" String="&pphash;" endRegion="PP" firstNonSpace="true" />
+      </context>
+
+      <context name="Number" attribute="Normal Text" lineEndContext="#pop" fallthrough="true" fallthroughContext="#pop">
+        <RegExpr attribute="Float" context="FloatSuffix" String="\.&int;&exp_float;?|&int;(?:&exp_float;|\.&int;?&exp_float;?)|0[xX](?:\.&hex_int;&exp_hexfloat;?|&hex_int;(?:&exp_hexfloat;|\.&hex_int;?&exp_hexfloat;?))" />
+        <IncludeRules context="Integer" />
+      </context>
+
+      <context name="Integer" attribute="Normal Text" lineEndContext="#pop" fallthrough="true" fallthroughContext="#pop">
+        <RegExpr attribute="Hex" context="IntSuffix" String="%[xX]&hex_int;" />
+        <RegExpr attribute="Binary" context="IntSuffix" String="%[Bb][01](?:'?[01]+)*" />
+        <RegExpr attribute="Octal" context="IntSuffix" String="%[oO](?:'?[0-7]+)+" />
+        <RegExpr attribute="Decimal" context="IntSuffix" String="0(?![xXbB0-9])|[1-9](?:'?[0-9]+)*" />
+        <RegExpr attribute="Error" context="#pop" String="[._0-9A-Za-z']+" />
+      </context>
+
+      <context name="IntSuffix" attribute="Error" lineEndContext="#pop#pop" fallthrough="true" fallthroughContext="NumericSuffixError">
+        <DetectChar attribute="Error" context="#stay" char="'" />
+        <AnyChar attribute="Error" context="#pop!IntSuffixPattern" String="uUlLimunshyd_" lookAhead="true" />
+      </context>
+
+      <context name="IntSuffixPattern" attribute="Error" lineEndContext="#pop#pop" fallthrough="true" fallthroughContext="NumericSuffixError">
+        <RegExpr attribute="Standard Suffix" context="NumericSuffixError" String="[Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?" />
+      </context>
+
+      <context name="FloatSuffix" attribute="Error" lineEndContext="#pop#pop" fallthrough="true" fallthroughContext="NumericSuffixError">
+        <AnyChar attribute="Standard Suffix" context="NumericSuffixError" String="fFlL" />
+      </context>
+
+      <context name="NumericSuffixError" attribute="Error" lineEndContext="#pop#pop#pop" fallthrough="true" fallthroughContext="#pop#pop#pop">
+        <RegExpr attribute="Error" context="#pop#pop#pop" String="\.[_0-9A-Za-z]*|[_0-9A-Za-z]+" />
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text"  defStyleNum="dsNormal" spellChecking="false"/>
+      <itemData name="Control Flow" defStyleNum="dsControlFlow" spellChecking="false"/>
+      <itemData name="Keyword"      defStyleNum="dsKeyword" spellChecking="false"/>
+      <itemData name="Data Type"    defStyleNum="dsDataType" spellChecking="false"/>
+      <itemData name="Decimal"      defStyleNum="dsDecVal" spellChecking="false"/>
+      <itemData name="Octal"        defStyleNum="dsBaseN" spellChecking="false"/>
+      <itemData name="Hex"          defStyleNum="dsBaseN" spellChecking="false"/>
+      <itemData name="Binary"       defStyleNum="dsBaseN" spellChecking="false"/>
+      <itemData name="Float"        defStyleNum="dsFloat" spellChecking="false"/>
+      <itemData name="Standard Suffix" defStyleNum="dsBuiltIn" spellChecking="false" />
+      <itemData name="Char"         defStyleNum="dsChar" spellChecking="false"/>
+      <itemData name="String"       defStyleNum="dsString"/>
+      <itemData name="String Char"  defStyleNum="dsSpecialChar"/>
+      <itemData name="Comment"      defStyleNum="dsComment"/>
+      <itemData name="Symbol"       defStyleNum="dsNormal" spellChecking="false"/>
+      <itemData name="Preprocessor" defStyleNum="dsPreprocessor" spellChecking="false"/>
+      <itemData name="Prep. Lib"    defStyleNum="dsImport" spellChecking="false"/>
+      <itemData name="Region Marker" defStyleNum="dsRegionMarker" spellChecking="false"/>
+      <itemData name="Error"        defStyleNum="dsError" spellChecking="false"/>
+    </itemDatas>
+  </highlighting>
+  <general>
+    <comments>
+      <comment name="singleLine" start="!" />
+      <comment name="multiLine" start="%(" end=")%" />
+    </comments>
+    <keywords casesensitive="0" additionalDeliminator="'&quot;" />
+  </general>
+</language>
+
