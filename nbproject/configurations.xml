@@ -5,11 +5,18 @@
       <df name="include">
         <df name="bliss">
           <df name="AST">
+            <in>AttributeAST.h</in>
+            <in>BaseAST.h</in>
+            <in>BlockAST.h</in>
+            <in>ConstantAST.h</in>
             <in>ControlAST.h</in>
+            <in>DataAST.h</in>
+            <in>DeclarationAST.h</in>
             <in>ExecutableFuncAST.h</in>
             <in>ExprAST.h</in>
             <in>OperatorAST.h</in>
             <in>PrimaryAST.h</in>
+            <in>StructureAST.h</in>
           </df>
           <df name="FrontEnd">
             <in>Keyword.h</in>
@@ -87,7 +94,19 @@
           </incDir>
         </ccTool>
       </item>
+      <item path="include/bliss/AST/AttributeAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/BaseAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/BlockAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/ConstantAST.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/bliss/AST/ControlAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/DataAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/DeclarationAST.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/bliss/AST/ExecutableFuncAST.h"
             ex="false"
@@ -99,6 +118,8 @@
       <item path="include/bliss/AST/OperatorAST.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/bliss/AST/PrimaryAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/StructureAST.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/bliss/FrontEnd/Keyword.h" ex="false" tool="3" flavor2="0">
       </item>

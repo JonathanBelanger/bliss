@@ -43,11 +43,18 @@
       <df name="include">
         <df name="bliss">
           <df name="AST">
+            <in>AttributeAST.h</in>
+            <in>BaseAST.h</in>
+            <in>BlockAST.h</in>
+            <in>ConstantAST.h</in>
             <in>ControlAST.h</in>
+            <in>DataAST.h</in>
+            <in>DeclarationAST.h</in>
             <in>ExecutableFuncAST.h</in>
             <in>ExprAST.h</in>
             <in>OperatorAST.h</in>
             <in>PrimaryAST.h</in>
+            <in>StructureAST.h</in>
           </df>
           <df name="Basic">
             <in>CommonInclude.h</in>

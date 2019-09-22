@@ -25,24 +25,12 @@
 #ifndef LLVM_BLISS_EXPRAST_H
 #define LLVM_BLISS_EXPRAST_H
 
+#include "AST/BaseAST.h"
+
 using namespace std;
 
 namespace bliss
 {
-    typedef struct
-    {
-        uint32_t startLine;
-        uint32_t startColumn;
-        uint32_t endLine;
-        uint32_t endColumn;
-    } SourceLocation;
-    typedef struct
-    {
-        uint32_t dsc_l_length;
-        uint16_t dsc_w_type;
-        uint16_t dsc_w_class;
-        char *dsc_a_pointer;
-    } ASCID;
 
     /*
      * ExprAST - Base class for all expression nodes.
@@ -52,22 +40,8 @@ namespace bliss
      *              |  executable-function
      *              +- control-expression
      */
-    class ExprAST
+    class ExprAST : public BaseAST
     {
-        public:
-        virtual ~ExprAST() {}
-
-        /**
-         * This function is called to return the location information for the
-         * AST Node.
-         *
-         * @return - a pointer to a structure containing the starting/ending
-         *           line/column numbers.
-         */
-        SourceLocation *getLocation() { return &Loc; }
-
-        private:
-        SourceLocation Loc;
     };
 }
 

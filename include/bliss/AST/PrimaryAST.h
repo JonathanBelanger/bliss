@@ -138,11 +138,11 @@ namespace bliss
     {
         public:
         StringLiteral(string Str) : Str(Str) {}
-        StringLiteral(ASCID StrDSC) : StrDSC(StrDSC) {}
+        StringLiteral(DSC_DESCRIPTOR StrDSC) : StrDSC(StrDSC) {}
 
         private:
         string Str;
-        ASCID StrDSC;
+        DSC_DESCRIPTOR StrDSC;
     };
 
     /*

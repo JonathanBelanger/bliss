@@ -1,574 +1,440 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE language SYSTEM "language.dtd">
-<language name="FreeBASIC" version="4" kateversion="5.0" section="Sources" extensions="*.bas;*.bi;*.BAS;*.BI" mimetype="text/x-freebasic" author="Chris Neugebauer (chrisjrn@gmail.com)" license="GPL">
-  <highlighting>
-    <list name="preproc">
-    
-      <item>#DEFINE</item>
-      <item>#ELSE</item>
-      <item>#ELSEIF</item>
-      <item>#ENDIF</item>
-      <item>#IF</item>
-      <item>#IFDEF</item>
-      <item>#IFNDEF</item>
-      <item>#UNDEF</item>
-      <item>$DYNAMIC</item>
-      <item>$INCLIB</item>
-      <item>$INCLUDE</item>
-      <item>$STATIC</item>
-    
-    </list>
-    
-    <list name="keywords">
-      <item>Declare</item>
-      
-      <item>Open</item>
-      
-      <item>For</item>
-      <item>Input</item>
-      <item>Output</item>
-      <item>Binary</item>
-      <item>Random</item>
+<!-- SYSTEM "language.dtd" -->
+<!DOCTYPE language
+    [
+        <!-- + - - - - - - - - - - - - - - - - - +  -->
+        <!-- | Category       Characters         |  -->
+        <!-- + - - - - - - - - - - - - - - - - - +  -->
+        <!-- | Printing                          |  -->
+        <!-- + - - - - - - - - - - - - - - - - - +  -->
+        <!-- | Letters        ABC...Z abc...z    |  -->
+        <!-- | Digits         012 ... 9          |  -->
+        <!-- | Delimiters     .^*/+-=,;:()[]<>   |  -->
+        <!-- | Special        $_%!'              |  -->
+        <!-- | Free           "&?@\`{|}~         |  -->
+        <!-- + - - - - - - - - - - - - - - - - - +  -->
+        <!-- | Nonprinting                       |  -->
+        <!-- + - - - - - - - - - - - - - - - - - +  -->
+        <!-- |                SP HT VT FF        |  -->
+        <!-- + - - - - - - - - - - - - - - - - - +  -->
+        <!ENTITY Let "[A-Za-z]" >
+        <!ENTITY Dig "[0-9]" >
+        <!ENTITY Del "[\.\^\*\-=,;:\(\)\[\]&lt;&gt;]" >
+        <!ENTITY Spe "\$_%!&apos;" >
+        <!ENTITY Fre "[&quot;&amp;\?\\`\{\|\}~]" >
+        <!ENTITY Non "[ \t\v\f]" >
+        <!ENTITY Sig "(|+|-)" >
+        <!ENTITY Spa "[ \t]" >
+        <!ENTITY Pchar "(([&Let;&Dig;&Del;&Fre;\t ]|&apos;&apos;)&apos;)" >
 
-      <item>Close</item>
-      
-      <item>To</item>
-      <item>Step</item>
-      <item>Next</item>
-      <item>As</item>
-      <item>Break</item>
-      <item>Exit</item>
-      <item>If</item>
-      <item>Then</item>
-      <item>Else</item>
-      <item>Until</item>
-      <item>Select</item>
-      <item>System</item>
-      <item>Case</item>
-      <item>Default</item>
-      <item>EndSelect</item>
-      <item>Do</item>
-      <item>Loop</item>
-      <item>While</item>
-      <item>Wend</item>
-      <item>End</item>
-      <item>Type</item>
-      <item>DefType</item>
-      <item>Dim</item>
-      <item>Global</item>
-      <item>Function</item>
-      <item>Sub</item>
-      <item>Shared</item>
-      <item>Protected</item>
-      <item>Static</item>
-      <item>Declare</item>
+        <!-- Primary                                -->
+        <!-- Numeric Literals                       -->
+        <!-- decimal-literal                        -->
+        <!ENTITY std_int "(&Sig;&Dig;)+)" >                                                                     <!-- 15 -->
+        <!-- integer-literal                        -->
+        <!ENTITY bin "%[Bb]" >
+        <!ENTITY oct "%[Oo]" >
+        <!ENTITY dec "%[Dd][Ee][Cc][Ii][Mm][Aa][Ll]" >
+        <!ENTITY hex "%[Xx]" >
+        <!ENTITY bin_lit "(&bin;&Spa;*&apos;&Sig;[01]+&apos;)" >                                                <!-- %B'0101' -->
+        <!ENTITY oct_lit "(&oct;&Spa;*&apos;&Sig;[0-7]+&apos;)" >                                                <!-- %O'17' -->
+        <!ENTITY dec_lit "(&dec;&Spa;*&apos;&Sig;&Dig;+&apos;)" >                                               <!-- %DECIMAL'15' -->
+        <!ENTITY hex_lit "(&hex;&Spa;*&apos;&Sig;[&Dig;A-F]+&apos;)" >                                          <!-- %X'0F' -->
+        <!-- character-coded-literal                -->
+        <!ENTITY chr "%[Cc]" >
+        <!ENTITY chr_lit "(&chr;&Spa;*&apos;&Pchar;&apos;)" >                                                   <!-- %C'A' -->
+        <!-- float-literal                          -->
+        <!ENTITY s "[Ee]" >
+        <!ENTITY d "[Dd]" >
+        <!ENTITY ld "[Qq]" >
+        <!ENTITY flt_lit "(%&s;&Spa;*&apos;&Sig;(&Dig;*|&Dig;*.|.&Dig;*|&Dig;*.&Dig;*)(|&s;&Sig;&Dig;+)'" >     <!-- %E'1.125E-02' -->
+        <!ENTITY dbl_lit "(%&d;&Spa;*&apos;&Sig;(&Dig;*|&Dig;*.|.&Dig;*|&Dig;*.&Dig;*)(|&d;&Sig;&Dig;+)'" >     <!-- %D'1.125D-02' -->
+        <!ENTITY ldbl_lit "(%&ld;&Spa;*&apos;&Sig;(&Dig;*|&Dig;*.|.&Dig;*|&Dig;*.&Dig;*)(|&ld;&Sig;&Dig;+)'" >  <!-- %Q'1.125Q-02' -->
 
-      <item>Unsigned</item>
-      
-      <item>Data</item>
-      <item>Restore</item>
-      <item>Read</item>
+        <!-- string-literal                         -->
+        <!ENTITY ascii "%[Aa][Ss][Cc][Ii][Ii]" >
+        <!ENTITY asciz "%[Aa][Ss][Cc][Ii][Zz]" >
+        <!ENTITY ascic "%[Aa][Ss][Cc][Ii][Cc]" >
+        <!ENTITY ascid "%[Aa][Ss][Cc][Ii][Dd]" >
+        <!ENTITY p "%[Pp]" >
+        <!ENTITY str_typ "(|&ascii;|&asciz;|&ascic;|&ascid;|&p;)" >
+        <!ENTITY str_lit "&str_typ;&apos;&Pchar;*;&apos;" >
 
+        <!-- name -->
+        <!ENTITY name "([&Let;$_][&Let;&Dig;$_]*)">
+    ]>
+<language name="BLISS"
+          section="Sources"
+          extensions="*.bli;*.b32;*.b64;*.req;*.r32;*.r64;*.lib;*.l32;*.l64;*.BLI;*.B32;*.B64;*.REQ;*.R32;*.R64;.*.LIB;*.L32;*.L64"
+          version="0"
+          kateversion="5.0"
+          mimetype="text/x-bliss"
+          casesensitive="false"
+          author="Jonathan D. Belanger (jbelanger1@rochester.rr.com)"
+          license="GPL">
+    <highlighting>
+        <list name="Preprocessor">
+            <item>MACRO</item>
+            <item>KEYWORDMACRO</item>
+            <item>%ALLOCATION</item>
+            <item>%ASCIC</item>
+            <item>%ASCID</item>
+            <item>%ASCII</item>
+            <item>%ASCIZ</item>
+            <item>%ASSIGN</item>
+            <item>%B</item>
+            <item>%BLISS</item>
+            <item>%BLISS16</item>
+            <item>%BLISS32</item>
+            <item>%BLISS36</item>
+            <item>%BPADDR</item>
+            <item>%BPUNIT</item>
+            <item>%BPVAL</item>
+            <item>%C</item>
+            <item>%CHAR</item>
+            <item>%CHARCOUNT</item>
+            <item>%COUNT</item>
+            <item>%CTCE</item>
+            <item>%D</item>
+            <item>%DECIMAL</item>
+            <item>%DECLARED</item>
+            <item>%E</item>
+            <item>%ELSE</item>
+            <item>%ERROR</item>
+            <item>%ERRORMACRO</item>
+            <item>%EXACTSTRING</item>
+            <item>%EXITITERATION</item>
+            <item>%EXITMACRO</item>
+            <item>%EXPAND</item>
+            <item>%EXPLODE</item>
+            <item>%FI</item>
+            <item>%FIELDEXPAND</item>
+            <item>%G</item>
+            <item>%H</item>
+            <item>%IDENTICAL</item>
+            <item>%IF</item>
+            <item>%INFORM</item>
+            <item>%ISSTRING</item>
+            <item>%LENGTH</item>
+            <item>%LTCE</item>
+            <item>%MESSAGE</item>
+            <item>%NAME</item>
+            <item>%NBITS</item>
+            <item>%NBITSU</item>
+            <item>%NULL</item>
+            <item>%NUMBER</item>
+            <item>%O</item>
+            <item>%P</item>
+            <item>%PRINT</item>
+            <item>%QUOTE</item>
+            <item>%QUOTENAME</item>
+            <item>%RAD50_10</item>
+            <item>%RAD50_11</item>
+            <item>%REF</item>
+            <item>%REMAINING</item>
+            <item>%REMOVE</item>
+            <item>%REQUIRE</item>
+            <item>%SBTTL</item>
+            <item>%SIXBIT</item>
+            <item>%SIZE</item>
+            <item>%STRING</item>
+            <item>%SWITCHES</item>
+            <item>%THEN</item>
+            <item>%TITLE</item>
+            <item>%UNQUOTE</item>
+            <item>%UPVAL</item>
+            <item>%VARIANT</item>
+            <item>%WARN</item>
+            <item>%X</item>
+            <item>%</item>
+        </list>
+        <list name="Keywords">
+            <item>ABSOLUTE</item>
+            <item>ADDRESSING_MODE</item>
+            <item>ALIGN</item>
+            <item>ALWAYS</item>
+            <item>AND</item>
+            <item>ASSEMBLY</item>
+            <item>BEGIN</item>
+            <item>BINARY</item>
+            <item>BIND</item>
+            <item>BLISS</item>
+            <item>BLISS32</item>
+            <item>BLISS64</item>
+            <item>BLOCK</item>
+            <item>BUILTIN</item>
+            <item>BY</item>
+            <item>CALL</item>
+            <item>CASE</item>
+            <item>CODE</item>
+            <item>CODECOMMENT</item>
+            <item>COMMENTARY</item>
+            <item>COMPILETIME</item>
+            <item>CONCATENATE</item>
+            <item>DEBUG</item>
+            <item>DECR</item>
+            <item>DECRA</item>
+            <item>DECRU</item>
+            <item>DO</item>
+            <item>ELSE</item>
+            <item>ELUDOM</item>
+            <item>EMT</item>
+            <item>ENABLE</item>
+            <item>END</item>
+            <item>EQL</item>
+            <item>EQLA</item>
+            <item>EQLU</item>
+            <item>EQV</item>
+            <item>ERRS</item>
+            <item>EXECUTE</item>
+            <item>EXITLOOP</item>
+            <item>EXPAND</item>
+            <item>EXTERNAL</item>
+            <item>FIELD</item>
+            <item>FORWARD</item>
+            <item>FROM</item>
+            <item>GENERAL</item>
+            <item>GEQ</item>
+            <item>GEQA</item>
+            <item>GEQU</item>
+            <item>GLOBAL</item>
+            <item>GTR</item>
+            <item>GTRA</item>
+            <item>GTRU</item>
+            <item>IDENT</item>
+            <item>IF</item>
+            <item>INCR</item>
+            <item>INCRA</item>
+            <item>INCRU</item>
+            <item>INDIRECT</item>
+            <item>INITIAL</item>
+            <item>INRANGE</item>
+            <item>INTERRUPT</item>
+            <item>IOPAGE</item>
+            <item>JSB</item>
+            <item>LABEL</item>
+            <item>LANGUAGE</item>
+            <item>LEAVE</item>
+            <item>LEQ</item>
+            <item>LEQA</item>
+            <item>LEQU</item>
+            <item>LIBRARY</item>
+            <item>LINKAGE</item>
+            <item>LIST</item>
+            <item>LITERAL</item>
+            <item>LOCAL</item>
+            <item>LSS</item>
+            <item>LSSA</item>
+            <item>LSSU</item>
+            <item>MAIN</item>
+            <item>MAP</item>
+            <item>MOD</item>
+            <item>MODULE</item>
+            <item>NEQ</item>
+            <item>NEQA</item>
+            <item>NEQU</item>
+            <item>NOASSEMBLY</item>
+            <item>NOBINARY</item>
+            <item>NOCODE</item>
+            <item>NOCOMMENTARY</item>
+            <item>NODEBUG</item>
+            <item>NODEFAULT</item>
+            <item>NOERRS</item>
+            <item>NOEXECUTE</item>
+            <item>NOEXPAND</item>
+            <item>NOLIBRARY</item>
+            <item>NONEXTERNAL</item>
+            <item>NOOBJECT</item>
+            <item>NOOPTIMIZE</item>
+            <item>NOPIC</item>
+            <item>NOPRESERVE</item>
+            <item>NOREAD</item>
+            <item>NOREQUIRE</item>
+            <item>NOSAFE</item>
+            <item>NOSHARE</item>
+            <item>NOSOURCE</item>
+            <item>NOSYMBOLIC</item>
+            <item>NOT</item>
+            <item>NOTRACE</item>
+            <item>NOTUSED</item>
+            <item>NOUNAMES</item>
+            <item>NOVALUE</item>
+            <item>NOWRITE</item>
+            <item>NOZIP</item>
+            <item>OBJECT</item>
+            <item>OF</item>
+            <item>OPTIMIZE</item>
+            <item>OPTLEVEL</item>
+            <item>OR</item>
+            <item>OTHERWISE</item>
+            <item>OUTRANGE</item>
+            <item>OVERLAY</item>
+            <item>OWN</item>
+            <item>PIC</item>
+            <item>PLIT</item>
+            <item>PRESERVE</item>
+            <item>PRESET</item>
+            <item>PSECT</item>
+            <item>READ</item>
+            <item>RECORD</item>
+            <item>REF</item>
+            <item>REGISTER</item>
+            <item>REP</item>
+            <item>REQUIRE</item>
+            <item>RETURN</item>
+            <item>ROUTINE</item>
+            <item>SAFE</item>
+            <item>SELECT</item>
+            <item>SELECTA</item>
+            <item>SELECTONE</item>
+            <item>SELECTONEA</item>
+            <item>SELECTONEU</item>
+            <item>SELECTU</item>
+            <item>SET</item>
+            <item>SHARE</item>
+            <item>SHOW</item>
+            <item>SIGNED</item>
+            <item>SOURCE</item>
+            <item>STACKLOCAL</item>
+            <item>STANDARD</item>
+            <item>STRUCTURE</item>
+            <item>SWITCHES</item>
+            <item>SYMBOLIC</item>
+            <item>TES</item>
+            <item>THEN</item>
+            <item>TO</item>
+            <item>TRACE</item>
+            <item>UNAMES</item>
+            <item>UNDECLARE</item>
+            <item>UNSIGNED</item>
+            <item>UNTIL</item>
+            <item>UPLIT</item>
+            <item>VECTOR</item>
+            <item>VERSION</item>
+            <item>VOLATILE</item>
+            <item>WEAK</item>
+            <item>WHILE</item>
+            <item>WITH</item>
+            <item>WRITE</item>
+            <item>XOR</item>
+            <item>ZIP</item>
+        </list>
+        <list name="Data Types">
+            <item>BIT</item>
+            <item>BYTE</item>
+            <item>WORD</item>
+            <item>LONG</item>
+            <item>QUAD</item>
+        </list>
+        <list name="Functions">
+            <item>ABS</item>
+            <item>ACTUALCOUNT</item>
+            <item>ACTUALPARAMETER</item>
+            <item>ARGPTR</item>
+            <item>CH$A_RCHAR</item>
+            <item>CH$A_WCHAR</item>
+            <item>CH$ALLOCATION</item>
+            <item>CH$COMPARE</item>
+            <item>CH$COPY</item>
+            <item>CH$DIFF</item>
+            <item>CH$EQL</item>
+            <item>CH$FAIL</item>
+            <item>CH$FILL</item>
+            <item>CH$FIND_CH</item>
+            <item>CH$FIND_NOT_CH</item>
+            <item>CH$FIND_SUB</item>
+            <item>CH$GEQ</item>
+            <item>CH$GTR</item>
+            <item>CH$LEQ</item>
+            <item>CH$LSS</item>
+            <item>CH$MOVE</item>
+            <item>CH$NEQ</item>
+            <item>CH$PLUS</item>
+            <item>CH$PTR</item>
+            <item>CH$RCHAR</item>
+            <item>CH$RCHAR_A</item>
+            <item>CH$SIZE</item>
+            <item>CH$TRANSLATE</item>
+            <item>CH$TRANSTABLE</item>
+            <item>CH$WCHAR</item>
+            <item>CH$WCHAR_A</item>
+            <item>MAX</item>
+            <item>MAXA</item>
+            <item>MAXU</item>
+            <item>MIN</item>
+            <item>MINA</item>
+            <item>MINU</item>
+            <item>NULLPARAMETER</item>
+            <item>SETUNWIND</item>
+            <item>SIGN</item>
+            <item>SIGNAL</item>
+            <item>SIGNAL_STOP</item>
+        </list>
 
-      <item>Goto</item>
-      <item>Gosub</item>
-      <item>Return</item>
-      
-      <item>DEFBYTE</item>
-      <item>DEFDBL</item>
-      <item>DEFINT</item>
-      <item>DEFLNG</item>
-      <item>DEFSHORT</item>
-      <item>DEFSNG</item>
-      <item>DEFSTR</item>
-      <item>DEFUBYTE</item>
-      <item>DEFUINT</item>
-      <item>DEFUSHORT</item>
-    </list>
+        <contexts>
+            <context attribute="Normal Text" lineEndContext="#stay" name="Normal">
 
-    <list name="Data Types">  
-      <item>Integer</item>
-      <item>Long</item>
-      <item>Single</item>
-      <item>Double</item>
-      <item>String</item>
-      <item>PTR</item>
-      <item>Byte</item>
-      <item>Dword</item>
-      <item>Qword</item>
-      <item>Word</item>
-    </list>
-        
-    <list name="functions">
-      <item>AAA</item>
-      <item>AAD</item>
-      <item>AAM</item>
-      <item>AAS</item>
-      <item>ABS</item>
-      <item>ACOS</item>
-      <item>ADC</item>
-      <item>ADD</item>
-      <item>ALLOCATE</item>
-      <item>AND</item>
-      <item>AND</item>
-      <item>ARPL</item>
-      <item>ASC</item>
-      <item>ASIN</item>
-      <item>ASM</item>
-      <item>ATAN2</item>
-      <item>ATN</item>
-      <item>BASE</item>
-      <item>BEEP</item>
-      <item>BIN$</item>
-      <item>BLOAD</item>
-      <item>BOUND</item>
-      <item>BREAK</item>
-      <item>BSAVE</item>
-      <item>BSF</item>
-      <item>BSR</item>
-      <item>BSWAP</item>
-      <item>BT</item>
-      <item>BTC</item>
-      <item>BTR</item>
-      <item>BTS</item>
-      <item>BYREF</item>
-      <item>CALL</item>
-      <item>CALLOCATE</item>
-      <item>CALLS</item>
-      <item>CBW</item>
-      <item>CBYTE</item>
-      <item>CDBL</item>
-      <item>CDQ</item>
-      <item>CHAIN</item>
-      <item>CHDIR</item>
-      <item>CHR$</item>
-      <item>CINT</item>
-      <item>CIRCLE</item>
-      <item>CLC</item>
-      <item>CLD</item>
-      <item>CLEAR</item>
-      <item>CLI</item>
-      <item>CLNG</item>
-      <item>CLOSE</item>
-      <item>CLTS</item>
-      <item>CMC</item>
-      <item>CMP</item>
-      <item>CMPS</item>
-      <item>CMPSB</item>
-      <item>CMPSD</item>
-      <item>CMPSW</item>
-      <item>CMPXCHG</item>
-      <item>COLOR</item>
-      <item>COMMAND$</item>
-      <item>COMMON</item>
-      <item>CONST</item>
-      <item>CONTINUE</item>
-      <item>COS</item>
-      <item>CSHORT</item>
-      <item>CSIGN</item>
-      <item>CSNG</item>
-      <item>CUNSG</item>
-      <item>CURDIR$</item>
-      <item>CVD</item>
-      <item>CVI</item>
-      <item>CVL</item>
-      <item>CVS</item>
-      <item>CWD</item>
-      <item>CWDE</item>
-      <item>DAA</item>
-      <item>DAS</item>
-      <item>DATA</item>
-      <item>DATE$</item>
-      <item>DEALLOCATE</item>
-      <item>DEC</item>
-      <item>DIM</item>
-      <item>DIR$</item>
-      <item>DIV</item>
-      <item>DRAW</item>
-      <item>END</item>
-      <item>ENTER</item>
-      <item>ENUM</item>
-      <item>ENVIRON</item>
-      <item>ENVIRON$</item>
-      <item>EOF</item>
-      <item>EQV</item>
-      <item>ERASE</item>
-      <item>EXEC</item>
-      <item>EXEPATH</item>
-      <item>EXP</item>
-      <item>FIX</item>
-      <item>FLIP</item>
-      <item>FRE</item>
-      <item>FREEFILE</item>
-      <item>GET</item>
-      <item>GETKEY</item>
-      <item>GETMOUSE</item>
-      <item>HEX$</item>
-      <item>HLT</item>
-      <item>IDIV</item>
-      <item>IMP</item>
-      <item>IMUL</item>
-      <item>IN</item>
-      <item>INC</item>
-      <item>INKEY$</item>
-      <item>INP</item>
-      <item>INPUT</item>
-      <item>INPUT$</item>
-      <item>INS</item>
-      <item>INSB</item>
-      <item>INSD</item>
-      <item>INSTR</item>
-      <item>INT</item>
-      <item>INT</item>
-      <item>INTO</item>
-      <item>INVD</item>
-      <item>INVLPG</item>
-      <item>IRET</item>
-      <item>IRETD</item>
-      <item>JA</item>
-      <item>JAE</item>
-      <item>JB</item>
-      <item>JBE</item>
-      <item>JC</item>
-      <item>JCXZ</item>
-      <item>JE</item>
-      <item>JECXZ</item>
-      <item>JG</item>
-      <item>JGE</item>
-      <item>JL</item>
-      <item>JLE</item>
-      <item>JMP</item>
-      <item>JNA</item>
-      <item>JNAE</item>
-      <item>JNB</item>
-      <item>JNBE</item>
-      <item>JNC</item>
-      <item>JNE</item>
-      <item>JNG</item>
-      <item>JNGE</item>
-      <item>JNL</item>
-      <item>JNLE</item>
-      <item>JNO</item>
-      <item>JNP</item>
-      <item>JNS</item>
-      <item>JNZ</item>
-      <item>JO</item>
-      <item>JP</item>
-      <item>JPE</item>
-      <item>JPO</item>
-      <item>JS</item>
-      <item>JUMP</item>
-      <item>JZ</item>
-      <item>KILL</item>
-      <item>LAHF</item>
-      <item>LAR</item>
-      <item>LBOUND</item>
-      <item>LCASE$</item>
-      <item>LDS</item>
-      <item>LEA</item>
-      <item>LEAVE</item>
-      <item>LEAVED</item>
-      <item>LEAVEW</item>
-      <item>LEFT$</item>
-      <item>LEN</item>
-      <item>LES</item>
-      <item>LET</item>
-      <item>LFS</item>
-      <item>LGDT</item>
-      <item>LGS</item>
-      <item>LIB</item>
-      <item>LIDT</item>
-      <item>LINE</item>
-      <item>LLDT</item>
-      <item>LMSW</item>
-      <item>LOC</item>
-      <item>LOCK</item>
-      <item>LOCK</item>
-      <item>LODS</item>
-      <item>LODSB</item>
-      <item>LODSD</item>
-      <item>LODSW</item>
-      <item>LOF</item>
-      <item>LOG</item>
-      <item>LOOPD</item>
-      <item>LOOPDE</item>
-      <item>LOOPDNE</item>
-      <item>LOOPDNZ</item>
-      <item>LOOPDZ</item>
-      <item>LOOPE</item>
-      <item>LOOPNE</item>
-      <item>LOOPNZ</item>
-      <item>LOOPW</item>
-      <item>LOOPWE</item>
-      <item>LOOPWNE</item>
-      <item>LOOPWNZ</item>
-      <item>LOOPWZ</item>
-      <item>LOOPZ</item>
-      <item>LSET</item>
-      <item>LSL</item>
-      <item>LSS</item>
-      <item>LTR</item>
-      <item>LTRIM$</item>
-      <item>MID$</item>
-      <item>MKD$</item>
-      <item>MKDIR</item>
-      <item>MKI$</item>
-      <item>MKL$</item>
-      <item>MKS$</item>
-      <item>MOD</item>
-      <item>MOV</item>
-      <item>MOVS</item>
-      <item>MOVSB</item>
-      <item>MOVSD</item>
-      <item>MOVSW</item>
-      <item>MOVSX</item>
-      <item>MOVZX</item>
-      <item>MUL</item>
-      <item>MULTIKEY</item>
-      <item>NAME</item>
-      <item>NEG</item>
-      <item>NOP</item>
-      <item>NOT</item>
-      <item>NOTHING</item>
-      <item>OCT$</item>
-      <item>OPTION</item>
-      <item>OR</item>
-      <item>OUT</item>
-      <item>OUTS</item>
-      <item>OUTSB</item>
-      <item>OUTSD</item>
-      <item>OUTSW</item>
-      <item>PAINT</item>
-      <item>PALETTE</item>
-      <item>PCOPY</item>
-      <item>PEEK</item>
-      <item>PEEKI</item>
-      <item>PEEKS</item>
-      <item>PMAP</item>
-      <item>POINT</item>
-      <item>POKE</item>
-      <item>POKEI</item>
-      <item>POKES</item>
-      <item>POP</item>
-      <item>POPA</item>
-      <item>POPAD</item>
-      <item>POPF</item>
-      <item>POPFD</item>
-      <item>POS</item>
-      <item>PRESERVE</item>
-      <item>PRESET</item>
-      <item>PRINT</item>
-      <item>PRIVATE</item>
-      <item>PROCPTR</item>
-      <item>PSET</item>
-      <item>PTR</item>
-      <item>PUBLIC</item>
-      <item>PUSH</item>
-      <item>PUSHA</item>
-      <item>PUSHAD</item>
-      <item>PUSHF</item>
-      <item>PUSHFD</item>
-      <item>PUT</item>
-      <item>RANDOMIZE</item>
-      <item>RCL</item>
-      <item>RCR</item>
-      <item>REALLOCATE</item>
-      <item>REDIM</item>
-      <item>REM</item>
-      <item>REP</item>
-      <item>REPE</item>
-      <item>REPNE</item>
-      <item>REPNZ</item>
-      <item>REPZ</item>
-      <item>RESET</item>
-      <item>RET</item>
-      <item>RETURN</item>
-      <item>RGB</item>
-      <item>RIGHT$</item>
-      <item>RMDIR</item>
-      <item>RND</item>
-      <item>ROL</item>
-      <item>ROR</item>
-      <item>RSET</item>
-      <item>RTRIM$</item>
-      <item>RUN</item>
-      <item>SADD</item>
-      <item>SAHF</item>
-      <item>SAL</item>
-      <item>SAR</item>
-      <item>SBB</item>
-      <item>SCAS</item>
-      <item>SCASB</item>
-      <item>SCASD</item>
-      <item>SCASW</item>
-      <item>SCREEN</item>
-      <item>SCREENCOPY</item>
-      <item>SCREENINFO</item>
-      <item>SCREENLOCK</item>
-      <item>SCREENPTR</item>
-      <item>SCREENSET</item>
-      <item>SCREENUNLOCK</item>
-      <item>SEEK</item>
-      <item>SETA</item>
-      <item>SETAE</item>
-      <item>SETB</item>
-      <item>SETBE</item>
-      <item>SETC</item>
-      <item>SETDATE</item>
-      <item>SETE</item>
-      <item>SETENVIRON</item>
-      <item>SETG</item>
-      <item>SETGE</item>
-      <item>SETL</item>
-      <item>SETLE</item>
-      <item>SETNA</item>
-      <item>SETNAE</item>
-      <item>SETNB</item>
-      <item>SETNBE</item>
-      <item>SETNC</item>
-      <item>SETNE</item>
-      <item>SETNG</item>
-      <item>SETNGE</item>
-      <item>SETNL</item>
-      <item>SETNLE</item>
-      <item>SETNO</item>
-      <item>SETNP</item>
-      <item>SETNS</item>
-      <item>SETNZ</item>
-      <item>SETO</item>
-      <item>SETP</item>
-      <item>SETPE</item>
-      <item>SETPO</item>
-      <item>SETS</item>
-      <item>SETZ</item>
-      <item>SGDT</item>
-      <item>SGN</item>
-      <item>SHARED</item>
-      <item>SHELL</item>
-      <item>SHL</item>
-      <item>SHLD</item>
-      <item>SHR</item>
-      <item>SHRD</item>
-      <item>SIDT</item>
-      <item>SIN</item>
-      <item>SLDT</item>
-      <item>SLEEP</item>
-      <item>SMSW</item>
-      <item>SPACE$</item>
-      <item>SQR</item>
-      <item>STATIC</item>
-      <item>STC</item>
-      <item>STD</item>
-      <item>STI</item>
-      <item>STOP</item>
-      <item>STOS</item>
-      <item>STOSB</item>
-      <item>STOSD</item>
-      <item>STOSW</item>
-      <item>STR</item>
-      <item>STR$</item>
-      <item>STRING$</item>
-      <item>SWAP</item>
-      <item>TAN</item>
-      <item>TEST</item>
-      <item>TIME$</item>
-      <item>TIMER</item>
-      <item>TRIM$</item>
-      <item>TYPE</item>
-      <item>UBOUND</item>
-      <item>UCASE$</item>
-      <item>UNION</item>
-      <item>UNLOCK</item>
-      <item>VAL</item>
-      <item>VARPTR</item>
-      <item>VERR</item>
-      <item>VERW</item>
-      <item>VIEW</item>
-      <item>WAIT</item>
-      <item>WINDOWTITLE</item>
-      <item>WRITE</item>
-      <item>XADD</item>
-      <item>XCHG</item>
-      <item>XLAT</item>
-      <item>XLATB</item>
-      <item>XOR</item>
-    
-    </list>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(MODULE\s*&name;)" beginRegion="ModuleRegion" insensitive="true" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(ELUDOM)" endRegion="ModuleRegion" insensitive="true" />
 
-    <contexts>
-      <context attribute="Normal Text" lineEndContext="#stay" name="Normal">
+                <RegExpr attribute="Keyword" context="#stay" String="\b((|GLOBAL|FORWARD)\sROUTINE\s*&name;)" insensitive="true" />
 
-        <RegExpr attribute="Keyword" context="#stay" String="\b(exit (function|sub|for|do|while|type|select))([\s]|$)" insensitive="true" />
-        <RegExpr attribute="Keyword" context="#stay" String="\b(declare (function|sub))([\s]|$)" insensitive="true" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(IF)" beginRegion="IfRegion" insensitive="true" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(THEN)" endRegion="IfRegion" insensitive="true" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(ELSE)" endRegion="IfRegion" insensitive="true" />
 
-        <RegExpr attribute="Keyword" context="#stay" String="\b(while)([\s]|$)" insensitive="true" beginRegion="WhileRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(wend)([\s]|$)" insensitive="true" endRegion="WhileRegion"/>
-        
-        <RegExpr attribute="Keyword" context="#stay" String="\b(do)([\s]|$)" insensitive="true" beginRegion="DoRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(loop)([\s]|$)" insensitive="true" endRegion="DoRegion"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(CASE)" insensitive="true"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(SELECT((|ONE)|[AU]))" insensitive="true"/>
 
-        <RegExpr attribute="Keyword" context="#stay" String="\b(select)([\s]|$)" insensitive="true" beginRegion="SelectRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(end select)([\s]|$)" insensitive="true" endRegion="SelectRegion"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(SET)" beginRegion="SET" insensitive="true"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(TES)" endRegion="TES" insensitive="true"/>
 
-        <RegExpr attribute="Keyword" context="#stay" String="\b(for (input|output|binary|random))([\s]|$)" insensitive="true" />
-                
-        <RegExpr attribute="Keyword" context="#stay" String="\b(for)([\s]|$)" insensitive="true" beginRegion="ForRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(next)([\s]|$)" insensitive="true" endRegion="ForRegion"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b((IN|DE)CR(|[AU]))" insensitive="true" beginRegion="LoopRegion"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(loop)([\s]|$)" insensitive="true" endRegion="LoopRegion"/>
 
-        <RegExpr attribute="Keyword" context="#stay" String="\b(function)([.\s]|$)" insensitive="true" beginRegion="fProcedureRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(end function)([\s]|$)" insensitive="true" endRegion="fProcedureRegion"/>
-        
-        <RegExpr attribute="Keyword" context="#stay" String="\b(sub)([.\s]|$)" insensitive="true" beginRegion="sProcedureRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(end sub)([\s]|$)" insensitive="true" endRegion="sProcedureRegion"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(WHILE)" insensitive="true" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(DO)" insensitive="true" />
 
-        <RegExpr attribute="Keyword" context="#stay" String="\b(type)([\s]|$)" insensitive="true" beginRegion="StructureRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(end type)([\s]|$)" insensitive="true" endRegion="StructureRegion"/>
+                <keyword attribute="Keyword" context="#stay" String="Keywords"/>
+                <keyword attribute="Data Types" context="#stay" String="Data Types"/>
+                <keyword attribute="Preprocessor" context="#stay" String="Preprocessor"/>
 
-        <RegExpr attribute="Keyword" context="#stay" String="\b(if)([\s]|$)" insensitive="true" beginRegion="IfRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(then )[a-zA-Z_\x7f-\xff]." insensitive="true" endRegion="IfRegion"/>
-        <RegExpr attribute="Keyword" context="#stay" String="\b(end if)([\s]|$)" insensitive="true" endRegion="IfRegion"/>
-
-
-        <keyword attribute="Keyword" context="#stay" String="keywords"/>
-        <keyword attribute="Data Types" context="#stay" String="Data Types"/>
-        <keyword attribute="Preprocessor" context="#stay" String="preproc"/>
-         
-        <keyword attribute="Functions" context="#stay" String="functions"/>
-        <RegExpr attribute="Constant" context="#stay" String="\#+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*"/>
-        <Float attribute="Number" context="#stay"/>
-        <Int attribute="Number" context="#stay"/>
-        <DetectChar attribute="String" context="String" char="&quot;" />
-        <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*BEGIN.*$" beginRegion="marker"/>
-        <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*END.*$" endRegion="marker"/>
-        <DetectChar attribute="Comment" context="Comment1" char="'"/>
-      </context>
-      <context attribute="String" lineEndContext="#pop" name="String">
-        <DetectChar attribute="String" context="#pop" char="&quot;"/>
-      </context>
-      <context attribute="Comment" lineEndContext="#pop" name="Comment1">
-        <IncludeRules context="##Alerts" />
-        <IncludeRules context="##Modelines" />
-      </context>
-    </contexts>
-    <itemDatas>
-      <itemData name="Normal Text" defStyleNum="dsNormal"/>
-      <itemData name="Keyword" defStyleNum="dsKeyword"/>
-      <itemData name="Functions" defStyleNum="dsFunction"/>
-      <itemData name="Data Types" defStyleNum="dsDataType"/>
-      <itemData name="Constant" defStyleNum="dsConstant"/>
-      <itemData name="Number" defStyleNum="dsDecVal"/>
-      <itemData name="String" defStyleNum="dsString"/>
-      <itemData name="Comment" defStyleNum="dsComment"/>
-      <itemData name="Region Marker" defStyleNum="dsRegionMarker"/>
-      <itemData name="Preprocessor" defStyleNum="dsPreprocessor"/>
-    </itemDatas>
-  </highlighting>
-  <general>
-    <keywords casesensitive="0" />
-    <comments>
-      <comment name="singleLine" start="'" />
-    </comments>
-  </general>
+                <keyword attribute="Functions" context="#stay" String="Functions"/>
+                <RegExpr attribute="Constant" context="#stay" String="\#+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*"/>
+                <Float attribute="Number" context="#stay"/>
+                <Int attribute="Number" context="#stay"/>
+                <DetectChar attribute="String" context="String" char="&apos;" />
+                <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*BEGIN.*$" beginRegion="marker"/>
+                <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*END.*$" endRegion="marker"/>
+                <DetectChar attribute="Comment" context="TrailingComment" char="!" lineEndContext="#pop"/>
+            </context>
+            <context attribute="String" lineEndContext="#pop" name="String">
+                <DetectChar attribute="String" context="#pop" char="&apos;"/>
+            </context>
+            <context attribute="Comment" lineEndContext="#pop" name="EmbeddedCommand">
+                <Detect2Chars attribute="Comment" context="EmbeddedComment" char="%" char1="(" beginRegion="FoldableComment"/>
+                <Detect2Chars attribute="Comment" context="#pop" char=")" char1="%" endRegion="FoldableComment"/>
+            </context>
+        </contexts>
+        <itemDatas>
+            <itemData name="Normal Text" defStyleNum="dsNormal"/>
+            <itemData name="Keyword" defStyleNum="dsKeyword"/>
+            <itemData name="Functions" defStyleNum="dsFunction"/>
+            <itemData name="Data Types" defStyleNum="dsDataType"/>
+            <itemData name="Constant" defStyleNum="dsConstant"/>
+            <itemData name="Number" defStyleNum="dsDecVal"/>
+            <itemData name="String" defStyleNum="dsString"/>
+            <itemData name="Comment" defStyleNum="dsComment"/>
+            <itemData name="Region Marker" defStyleNum="dsRegionMarker"/>
+            <itemData name="Preprocessor" defStyleNum="dsPreprocessor"/>
+        </itemDatas>
+    </highlighting>
+    <general>
+        <keywords casesensitive="false" />
+        <comments>
+            <comment name="TrailingComment" start="!" />
+            <comment name="EmbeddedComment" start="%(" end=")%" />
+        </comments>
+    </general>
 </language>
 <!-- // kate: space-indent on; indent-width 2; replace-tabs on; -->
-

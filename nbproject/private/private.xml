@@ -10,13 +10,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/belanger/projects/bliss/include/bliss/FrontEnd/Lexer.h</file>
-            <file>file:/home/belanger/projects/bliss/lib/FrontEnd/Parser.cpp</file>
-            <file>file:/home/belanger/projects/bliss/bliss.cpp</file>
-            <file>file:/home/belanger/projects/bliss/lib/FrontEnd/Lexer.cpp</file>
-            <file>file:/home/belanger/projects/bliss/CMakeLists.txt</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/FrontEnd/Parser.h</file>
-            <file>file:/home/belanger/projects/bliss/lib/FrontEnd/CMakeLists.txt</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ExprAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ConstantAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/OperatorAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ExecutableFuncAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/BlockAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/PrimaryAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ControlAST.h</file>
         </group>
     </open-files>
 </project-private>

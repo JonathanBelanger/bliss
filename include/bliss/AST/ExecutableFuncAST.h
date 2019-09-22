@@ -38,6 +38,8 @@ namespace bliss
      *
      * executable-function-name -+- name
      *                           +- % name
+     *
+     * actual-parameter --- expression
      */
     class ExecutableFuncAST : public ExprAST
     {

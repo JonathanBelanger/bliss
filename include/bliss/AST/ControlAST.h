@@ -48,6 +48,137 @@ namespace bliss
         private:
         void* Val;
     };
+
+    /*
+     * conditional-expression -+- IF test THEN consequence ELSE alternative
+     *                         +- IF test THEN consequence
+     *
+     * test --------+
+     * consequence  +- expression
+     * alternative -+
+     */
+    class ConditionalExprAST : public ControlExprAST
+    {
+    };
+
+    /*
+     * case-expression --- CASE case-index FROM low-bound TO high-bound
+     *                          SET
+     *                          case-line...
+     *                          TES
+     *
+     * case-line --- [case-label, ...]: case-action;
+     *
+     *             +- single-value
+     * case-label -+  low-value TO high-value
+     *             |  INRANGE
+     *             +- OUTRANGE
+     *
+     * case-index --+- expression
+     * case-action -+
+     *
+     * low-bound    +
+     * high-bound   |
+     * single-value +- compile-time-constant-expression
+     * low-value    |
+     * high-value --+
+     */
+    class CaseExprAST : public ControlExprAST
+    {
+    };
+
+    /*
+     * select-expression -+- SELECT | SELECTA | SELECTU ---------+- select-index OF
+     *                    +- SELECTONE | SELECTONEA | SELECTONEU +
+     *                          SET
+     *                          select-line...
+     *                          TES
+     *
+     * select-line --- [select-label, ...]: select-action;
+     *
+     *               +- selector
+     * select-label -+  low-selector TO high-selector
+     *               | OTHERWISE
+     *               + ALWAYS
+     *
+     * select-index --+
+     * select-action  |
+     * selector       +- expression
+     * low-selector   |
+     * high-selector -+
+     */
+    class SelectExprAST : public ControlExprAST
+    {
+    };
+
+    /*
+     * loop-expression -+- indexed-loop-expression
+     *                  +- tested-loop-expression
+     *
+     */
+    class LoopExprAST : public ControlExprAST
+    {
+        private:
+        ExprAST LoopBody;
+    };
+
+    /*
+     * indexed-loop-expression -+- INCR | INCRA | INCRU -+- loop-index
+     *                          +- DECR | DECRA | DESCU -+
+     *                              FROM initial -+--+- TO final -+--+- BY step
+     *                              nothing ------+  +- nothing --+  +- nothing
+     *                                  DO loop-body
+     *
+     * loop-index --- name
+     *
+     * loop-body -+
+     * initial    +- expression
+     * final      |
+     * step ------+
+     */
+    class IndexLoopExprAST : public LoopExprAST
+    {
+    };
+
+    /*
+     * tested-loop-expression -+- pre-tested-loop
+     *                         +- post-tested-loop
+     *
+     * pre-tested-loop -+- WHILE -+- test DO loop-body
+     *                  +- UNTIL -+
+     *
+     * post-tested-loop --- DO loop-body -+- WHILE -+- test
+     *                                    +- UNTIL -+
+     */
+    class TestedLoopExprAST : public LoopExprAST
+    {
+    };
+
+    /*
+     * exit-expression -+- leave-expression
+     *                  +- exit-loop-expression
+     *
+     * leave-expression --- LEAVE label -+- WITH exit-value
+     *                                   +- nothing
+     *
+     * exit-loop-expression --- EXITLOOP -+- exit-value
+     *                                    +- nothing
+     *
+     * exit-value --- expression
+     */
+    class ExitExprAST : public ControlExprAST
+    {
+    };
+
+    /*
+     * return-expression --- RETURN -+- returned-value
+     *                               +- nothing
+     *
+     * returned-value --- expression
+     */
+    class ReturnExprAST : public ControlExprAST
+    {
+    };
 }
 
 #endif /* LLVM_BLISS_CONTROLAST_H */
