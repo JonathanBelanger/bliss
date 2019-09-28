@@ -7,15 +7,25 @@
           <df name="AST">
             <in>AttributeAST.h</in>
             <in>BaseAST.h</in>
+            <in>BindingAST.h</in>
             <in>BlockAST.h</in>
+            <in>CompileTimeAST.h</in>
+            <in>ConditionHandlingAST.h</in>
             <in>ConstantAST.h</in>
             <in>ControlAST.h</in>
             <in>DataAST.h</in>
             <in>DeclarationAST.h</in>
             <in>ExecutableFuncAST.h</in>
             <in>ExprAST.h</in>
+            <in>IncludeAST.h</in>
+            <in>LexicalAST.h</in>
+            <in>LinkageAST.h</in>
+            <in>MacroAST.h</in>
+            <in>ModuleAST.h</in>
             <in>OperatorAST.h</in>
             <in>PrimaryAST.h</in>
+            <in>RoutineAST.h</in>
+            <in>SpecialAST.h</in>
             <in>StructureAST.h</in>
           </df>
           <df name="FrontEnd">
@@ -98,7 +108,16 @@
       </item>
       <item path="include/bliss/AST/BaseAST.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/bliss/AST/BindingAST.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/bliss/AST/BlockAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/CompileTimeAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/ConditionHandlingAST.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="include/bliss/AST/ConstantAST.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -115,9 +134,23 @@
       </item>
       <item path="include/bliss/AST/ExprAST.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/bliss/AST/IncludeAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/LexicalAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/LinkageAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/MacroAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/ModuleAST.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/bliss/AST/OperatorAST.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/bliss/AST/PrimaryAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/RoutineAST.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/AST/SpecialAST.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/bliss/AST/StructureAST.h" ex="false" tool="3" flavor2="0">
       </item>

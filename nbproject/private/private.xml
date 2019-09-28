@@ -12,11 +12,13 @@
         <group>
             <file>file:/home/belanger/projects/bliss/include/bliss/AST/ExprAST.h</file>
             <file>file:/home/belanger/projects/bliss/include/bliss/AST/ConstantAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/OperatorAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ExecutableFuncAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/AttributeAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/StructureAST.h</file>
             <file>file:/home/belanger/projects/bliss/include/bliss/AST/BlockAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/DeclarationAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/DataAST.h</file>
             <file>file:/home/belanger/projects/bliss/include/bliss/AST/PrimaryAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ControlAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/AST/BaseAST.h</file>
         </group>
     </open-files>
 </project-private>

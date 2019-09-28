@@ -264,12 +264,14 @@ namespace bliss
     /*
      * routine-call -+- ordinary-routine-call
      *               +- general-routine-call
-     *
-     *                                                 +-+- input-actual-parameter, ... -+-----+
-     *                                                 | +-  nothing --------------------+     |
-     * ordinary-routine-call --- routine-designator ( -+                                       +- )
-     *                                                 |-+- ; output -actual-parameter, ... -+ |
-     *                                                 | +- nothing -------------------------+ +
+     */
+    class RoutineAST : public PrimaryExprAST
+    {
+    };
+
+    /*
+     * ordinary-routine-call --- routine-designator ( -+- input-actual-parameter, ... -+--+- ; output-actual-parameter, ... -+- )
+     *                                                 +- nothing ---------------------+  +- nothing ------------------------+
      *
      * routine-designator --- primary
      *
@@ -279,7 +281,18 @@ namespace bliss
      * output-actual-parameter -+- expression
      *                          +- nothing
      */
-    class Routine : public PrimaryExprAST
+    class OrdinaryRoutineAST : public RoutineAST
+    {
+    };
+
+    /*
+     * general-routine-call --- linkage-name ( routine-address --
+     *                              -+- , input-actual-parameter, ... -+--+- ; output-actual-parameter, ... -+- )
+     *                               +- nothing -----------------------+  +- nothing ------------------------+
+     *
+     * routine-address --- expression
+     */
+    class GeneralRoutineAST : public RoutineAST
     {
     };
 

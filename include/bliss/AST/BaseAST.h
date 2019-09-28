@@ -43,27 +43,16 @@ namespace bliss
     } SourceLocation;
 
     /*
-     * This structure defines the descriptor structure.  This is the O/S
-     * version of the descriptor (pointer size is determined by the operating
-     * system on which we are running (but will work for both 32- and 64-bit.
+     * These structures define the various layouts of the descriptor structure.
+     * The first one is the 32-bit version of the descriptor, and is used when
+     * compiling for a 32-bit operating system.  The second one is the 64-bit
+     * version, and is used when compiling for a 64-bit operating system.
      */
     typedef struct
     {
-        uint32_t dsc_l_length;
-        uint16_t dsc_w_dtype;
-        uint16_t dsc_w_class;
-        char *dsc_a_pointer;
-    } DSC_DESCRIPTOR;
-    
-    /*
-     * The next 2 structures define and enforce either 32- or 64-bit layouts
-     * for the descriptor.
-     */
-    typedef struct
-    {
-        uint16_t dsc_w_length;
-        uint8_t dsc_b_dtype;
-        uint8_t dsc_b_class;
+        uint16_t dsc_l_length;
+        uint8_t dsc_w_type;
+        uint8_t dsc_w_class;
         uint32_t dsc_a_pointer;
     } DSC32_DESCRIPTOR;
     typedef struct
