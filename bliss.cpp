@@ -34,14 +34,12 @@
  *  The next step will be to move these into their own include and module
  *  files.
  */
-#include "Basic/FileManager.h"
-#include "FrontEnd/Lexer.h"
+#include "Driver/Driver.h"
 
 using namespace std;
 using namespace bliss;
 
-FileManager* FileManager::fmp = nullptr;
-Lexer *Lexer::lex = nullptr;
+Driver *Driver::driver = nullptr;
 
 /*
  * This function is called to test the input file processing and character
@@ -49,9 +47,15 @@ Lexer *Lexer::lex = nullptr;
  */
 int main(int argc, char** argv)
 {
-    FileManager *fileMgr = FileManager::get();
-    Lexer *lex = Lexer::get();
+    Driver *driver = Driver::get();
+    vector<string> files = {"/home/belanger/projects/bliss/tests/AST/module_test_01.b64"};
 
+    if (driver->setFiles(&files) == true)
+    {
+        driver->mainLoop();
+    }
+
+#if 0
     if (fileMgr->pushFile("/home/belanger/projects/bliss/tests/lexical/lexfuncs1.bli") ==
             true)
     {
@@ -129,6 +133,6 @@ int main(int argc, char** argv)
         }
         fileMgr->popFile();
     }
-
+#endif
     return 0;
 }

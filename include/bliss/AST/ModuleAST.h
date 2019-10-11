@@ -40,8 +40,7 @@ namespace bliss
      *
      * module-name --- name
      *
-     * module-body --- BEGIN -+- data-declarations -+--+- routine-declarations -+- END
-     *                        +- nothing -----------+  +- nothing --------------+
+     * module-body --- block
      *
      * module-switch -+- on-off-switch
      *                +- special-switch
@@ -72,10 +71,10 @@ namespace bliss
     class ModuleAST : public BaseAST
     {
         public:
-            ModuleAST(string name);
+            ModuleAST(const string &Name) : Name(Name) {}
 
         private:
-            string module_name;
+            string Name;
             SwitchesDeclAST switches;
     };
 }

@@ -10,15 +10,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ExprAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/ConstantAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/AttributeAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/StructureAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/FrontEnd/Lexer.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/Basic/InputChar.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/FrontEnd/Keyword.h</file>
+            <file>file:/home/belanger/projects/bliss/lib/Driver/Driver.cpp</file>
             <file>file:/home/belanger/projects/bliss/include/bliss/AST/BlockAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/DeclarationAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/DataAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/PrimaryAST.h</file>
-            <file>file:/home/belanger/projects/bliss/include/bliss/AST/BaseAST.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/Basic/InputFile.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/FrontEnd/Parser.h</file>
+            <file>file:/home/belanger/projects/bliss/tests/AST/module_test_01.b64</file>
+            <file>file:/home/belanger/projects/bliss/lib/FrontEnd/Parser.cpp</file>
+            <file>file:/home/belanger/projects/bliss/lib/FrontEnd/Lexer.cpp</file>
+            <file>file:/home/belanger/projects/bliss/CMakeLists.txt</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/Driver/Driver.h</file>
+            <file>file:/home/belanger/projects/bliss/include/bliss/Basic/Lister.h</file>
         </group>
     </open-files>
 </project-private>

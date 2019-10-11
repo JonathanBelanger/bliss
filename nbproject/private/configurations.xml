@@ -19,6 +19,9 @@
           <df name="bliss.dir">
           </df>
           <df name="CMakeTmp">
+            <in>testCXXCompiler.cxx</in>
+          </df>
+          <df name="Progress">
           </df>
           <in>feature_tests.c</in>
           <in>feature_tests.cxx</in>
@@ -27,6 +30,12 @@
           <df name="Basic">
             <df name="CMakeFiles">
               <df name="Basic.dir">
+              </df>
+            </df>
+          </df>
+          <df name="Driver">
+            <df name="CMakeFiles">
+              <df name="Driver.dir">
               </df>
             </df>
           </df>
@@ -71,6 +80,10 @@
             <in>FileManager.h</in>
             <in>InputChar.h</in>
             <in>InputFile.h</in>
+            <in>Lister.h</in>
+          </df>
+          <df name="Driver">
+            <in>Driver.h</in>
           </df>
           <df name="FrontEnd">
             <in>Keyword.h</in>
@@ -80,11 +93,12 @@
         </df>
       </df>
       <df name="lib">
-        <df name="AST">
-        </df>
         <df name="Basic">
           <in>FileManager.cpp</in>
           <in>InputFile.cpp</in>
+        </df>
+        <df name="Driver">
+          <in>Driver.cpp</in>
         </df>
         <df name="FrontEnd">
           <in>Lexer.cpp</in>
@@ -92,6 +106,9 @@
         </df>
       </df>
       <df name="tests">
+        <df name="AST">
+          <in>module_test_01.b64</in>
+        </df>
         <df name="expression">
         </df>
         <df name="lexical">

@@ -137,6 +137,7 @@ namespace bliss
      * VECTOR       - A vector of signed or unsigned elements of uniform size (BYTE, WORD, LONG, or QUAD)
      * BITVECTOR    - A vector of 1 bit element
      * BLOCK        - A sequence of varying-sized fields
+     * BLOCKBYTE    - This structure is functionally equivalent to BLOCK[,BYTE]
      * BLOCKVECTOR  - A vector of BLOCKs
      */
     class BlockDeclarationAST : public DeclarationAST

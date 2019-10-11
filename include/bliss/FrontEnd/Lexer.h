@@ -37,24 +37,24 @@ namespace bliss
         public:
         enum LexemeType
         {
-            LTUnknown = 0,
-            LTKeyword,
-            LTPredeclared,
-            LTExplicitDeclared,
-            LTDecimalLiteral,
-            LTQuotedString,
-            LTOperator,
-            LTPunctuation,
-            LTLinemark,
-            LTTrailingComment,
-            LTEmbeddedComment,
-            LTPercentSign   // This is not in the LRM, but used to terminate macros
+            LTUnknown = 0,      // 0
+            LTKeyword,          // 1
+            LTPredeclared,      // 2
+            LTExplicitDeclared, // 3
+            LTDecimalLiteral,   // 4
+            LTQuotedString,     // 5
+            LTOperator,         // 6
+            LTPunctuation,      // 7
+            LTLinemark,         // 8
+            LTTrailingComment,  // 9
+            LTEmbeddedComment,  // 10
+            LTPercentSign       // 11 - This is not in the LRM, but used to terminate macros
         };
 
         /**
          * This function is called to return the address of the one and only Lexer.
          * If one has not been instantiated, this call will do so.  If one has been
-         * instantiated, then the parameters are ignored.
+         * instantiated, then it is just returned.
          *
          * @return A pointer to the Lexer class.
          */

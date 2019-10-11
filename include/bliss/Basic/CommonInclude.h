@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * File:   CommonInclude.h
  * Author: Jonathan D. Belanger
  *
@@ -39,11 +39,14 @@
 #include <system_error>
 #include <utility>
 #include <vector>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
+#include "llvm/ADT/STLExtras.h"
 #if 0
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/Optional.h"
-#include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
@@ -55,13 +58,12 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Type.h"
 #include "llvm/IR/Verifier.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Host.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/Support/TargetRegistry.h"
-#include "llvm/Support/TargetSelect.h"
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
 #endif
+
+#define ALLOW_LISTER_INCLUDE 1
+#include "Basic/Lister.h"
+#undef ALLOW_LISTER_INCLUDE
 
 #endif /* LLVM_BLISS_COMMONINCLUDE_H */

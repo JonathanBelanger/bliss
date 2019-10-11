@@ -28,6 +28,12 @@
             <in>SpecialAST.h</in>
             <in>StructureAST.h</in>
           </df>
+          <df name="Basic">
+            <in>Lister.h</in>
+          </df>
+          <df name="Driver">
+            <in>Driver.h</in>
+          </df>
           <df name="FrontEnd">
             <in>Keyword.h</in>
             <in>Parser.h</in>
@@ -39,9 +45,17 @@
           <in>FileManager.cpp</in>
           <in>InputFile.cpp</in>
         </df>
+        <df name="Driver">
+          <in>Driver.cpp</in>
+        </df>
         <df name="FrontEnd">
           <in>Lexer.cpp</in>
           <in>Parser.cpp</in>
+        </df>
+      </df>
+      <df name="tests">
+        <df name="AST">
+          <in>module_test_01.b64</in>
         </df>
       </df>
       <in>bliss.cpp</in>
@@ -154,6 +168,10 @@
       </item>
       <item path="include/bliss/AST/StructureAST.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/bliss/Basic/Lister.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/bliss/Driver/Driver.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/bliss/FrontEnd/Keyword.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/bliss/FrontEnd/Parser.h" ex="false" tool="3" flavor2="0">
@@ -176,9 +194,13 @@
           </incDir>
         </ccTool>
       </item>
+      <item path="lib/Driver/Driver.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="lib/FrontEnd/Lexer.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="lib/FrontEnd/Parser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="tests/AST/module_test_01.b64" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

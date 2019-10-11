@@ -34,6 +34,8 @@
 #include "AST/OperatorAST.h"
 #include "AST/ExecutableFuncAST.h"
 #include "AST/ControlAST.h"
+#include "AST/ModuleAST.h"
+#include "AST/BlockAST.h"
 
 using namespace std;
 
@@ -41,6 +43,50 @@ namespace bliss
 {
     class Parser
     {
+        public:
+
+        /**
+         * This function is called to return the address of the one and only Parser.
+         * If one has not been instantiated, this call will do so.  If one has been
+         * instantiated, then it is just returned.
+         *
+         * @param lex - A pointer to the lexer that will be used.
+         * @return A pointer to the Parser class.
+         */
+        static Parser *get(Lexer *lex)
+        {
+            if (parse == nullptr)
+            {
+                parse = new Parser(lex);
+            }
+            return parse;
+        }
+
+        /*
+         * The top-level structure is the MODULE, which is terminated by ELUDOM.
+         */
+        void handleModule();
+        std::unique_ptr<ModuleAST> handleModuleHead();
+        std::unique_ptr<BlockAST> handleModuleBody();
+        std::unique_ptr<BlockAST> handleBlock();
+
+        private:
+
+        /* CONSTRUCTORS */
+        Parser(Lexer *lex)                          // Private constructor
+        {
+            lexer = lex;
+            return;
+        };
+        Parser(Parser const&) = delete;             // Prevent copy constructor
+        Parser& operator=(Parser const&) = delete;  // Prevent assignment
+
+        /* DESTRUCTORS */
+        ~Parser(){};
+
+        /* CLASS DATA */
+        static Parser *parse;
+        Lexer *lexer;
     };
 }
 

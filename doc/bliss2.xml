@@ -151,6 +151,7 @@
         <list name="Keywords">
             <item>ABSOLUTE</item>
             <item>ADDRESSING_MODE</item>
+            <item>ALAIS</item>
             <item>ALIGN</item>
             <item>ALWAYS</item>
             <item>AND</item>
@@ -162,15 +163,27 @@
             <item>BLISS32</item>
             <item>BLISS64</item>
             <item>BLOCK</item>
+            <item>BLOCK_ALIGNMENT</item>
+            <item>BLOCK_BYTE</item>
             <item>BUILTIN</item>
             <item>BY</item>
             <item>CALL</item>
             <item>CASE</item>
+            <item>CHECK_ADDRESS_TAKEN</item>
+            <item>CHECK_ALIGNMENT</item>
+            <item>CHECK_FIELD</item>
+            <item>CHECK_LONGWORD</item>
+            <item>CHECK_OPTIMIZE</item>
+            <item>CHECK_PARAMETERS</item>
+            <item>CHECK_REDECLARE</item>
+            <item>CHECK_SHARE</item>
+            <item>CHECK_SHORT_ADDRESS</item>
             <item>CODE</item>
             <item>CODECOMMENT</item>
             <item>COMMENTARY</item>
             <item>COMPILETIME</item>
             <item>CONCATENATE</item>
+            <item>COUNT</item>
             <item>DEBUG</item>
             <item>DECR</item>
             <item>DECRA</item>
@@ -235,8 +248,18 @@
             <item>NEQU</item>
             <item>NOASSEMBLY</item>
             <item>NOBINARY</item>
+            <item>NOCHECK_ADDRESS_TAKEN</item>
+            <item>NOCHECK_ALIGNMENT</item>
+            <item>NOCHECK_FIELD</item>
+            <item>NOCHECK_LONGWORD</item>
+            <item>NOCHECK_OPTIMIZE</item>
+            <item>NOCHECK_PARAMETERS</item>
+            <item>NOCHECK_REDECLARE</item>
+            <item>NOCHECK_SHARE</item>
+            <item>NOCHECK_SHORT_ADDRESS</item>
             <item>NOCODE</item>
             <item>NOCOMMENTARY</item>
+            <item>NOCOUNT</item>
             <item>NODEBUG</item>
             <item>NODEFAULT</item>
             <item>NOERRS</item>
@@ -246,6 +269,7 @@
             <item>NONEXTERNAL</item>
             <item>NOOBJECT</item>
             <item>NOOPTIMIZE</item>
+            <item>NOOVERFLOW</item>
             <item>NOPIC</item>
             <item>NOPRESERVE</item>
             <item>NOREAD</item>
@@ -268,6 +292,7 @@
             <item>OR</item>
             <item>OTHERWISE</item>
             <item>OUTRANGE</item>
+            <item>OVERFLOW</item>
             <item>OVERLAY</item>
             <item>OWN</item>
             <item>PIC</item>
@@ -365,10 +390,13 @@
             <item>MINA</item>
             <item>MINU</item>
             <item>NULLPARAMETER</item>
+            <item>RETURN_UNWIND</item>
             <item>SETUNWIND</item>
             <item>SIGN</item>
             <item>SIGNAL</item>
             <item>SIGNAL_STOP</item>
+            <item>SIGNALREF</item>
+            <item>SIGNALREF_STOP</item>
         </list>
 
         <contexts>
@@ -383,50 +411,55 @@
                 <RegExpr attribute="Keyword" context="#stay" String="\b(THEN)" endRegion="IfRegion" insensitive="true" />
                 <RegExpr attribute="Keyword" context="#stay" String="\b(ELSE)" endRegion="IfRegion" insensitive="true" />
 
-                <RegExpr attribute="Keyword" context="#stay" String="\b(CASE)" insensitive="true"/>
-                <RegExpr attribute="Keyword" context="#stay" String="\b(SELECT((|ONE)|[AU]))" insensitive="true"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(CASE)" insensitive="true" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(SELECT((|ONE)|[AU]))" insensitive="true" />
 
-                <RegExpr attribute="Keyword" context="#stay" String="\b(SET)" beginRegion="SET" insensitive="true"/>
-                <RegExpr attribute="Keyword" context="#stay" String="\b(TES)" endRegion="TES" insensitive="true"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b(SET)" beginRegion="SET" insensitive="true" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(TES)" endRegion="TES" insensitive="true" />
 
-                <RegExpr attribute="Keyword" context="#stay" String="\b((IN|DE)CR(|[AU]))" insensitive="true" beginRegion="LoopRegion"/>
-                <RegExpr attribute="Keyword" context="#stay" String="\b(loop)([\s]|$)" insensitive="true" endRegion="LoopRegion"/>
+                <RegExpr attribute="Keyword" context="#stay" String="\b((IN|DE)CR(|[AU]))" insensitive="true" beginRegion="LoopRegion" />
+                <RegExpr attribute="Keyword" context="#stay" String="\b(loop)([\s]|$)" insensitive="true" endRegion="LoopRegion" />
 
                 <RegExpr attribute="Keyword" context="#stay" String="\b(WHILE)" insensitive="true" />
                 <RegExpr attribute="Keyword" context="#stay" String="\b(DO)" insensitive="true" />
 
-                <keyword attribute="Keyword" context="#stay" String="Keywords"/>
-                <keyword attribute="Data Types" context="#stay" String="Data Types"/>
-                <keyword attribute="Preprocessor" context="#stay" String="Preprocessor"/>
+                <keyword attribute="Keyword" context="#stay" String="Keywords" />
+                <keyword attribute="Data Types" context="#stay" String="Data Types" />
 
-                <keyword attribute="Functions" context="#stay" String="Functions"/>
-                <RegExpr attribute="Constant" context="#stay" String="\#+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*"/>
-                <Float attribute="Number" context="#stay"/>
-                <Int attribute="Number" context="#stay"/>
+                <RegExpr attribute="Preprocessor" context="#stay" String="\b(MACRO)" beginRegeion="MacroRegion" insensitive="true" />
+                <RegExpr attribute="Preprocessor" context="#stay" String="\b(%\b;)" endRegeion="MacroRegion" insensitive="true" />
+                <keyword attribute="Preprocessor" context="#stay" String="Preprocessor" />
+
+                <keyword attribute="Functions" context="#stay" String="Functions" />
+                <RegExpr attribute="Constant" context="#stay" String="\#+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*" />
+                <Float attribute="Number" context="#stay" />
+                <Int attribute="Number" context="#stay" />
                 <DetectChar attribute="String" context="String" char="&apos;" />
-                <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*BEGIN.*$" beginRegion="marker"/>
-                <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*END.*$" endRegion="marker"/>
-                <DetectChar attribute="Comment" context="TrailingComment" char="!" lineEndContext="#pop"/>
+                <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*BEGIN.*$" beginRegion="marker" />
+                <RegExpr attribute="Region Marker" context="#stay" String="^\s*;+\s*END.*$" endRegion="marker" />
             </context>
             <context attribute="String" lineEndContext="#pop" name="String">
-                <DetectChar attribute="String" context="#pop" char="&apos;"/>
+                <DetectChar attribute="String" context="#pop" char="&apos;" />
             </context>
-            <context attribute="Comment" lineEndContext="#pop" name="EmbeddedCommand">
-                <Detect2Chars attribute="Comment" context="EmbeddedComment" char="%" char1="(" beginRegion="FoldableComment"/>
-                <Detect2Chars attribute="Comment" context="#pop" char=")" char1="%" endRegion="FoldableComment"/>
+            <context attribute="Comment" lineEndContext="#pop" name="TrailingComment">
+                <DetectChar attribute="Comment" context="TrailingComment" char="!" />
+            </context>
+            <context attribute="Comment" lineEndContext="#stay" name="EmbeddedComment">
+                <Detect2Chars attribute="Comment" context="EmbeddedComment" char="%" char1="(" beginRegion="FoldableComment" />
+                <Detect2Chars attribute="Comment" context="#pop" char=")" char1="%" endRegion="FoldableComment" />
             </context>
         </contexts>
         <itemDatas>
-            <itemData name="Normal Text" defStyleNum="dsNormal"/>
-            <itemData name="Keyword" defStyleNum="dsKeyword"/>
-            <itemData name="Functions" defStyleNum="dsFunction"/>
-            <itemData name="Data Types" defStyleNum="dsDataType"/>
-            <itemData name="Constant" defStyleNum="dsConstant"/>
-            <itemData name="Number" defStyleNum="dsDecVal"/>
-            <itemData name="String" defStyleNum="dsString"/>
-            <itemData name="Comment" defStyleNum="dsComment"/>
-            <itemData name="Region Marker" defStyleNum="dsRegionMarker"/>
-            <itemData name="Preprocessor" defStyleNum="dsPreprocessor"/>
+            <itemData name="Normal Text" defStyleNum="dsNormal" />
+            <itemData name="Keyword" defStyleNum="dsKeyword" />
+            <itemData name="Functions" defStyleNum="dsFunction" />
+            <itemData name="Data Types" defStyleNum="dsDataType" />
+            <itemData name="Constant" defStyleNum="dsConstant" />
+            <itemData name="Number" defStyleNum="dsDecVal" />
+            <itemData name="String" defStyleNum="dsString" />
+            <itemData name="Comment" defStyleNum="dsComment" />
+            <itemData name="Region Marker" defStyleNum="dsRegionMarker" />
+            <itemData name="Preprocessor" defStyleNum="dsPreprocessor" />
         </itemDatas>
     </highlighting>
     <general>
